@@ -3,9 +3,20 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useContext } from "react";
+import { UserContext } from "../UserContext";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
+    const { user, setUser } = useContext(UserContext);
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (user.isLoggedIn === true) {
+            navigate('/');
+        }
+    }, [navigate, user.isLoggedIn])
+
     const schema = yup.object().shape({
         firstName: yup.string().required("First name is required")
             .test('Check Whitespaces', 'First name is required', value => {
@@ -90,7 +101,7 @@ function Register() {
     const [emailFocusState, setEmailFocusState] = useState(false)
     const [userNameAvailable, setUserNameAvailable] = useState(null)
     const [emailAvailable, setEmailAvailable] = useState(null)
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
 
@@ -103,7 +114,7 @@ function Register() {
             email,
             password
         } = data
-        axios.post('http://127.0.0.1:3010/register', {
+        axios.post('register', {
             firstName,
             lastName,
             userName,
@@ -111,9 +122,20 @@ function Register() {
             password
         })
             .then((res) => {
-                console.log(res)
-                reset()
-            });
+                if (res.data.success === true) {
+                    localStorage.setItem('jwt', res.data.token.split(' ')[1])
+                    setUser(prev => ({
+                        ...prev,
+                        user: res.data.user,
+                        token: res.data.token.split('')[1],
+                        isLoggedIn: true
+                    }))
+                }
+                else {
+                    console.log(res)
+                }
+            })
+            .catch(err => console.log(err));
     }
     return (
         <div className="register-page">
@@ -169,6 +191,7 @@ function Register() {
                 </div>
                 <button>Register</button>
             </form>
+            <button onClick={() => navigate('/login')}>login</button>
         </div>
     );
 }

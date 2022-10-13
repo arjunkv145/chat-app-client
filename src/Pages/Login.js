@@ -3,8 +3,19 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
+import { useContext, useEffect } from "react";
+import { UserContext } from "../UserContext";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+    const { user, setUser } = useContext(UserContext);
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (user.isLoggedIn === true) {
+            navigate('/');
+        }
+    }, [navigate, user.isLoggedIn])
+
     const schema = yup.object().shape({
         email: yup.string().required("Email is required").email("Must be a valid email"),
         password: yup.string().required("Message is required")
@@ -17,12 +28,22 @@ function Login() {
     const onSubmitHandler = data => {
         const userData = { ...data }
         Object.keys(userData).forEach(k => userData[k] = userData[k].trim());
-        axios.post('http://127.0.0.1:3010/login', {
-            ...userData
-        })
+        axios.post('login', { ...userData })
             .then((res) => {
-                console.log(res.data)
-            });
+                if (res.data.success === true) {
+                    localStorage.setItem('jwt', res.data.token.split(' ')[1])
+                    setUser(prev => ({
+                        ...prev,
+                        user: res.data.user,
+                        token: res.data.token.split('')[1],
+                        isLoggedIn: true
+                    }))
+                }
+                else {
+                    console.log(res)
+                }
+            })
+            .catch(err => console.log(err));
     }
     return (
         <div className="login-page">
@@ -39,6 +60,7 @@ function Login() {
                 </div>
                 <button>Login</button>
             </form>
+            <button onClick={() => navigate('/register')}>register</button>
         </div>
     );
 }
