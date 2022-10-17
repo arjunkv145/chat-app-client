@@ -1,6 +1,6 @@
 import "./sassStyles/home.scss";
 import { useContext, useEffect } from "react";
-import { UserContext } from "../UserContext";
+import { removeJWT, UserContext } from "../AuthProvider";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
@@ -13,11 +13,10 @@ function Home() {
     }, [navigate, user.isLoggedIn])
 
     const logout = () => {
-        localStorage.setItem('jwt', null);
+        removeJWT();
         setUser(prev => ({
             ...prev,
             user: null,
-            token: null,
             isLoggedIn: false
         }));
     }

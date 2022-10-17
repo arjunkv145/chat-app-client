@@ -3,8 +3,6 @@ import Home from "./Pages/Home";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 
-//import axios from "axios";
-
 function App() {
   return (
     <div className="App">

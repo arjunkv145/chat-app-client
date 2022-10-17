@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useContext } from "react";
-import { UserContext } from "../UserContext";
+import { setJWT, UserContext } from "../AuthProvider";
 import { useNavigate } from "react-router-dom";
 
 function Register() {
@@ -123,16 +123,15 @@ function Register() {
         })
             .then((res) => {
                 if (res.data.success === true) {
-                    localStorage.setItem('jwt', res.data.token.split(' ')[1])
+                    setJWT(res.data.token.split(' ')[1]);
                     setUser(prev => ({
                         ...prev,
                         user: res.data.user,
-                        token: res.data.token.split('')[1],
                         isLoggedIn: true
-                    }))
+                    }));
                 }
                 else {
-                    console.log(res)
+                    console.log(res);
                 }
             })
             .catch(err => console.log(err));

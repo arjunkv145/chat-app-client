@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
 import { useContext, useEffect } from "react";
-import { UserContext } from "../UserContext";
+import { setJWT, UserContext } from "../AuthProvider";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -31,11 +31,10 @@ function Login() {
         axios.post('login', { ...userData })
             .then((res) => {
                 if (res.data.success === true) {
-                    localStorage.setItem('jwt', res.data.token.split(' ')[1])
+                    setJWT(res.data.token.split(' ')[1]);
                     setUser(prev => ({
                         ...prev,
                         user: res.data.user,
-                        token: res.data.token.split('')[1],
                         isLoggedIn: true
                     }))
                 }
