@@ -1,40 +1,34 @@
-import "./sassStyles/login.scss";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import axios from "axios";
-import { useContext, useEffect } from "react";
-import { setJWT, UserContext } from "../AuthProvider";
-import { useNavigate } from "react-router-dom";
+import "./sassStyles/login.scss"
+import { useForm } from "react-hook-form"
+import * as yup from "yup"
+import { yupResolver } from "@hookform/resolvers/yup"
+import axios from "../api/axios"
+import useAuth from "../hooks/useAuth"
+import { useNavigate } from "react-router-dom"
 
 function Login() {
-    const { user, setUser } = useContext(UserContext);
-    const navigate = useNavigate();
-    useEffect(() => {
-        if (user.isLoggedIn === true) {
-            navigate('/');
-        }
-    }, [navigate, user.isLoggedIn])
+    const { setAuth } = useAuth()
+    const navigate = useNavigate()
 
     const schema = yup.object().shape({
         email: yup.string().required("Email is required").email("Must be a valid email"),
         password: yup.string().required("Message is required")
-    });
+    })
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
-    });
+    })
 
     const onSubmitHandler = data => {
         const userData = { ...data }
-        Object.keys(userData).forEach(k => userData[k] = userData[k].trim());
+        Object.keys(userData).forEach(k => userData[k] = userData[k].trim())
         axios.post('login', { ...userData })
             .then((res) => {
                 if (res.data.success === true) {
-                    setJWT(res.data.token.split(' ')[1]);
-                    setUser(prev => ({
+                    setAuth(prev => ({
                         ...prev,
                         user: res.data.user,
+                        accessToken: res.data.accessToken,
                         isLoggedIn: true
                     }))
                 }
@@ -42,14 +36,14 @@ function Login() {
                     console.log(res)
                 }
             })
-            .catch(err => console.log(err));
+            .catch(err => console.log(err))
     }
     return (
         <div className="login-page">
             <form onSubmit={handleSubmit(onSubmitHandler)}>
                 <div>
                     <label htmlFor="email">Email</label>
-                    <input type="text" name="email" id="email" {...register("email")} />
+                    <input type="text" name="email" id="email" autoComplete="Off" {...register("email")} />
                     <span className="error-message">{errors.email?.message}</span>
                 </div>
                 <div>
@@ -64,4 +58,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default Login

@@ -1,21 +1,15 @@
-import "./sassStyles/register.scss";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useContext } from "react";
-import { setJWT, UserContext } from "../AuthProvider";
-import { useNavigate } from "react-router-dom";
+import "./sassStyles/register.scss"
+import { useForm } from "react-hook-form"
+import * as yup from "yup"
+import { yupResolver } from "@hookform/resolvers/yup"
+import axios from "../api/axios"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import useAuth from "../hooks/useAuth"
 
 function Register() {
-    const { user, setUser } = useContext(UserContext);
-    const navigate = useNavigate();
-    useEffect(() => {
-        if (user.isLoggedIn === true) {
-            navigate('/');
-        }
-    }, [navigate, user.isLoggedIn])
+    const { setAuth } = useAuth()
+    const navigate = useNavigate()
 
     const schema = yup.object().shape({
         firstName: yup.string().required("First name is required")
@@ -33,7 +27,7 @@ function Register() {
                     if (value.trim() === '') resolve(true)
                     else if (userNameFocusState === true) {
                         setUserNameAvailable("loading")
-                        axios.get(`http://localhost:3010/check_username/${value.trim()}`)
+                        axios.get(`check_username/${value.trim()}`)
                             .then(res => {
                                 if (res.data.status === "Username is available") {
                                     console.log("available")
@@ -66,7 +60,7 @@ function Register() {
                     if (value.trim() === '') resolve(true)
                     else if (emailFocusState === true) {
                         setEmailAvailable("loading")
-                        axios.get(`http://localhost:3010/check_email/${value.trim()}`)
+                        axios.get(`check_email/${value.trim()}`)
                             .then(res => {
                                 if (res.data.status === "Email is available") {
                                     console.log("available")
@@ -94,7 +88,7 @@ function Register() {
                 return value.trim().length < 8 ? false : true
             }),
         cpassword: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match')
-    });
+    })
 
 
     const [userNameFocusState, setUserNameFocusState] = useState(false)
@@ -103,10 +97,10 @@ function Register() {
     const [emailAvailable, setEmailAvailable] = useState(null)
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
-    });
+    })
 
     const onSubmitHandler = data => {
-        Object.keys(data).forEach(k => data[k] = data[k].trim());
+        Object.keys(data).forEach(k => data[k] = data[k].trim())
         const {
             firstName,
             lastName,
@@ -123,18 +117,18 @@ function Register() {
         })
             .then((res) => {
                 if (res.data.success === true) {
-                    setJWT(res.data.token.split(' ')[1]);
-                    setUser(prev => ({
+                    setAuth(prev => ({
                         ...prev,
                         user: res.data.user,
+                        accessToken: res.data.accessToken,
                         isLoggedIn: true
-                    }));
+                    }))
                 }
                 else {
-                    console.log(res);
+                    console.log(res)
                 }
             })
-            .catch(err => console.log(err));
+            .catch(err => console.log(err))
     }
     return (
         <div className="register-page">
@@ -195,4 +189,4 @@ function Register() {
     );
 }
 
-export default Register;
+export default Register

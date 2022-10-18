@@ -1,27 +1,38 @@
-// import axios from "axios";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react"
+import useAxiosPrivate from "./hooks/useAxiosPrivate"
 
-const AuthContext = createContext()
+const AuthContext = createContext([{}, () => { }])
 
 function AuthProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
-        isLoggedIn: false
-    });
+        accessToken: null,
+        isLoggedIn: false,
+        initialLoadingState: true
+    })
+    const axiosPrivate = useAxiosPrivate()
 
-    // useEffect(() => {
-    //     axios.get('isauthenticated')
-    //         .then(res => {
-    //             if (res.data.success === true) {
-    //                 setAuth(prev => ({
-    //                     ...prev,
-    //                     user: res.data.user,
-    //                     isLoggedIn: true
-    //                 }));
-    //             }
-    //         })
-    //         .catch(err => console.log(err))
-    // }, [])
+    useEffect(() => {
+        const controller = new AbortController()
+        let isMounted = true;
+        axiosPrivate.post('refreshtoken', { signal: controller.signal })
+            .then(res => {
+                if (res.data.success === true) {
+                    isMounted && setAuth(prev => ({
+                        ...prev,
+                        user: res.data.user,
+                        accessToken: res.data.accessToken,
+                        isLoggedIn: true,
+                        initialLoadingState: false
+                    }))
+                }
+            })
+            .catch(err => console.log(err, "hii"))
+        return () => {
+            controller.abort()
+            isMounted = false
+        }
+    }, [axiosPrivate])
 
     return (
         <AuthContext.Provider value={{ auth, setAuth }}>
@@ -30,5 +41,5 @@ function AuthProvider(props) {
     );
 }
 
-export default AuthProvider;
-export { AuthContext };
+export default AuthProvider
+export { AuthContext }

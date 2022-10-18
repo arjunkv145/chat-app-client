@@ -1,18 +1,26 @@
-import { Routes, Route } from "react-router-dom";
-import Home from "./Pages/Home";
-import Login from "./Pages/Login";
-import Register from "./Pages/Register";
+import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import Root from "./components/Root"
+import Chat from "./Pages/Chat"
+import ErrorPage from "./Pages/ErrorPage"
+import Group from "./Pages/Group"
+import Login from "./Pages/Login"
+import Register from "./Pages/Register"
+
+const router = createBrowserRouter([
+    {
+        element: <Root />,
+        errorElement: <ErrorPage />,
+        children: [
+            { path: '/', element: <Chat /> },
+            { path: '/group', element: <Group /> },
+        ]
+    },
+    { path: '/login', element: <Login /> },
+    { path: '/register', element: <Register /> },
+])
 
 function App() {
-  return (
-    <div className="App">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </div>
-  );
+    return <RouterProvider router={router} />
 }
 
-export default App;
+export default App
