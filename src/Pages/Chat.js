@@ -1,10 +1,11 @@
 import "./sassStyles/chat.scss"
 // import { useContext, useEffect } from "react"
-// import { removeJWT, UserContext } from "../AuthProvider"
+import useAuth from "../hooks/useAuth"
+import axios from "../api/axios"
 // import { useNavigate } from "react-router-dom"
 
 function Chat() {
-    // const { user, setUser } = useContext(UserContext)
+    const { setAuth } = useAuth()
     // const navigate = useNavigate()
     // useEffect(() => {
     //     if (user.isLoggedIn === false) {
@@ -12,19 +13,22 @@ function Chat() {
     //     }
     // }, [navigate, user.isLoggedIn])
 
-    // const logout = () => {
-    //     removeJWT();
-    //     setUser(prev => ({
-    //         ...prev,
-    //         user: null,
-    //         isLoggedIn: false
-    //     }))
-    // }
+    const logout = () => {
+        axios.get('logout').then(res => {
+            console.log(res.data)
+            setAuth(prev => ({
+                ...prev,
+                user: null,
+                accessToken: null,
+                isLoggedIn: false
+            }))
+        })
+    }
 
     return (
         <div className="chat-page">
             chat page
-            {/* <button onClick={logout}>Logout</button> */}
+            <button onClick={logout}>Logout</button>
         </div>
     )
 }

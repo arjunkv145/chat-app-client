@@ -29,16 +29,16 @@ function Register() {
                         setUserNameAvailable("loading")
                         axios.get(`check_username/${value.trim()}`)
                             .then(res => {
-                                if (res.data.status === "Username is available") {
+                                if (res.data.message === "Username is available") {
                                     console.log("available")
                                     setUserNameAvailable("available")
                                     resolve(true)
-                                } else if (res.data.status === "Username is not available") {
+                                } else if (res.data.message === "Username is not available") {
                                     console.log("not available")
                                     setUserNameAvailable(null)
                                     resolve(false)
                                 } else {
-                                    console.log(res.data.status)
+                                    console.log(res.data.message)
                                     setUserNameAvailable(null)
                                     resolve(false)
                                 }
@@ -62,16 +62,17 @@ function Register() {
                         setEmailAvailable("loading")
                         axios.get(`check_email/${value.trim()}`)
                             .then(res => {
-                                if (res.data.status === "Email is available") {
+                                if (res.data.message === "Email is available") {
                                     console.log("available")
                                     setEmailAvailable("available")
                                     resolve(true)
-                                } else if (res.data.status === "Email is not available") {
+                                } else if (res.data.message === "Email is not available") {
                                     console.log("not available")
                                     setEmailAvailable(null)
                                     resolve(false)
                                 } else {
-                                    console.log(res.data.status)
+                                    console.log(res)
+                                    console.log(res.data.message)
                                     setUserNameAvailable(null)
                                     resolve(false)
                                 }

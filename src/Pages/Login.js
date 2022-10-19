@@ -5,10 +5,17 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import axios from "../api/axios"
 import useAuth from "../hooks/useAuth"
 import { useNavigate } from "react-router-dom"
+import { useEffect } from "react"
 
 function Login() {
-    const { setAuth } = useAuth()
+    const { auth, setAuth } = useAuth()
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if (auth.initialLoadingState === false && auth.isLoggedIn === true) {
+            navigate('/')
+        }
+    }, [auth.initialLoadingState, auth.isLoggedIn, navigate])
 
     const schema = yup.object().shape({
         email: yup.string().required("Email is required").email("Must be a valid email"),
@@ -31,9 +38,6 @@ function Login() {
                         accessToken: res.data.accessToken,
                         isLoggedIn: true
                     }))
-                }
-                else {
-                    console.log(res)
                 }
             })
             .catch(err => console.log(err))
