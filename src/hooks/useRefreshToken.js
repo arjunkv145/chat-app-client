@@ -7,16 +7,17 @@ function useRefreshToken() {
     const refreshToken = async () => {
         try {
             const res = await axios.post('refreshtoken')
+            console.log(res)
             setAuth(prev => ({
                 ...prev,
                 user: res.data.user,
                 isLoggedIn: true,
-                initialLoadingState: false,
                 accessToken: res.data.accessToken
             }))
             return res.data.accessToken
         } catch (err) {
-            console.log('cant get refresh token')
+            console.log(err.response.data)
+            return null
         }
     }
     return refreshToken

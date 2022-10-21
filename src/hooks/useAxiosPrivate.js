@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import axios from '../api/axios'
 import useAuth from './useAuth'
 import useRefreshToken from './useRefreshToken'
@@ -7,9 +7,9 @@ function useAxiosPrivate() {
     const refreshToken = useRefreshToken()
     const { auth = {} } = useAuth()
     const { accessToken = '' } = auth
+    let sentOnce = useRef(false)
 
     useEffect(() => {
-        let sentOnce = false
         const requestInterceptor = axios.interceptors.request.use(
             config => {
                 if (!config.headers['Authorization']) {
@@ -21,17 +21,17 @@ function useAxiosPrivate() {
         const responseInterceptor = axios.interceptors.response.use(
             res => res,
             async (err) => {
-                console.log('ghbhjhfgjhdfghdbghsbeb')
                 const prevRequest = err.config
-                console.log(err.response.status)
-                console.log(prevRequest.sent)
-                if (err.response.status === 401 && !sentOnce) {
-                    sentOnce = true
-                    prevRequest.sent = true
+                if (err.response.status === 403 && !sentOnce.current) {
+                    sentOnce.current = true
                     const newAccessToken = await refreshToken()
-                    prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`
-                    return axios(prevRequest)
+                    if (newAccessToken !== null) {
+                        console.log(1)
+                        prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`
+                        return axios(prevRequest)
+                    }
                 }
+                console.log(2)
                 return Promise.reject(err)
             }
         )

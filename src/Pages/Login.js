@@ -5,12 +5,13 @@ import { Link, useNavigate } from "react-router-dom"
 import { useState, useEffect, useCallback, useRef } from "react"
 
 function Login() {
-    const { auth, setAuth } = useAuth()
-    const navigate = useNavigate()
+    const { auth, setAuth, initialLoadingState } = useAuth()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [errors, setErrors] = useState({ email: null, password: null })
+    const [serverError, setServerError] = useState(null)
     const isSubmittedOnce = useRef(false)
+    const navigate = useNavigate()
 
     const handleErrors = useCallback(() => {
         let emailErrorMessage = null
@@ -34,11 +35,30 @@ function Login() {
         return (emailErrorMessage === null && passwordErrorMessage === null) ? true : false
     }, [email, password])
 
-    useEffect(() => {
-        if (auth.initialLoadingState === false && auth.isLoggedIn === true) {
-            navigate('/')
+    const handleSubmit = e => {
+        e.preventDefault()
+        isSubmittedOnce.current = true
+        const submitStatus = handleErrors()
+        if (submitStatus === true) {
+            setServerError(null)
+            axios.post('login', { email, password })
+                .then((res) => {
+                    if (res.data.success === true) {
+                        setAuth(prev => ({
+                            ...prev,
+                            user: res.data.user,
+                            accessToken: res.data.accessToken,
+                            isLoggedIn: true
+                        }))
+                    } else if (res.data.success === false) {
+                        setServerError(res.data.message)
+                    }
+                })
+                .catch(err => {
+                    setServerError('Server not responding.')
+                })
         }
-    }, [auth.initialLoadingState, auth.isLoggedIn, navigate])
+    }
 
     useEffect(() => {
         if (isSubmittedOnce.current === true) {
@@ -46,27 +66,18 @@ function Login() {
         }
     }, [email, password, handleErrors])
 
-    const handleSubmit = e => {
-        e.preventDefault()
-        isSubmittedOnce.current = true
-        const submitStatus = handleErrors()
-        if (submitStatus === true) {
-            axios.post('login', { email, password })
-                .then((res) => {
-                    console.log(res)
-                    setAuth(prev => ({
-                        ...prev,
-                        user: res.data.user,
-                        accessToken: res.data.accessToken,
-                        isLoggedIn: true
-                    }))
-                })
-                .catch(err => console.log(err))
+    useEffect(() => {
+        if (initialLoadingState === false && auth.isLoggedIn === true) {
+            navigate('/chat')
         }
-    }
+    }, [initialLoadingState, auth.isLoggedIn, navigate])
+
     return (
         <div className="login-page">
             <form onSubmit={handleSubmit}>
+                <span className="error-message">
+                    {serverError && serverError}
+                </span>
                 <div>
                     <label htmlFor="email">Email</label>
                     <input

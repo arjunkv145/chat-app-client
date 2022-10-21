@@ -8,15 +8,19 @@ import Register from "./Pages/Register"
 
 const router = createBrowserRouter([
     {
-        element: <Root />,
         errorElement: <ErrorPage />,
         children: [
-            { path: '/', element: <Chat /> },
-            { path: '/group', element: <Group /> },
+            { path: '/', element: <Login /> },
+            { path: '/register', element: <Register /> },
+            {
+                element: <Root />,
+                children: [
+                    { path: '/chat', element: <Chat /> },
+                    { path: '/group', element: <Group /> },
+                ]
+            }
         ]
-    },
-    { path: '/login', element: <Login /> },
-    { path: '/register', element: <Register /> },
+    }
 ])
 
 function App() {

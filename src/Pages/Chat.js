@@ -1,17 +1,17 @@
 import "./sassStyles/chat.scss"
-// import { useContext, useEffect } from "react"
+import { useEffect } from "react"
 import useAuth from "../hooks/useAuth"
 import axios from "../api/axios"
-// import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 function Chat() {
-    const { setAuth } = useAuth()
-    // const navigate = useNavigate()
-    // useEffect(() => {
-    //     if (user.isLoggedIn === false) {
-    //         navigate('/login')
-    //     }
-    // }, [navigate, user.isLoggedIn])
+    const { auth, setAuth, initialLoadingState } = useAuth()
+    const navigate = useNavigate()
+    useEffect(() => {
+        if (initialLoadingState === false && auth.isLoggedIn === false) {
+            navigate('/')
+        }
+    }, [initialLoadingState, auth.isLoggedIn, navigate])
 
     const logout = () => {
         axios.get('logout').then(res => {
@@ -28,6 +28,7 @@ function Chat() {
     return (
         <div className="chat-page">
             chat page
+            <Link to='/group'>go to groups page</Link>
             <button onClick={logout}>Logout</button>
         </div>
     )

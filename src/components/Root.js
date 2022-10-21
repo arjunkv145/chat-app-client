@@ -4,17 +4,17 @@ import useAuth from '../hooks/useAuth'
 
 function Root() {
     const navigate = useNavigate()
-    const { auth } = useAuth()
+    const { auth, initialLoadingState } = useAuth()
     console.log(useAuth())
     useEffect(() => {
-        if (auth.initialLoadingState === false && auth.isLoggedIn === false) {
-            navigate('/login')
+        if (initialLoadingState === false && auth.isLoggedIn === false) {
+            navigate('/')
         }
-    }, [auth.initialLoadingState, auth.isLoggedIn, navigate])
+    }, [initialLoadingState, auth.isLoggedIn, navigate])
     return (
         <>
             {
-                auth.initialLoadingState ?
+                initialLoadingState ?
                     'loading...' :
                     <>
                         <header>header</header>

@@ -1,24 +1,28 @@
 import "./sassStyles/register.scss"
 import axios from "../api/axios"
-import { useState, useEffect, useRef, useCallback } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useState, useEffect, useRef } from "react"
+import { Link } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 
 const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
 function Register() {
-    // const { setAuth } = useAuth()
-    // const navigate = useNavigate()
+    const { setAuth } = useAuth()
     const [userName, setUserName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+    const userNameRef = useRef()
+    const emailRef = useRef()
+    const passwordRef = useRef()
+    const confirmPasswordRef = useRef()
     const [errors, setErrors] = useState({
         userName: null,
         email: null,
         password: null,
         confirmPassword: null
     })
+    const [serverError, setServerError] = useState(null)
     const [credentialsAvailable, setCredentialsAvailable] = useState({
         userName: null,
         email: null
@@ -27,76 +31,82 @@ function Register() {
         userName: false,
         email: false
     })
-    const isSubmittedOnce = useRef(false)
 
-    const handleErrors = useCallback(() => {
+    const handleUserName = () => {
         let userNameErrorMessage = null
-        let emailErrorMessage = null
-        let passwordErrorMessage = null
-        let confirmPasswordErrorMessage = null
-
-        if (userName.trim() === '') {
+        const { value } = userNameRef.current
+        if (value.trim() === '') {
             userNameErrorMessage = 'UserName is required'
         }
+        setUserName(value)
+        setErrors(prev => ({ ...prev, userName: userNameErrorMessage }))
+        return userNameErrorMessage === null ? true : false
+    }
 
-        if (email.trim() === '') {
+    const handleEmail = () => {
+        let emailErrorMessage = null
+        const { value } = emailRef.current
+        if (value.trim() === '') {
             emailErrorMessage = 'Email is required'
-        } else if (email.match(regexEmail) === null) {
+        } else if (value.match(regexEmail) === null) {
             emailErrorMessage = 'Email is not valid'
         }
+        setEmail(value)
+        setErrors(prev => ({ ...prev, email: emailErrorMessage }))
+        return emailErrorMessage === null ? true : false
+    }
 
-        if (password.trim() === '') {
+    const handlePassword = () => {
+        let passwordErrorMessage = null
+        const { value } = passwordRef.current
+        if (value.trim() === '') {
             passwordErrorMessage = 'Password is required'
-        } else if (password.trim().length < 8) {
+        } else if (value.trim().length < 8) {
             passwordErrorMessage = 'Password must be atleast 8 characters'
         }
+        setPassword(value)
+        setErrors(prev => ({ ...prev, password: passwordErrorMessage }))
+        handleConfirmPassword()
+        return passwordErrorMessage === null ? true : false
+    }
 
-        if (confirmPassword.trim() !== password.trim()) {
-            confirmPasswordErrorMessage = 'Passwords does not match'
+    const handleConfirmPassword = () => {
+        let confirmPasswordErrorMessage = null
+        const { value } = confirmPasswordRef.current
+        if (value.trim() !== passwordRef.current.value.trim()) {
+            confirmPasswordErrorMessage = 'Both passwords must match'
         }
-
-        setErrors(prev => ({
-            ...prev,
-            userName: userNameErrorMessage,
-            email: emailErrorMessage,
-            password: passwordErrorMessage,
-            confirmPassword: confirmPasswordErrorMessage
-        }))
-
-        return (
-            userNameErrorMessage === null &&
-            emailErrorMessage === null &&
-            passwordErrorMessage === null &&
-            confirmPasswordErrorMessage === null
-        ) ? true : false
-    }, [userName, email, password, confirmPassword])
+        setConfirmPassword(value)
+        setErrors(prev => ({ ...prev, confirmPassword: confirmPasswordErrorMessage }))
+        return confirmPasswordErrorMessage === null ? true : false
+    }
 
     useEffect(() => {
         const controller = new AbortController()
         let isMounted = true
+        isMounted && setCredentialsAvailable(prev => ({ ...prev, userName: null }))
+        isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, userName: false }))
         const fetchData = async () => {
-            isMounted && setCredentialsAvailable(prev => ({ ...prev, userName: null }))
-            isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, userName: false }))
-            if (userName.trim() !== '') {
-                let userNameAvailableMessage = null
-                try {
-                    isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, userName: true }))
-                    const res = await axios.get(`check_username/${userName.trim()}`, { signal: controller.signal })
-                    if (res.data.message === "Username is available") {
-                        userNameAvailableMessage = res.data.message
-                    } else if (res.data.message === "Username is not available") {
-                        userNameAvailableMessage = res.data.message
-                    }
-                    console.log(res.data)
-                } catch (err) {
-                    userNameAvailableMessage = "server not responding"
-                } finally {
-                    isMounted && setCredentialsAvailable(prev => ({ ...prev, userName: userNameAvailableMessage }))
-                    isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, userName: false }))
+            let userNameAvailableMessage = null
+            try {
+                isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, userName: true }))
+                const res = await axios.get(`check_username/${userName.trim()}`, { signal: controller.signal })
+                if (res.data.message === "Username is available") {
+                    userNameAvailableMessage = res.data.message
+                } else if (res.data.message === "Username is not available") {
+                    userNameAvailableMessage = res.data.message
                 }
+            } catch (err) {
+                userNameAvailableMessage = "server not responding"
+            } finally {
+                isMounted && setCredentialsAvailable(prev => ({ ...prev, userName: userNameAvailableMessage }))
+                isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, userName: false }))
             }
         }
-        fetchData()
+
+        if (userName.trim() !== '') {
+            fetchData()
+        }
 
         return () => {
             controller.abort()
@@ -105,126 +115,68 @@ function Register() {
     }, [userName])
 
     useEffect(() => {
+        const controller = new AbortController()
+        let isMounted = true
+        isMounted && setCredentialsAvailable(prev => ({ ...prev, email: null }))
+        isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, email: false }))
         const fetchData = async () => {
-            setCredentialsAvailable(prev => ({ ...prev, email: null }))
-            if (email.trim() !== '' && email.match(regexEmail) !== null) {
-                let emailAvailableMessage = null
-                try {
-                    setCredentialsAvailableLoadingState(prev => ({ ...prev, email: true }))
-                    const res = await axios.get(`check_email/${email.trim()}`)
-                    if (res.data.message === "Email is available") {
-                        emailAvailableMessage = res.data.message
-                    } else if (res.data.message === "Email is not available") {
-                        emailAvailableMessage = res.data.message
-                    }
-                    console.log(res.data)
-                } catch (err) {
-                    emailAvailableMessage = "server not responding"
-                } finally {
-                    setCredentialsAvailable(prev => ({ ...prev, email: emailAvailableMessage }))
-                    setCredentialsAvailableLoadingState(prev => ({ ...prev, email: false }))
+            let emailAvailableMessage = null
+            try {
+                isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, email: true }))
+                const res = await axios.get(`check_email/${email.trim()}`)
+                if (res.data.message === "Email is available") {
+                    emailAvailableMessage = res.data.message
+                } else if (res.data.message === "Email is not available") {
+                    emailAvailableMessage = res.data.message
                 }
+            } catch (err) {
+                emailAvailableMessage = "server not responding"
+            } finally {
+                isMounted && setCredentialsAvailable(prev => ({ ...prev, email: emailAvailableMessage }))
+                isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, email: false }))
             }
         }
-        fetchData()
-    }, [email])
-
-
-    // userName: yup.string().required("User name is required")
-    //     .test('Username availabily check', 'Username is not available', value => {
-    //         setUserNameAvailable(null)
-    //         return new Promise((resolve, reject) => {
-    //             if (value.trim() === '') resolve(true)
-    //             else if (userNameFocusState === true) {
-    //                 setUserNameAvailable("loading")
-    //                 axios.get(`check_username/${value.trim()}`)
-    //                     .then(res => {
-    //                         if (res.data.message === "Username is available") {
-    //                             console.log("available")
-    //                             setUserNameAvailable("available")
-    //                             resolve(true)
-    //                         } else if (res.data.message === "Username is not available") {
-    //                             console.log("not available")
-    //                             setUserNameAvailable(null)
-    //                             resolve(false)
-    //                         } else {
-    //                             console.log(res.data.message)
-    //                             setUserNameAvailable(null)
-    //                             resolve(false)
-    //                         }
-    //                     })
-    //                     .catch((err) => {
-    //                         setUserNameAvailable(null)
-    //                         resolve(false)
-    //                     })
-    //             } else resolve(true)
-    //         })
-    //     })
-    //     .test('Check Whitespaces', 'not a valid username', value => {
-    //         return value.trim() === '' ? false : true
-    //     }),
-    // email: yup.string().required("Email is required").email("Must be a valid email")
-    //     .test('Email availabily check', 'Email is not available', value => {
-    //         setEmailAvailable(null)
-    //         return new Promise((resolve, reject) => {
-    //             if (value.trim() === '') resolve(true)
-    //             else if (emailFocusState === true) {
-    //                 setEmailAvailable("loading")
-    //                 axios.get(`check_email/${value.trim()}`)
-    //                     .then(res => {
-    //                         if (res.data.message === "Email is available") {
-    //                             console.log("available")
-    //                             setEmailAvailable("available")
-    //                             resolve(true)
-    //                         } else if (res.data.message === "Email is not available") {
-    //                             console.log("not available")
-    //                             setEmailAvailable(null)
-    //                             resolve(false)
-    //                         } else {
-    //                             console.log(res)
-    //                             console.log(res.data.message)
-    //                             setUserNameAvailable(null)
-    //                             resolve(false)
-    //                         }
-    //                     })
-    //                     .catch((err) => {
-    //                         setEmailAvailable(null)
-    //                         resolve(false)
-    //                     })
-    //             } else resolve(true)
-    //         })
-    //     }),
-
-    useEffect(() => {
-        if (isSubmittedOnce.current === true) {
-            handleErrors()
+        if (email.trim() !== '' && email.match(regexEmail) !== null) {
+            fetchData()
         }
-    }, [userName, email, password, confirmPassword, handleErrors])
+
+        return () => {
+            controller.abort()
+            isMounted = false
+        }
+    }, [email])
 
     const handleSubmit = e => {
         e.preventDefault()
-        isSubmittedOnce.current = true
-        const submitStatus = handleErrors()
+        const submitStatus = (
+            handleUserName() &&
+            handleEmail() &&
+            handlePassword() &&
+            handleConfirmPassword() &&
+            credentialsAvailable.userName === 'Username is available' &&
+            credentialsAvailable.email === 'Email is available'
+        ) ? true : false
         if (submitStatus === true) {
-            // axios.post('register', { userName, email, password })
-            //     .then((res) => {
-            //         console.log(res)
-            //         setAuth(prev => ({
-            //             ...prev,
-            //             user: res.data.user,
-            //             accessToken: res.data.accessToken,
-            //             isLoggedIn: true
-            //         }))
-            //     })
-            //     .catch(err => console.log(err))
-            console.log('registering')
-        } else {
-            console.log('error')
+            axios.post('register', { userName, email, password })
+                .then((res) => {
+                    setAuth(prev => ({
+                        ...prev,
+                        user: res.data.user,
+                        accessToken: res.data.accessToken,
+                        isLoggedIn: true
+                    }))
+                })
+                .catch(err => {
+                    setServerError('Server not responding.')
+                })
         }
     }
     return (
         <div className="register-page">
             <form onSubmit={handleSubmit}>
+                <span className="error-message">
+                    {serverError && serverError}
+                </span>
                 <div>
                     <label htmlFor="userName">User name</label>
                     <input
@@ -232,7 +184,8 @@ function Register() {
                         name="userName"
                         id="userName"
                         value={userName}
-                        onChange={e => setUserName(e.target.value)}
+                        ref={userNameRef}
+                        onChange={handleUserName}
                     />
                     <span className="error-message">{errors.userName && errors.userName}</span>
                     <span className="error-message">
@@ -249,9 +202,16 @@ function Register() {
                         name="email"
                         id="email"
                         value={email}
-                        onChange={e => setEmail(e.target.value)}
+                        ref={emailRef}
+                        onChange={handleEmail}
                     />
                     <span className="error-message">{errors.email && errors.email}</span>
+                    <span className="error-message">
+                        {credentialsAvailable.email && credentialsAvailable.email}
+                    </span>
+                    <span className="error-message">
+                        {credentialsAvailableLoadingState.email && 'Loading...'}
+                    </span>
                 </div>
                 <div>
                     <label htmlFor="password">Password</label>
@@ -260,7 +220,8 @@ function Register() {
                         name="password"
                         id="password"
                         value={password}
-                        onChange={e => setPassword(e.target.value)}
+                        ref={passwordRef}
+                        onChange={handlePassword}
                     />
                     <span className="error-message">{errors.password && errors.password}</span>
                 </div>
@@ -271,7 +232,8 @@ function Register() {
                         name="confirmPassword"
                         id="confirmPassword"
                         value={confirmPassword}
-                        onChange={e => setConfirmPassword(e.target.value)}
+                        ref={confirmPasswordRef}
+                        onChange={handleConfirmPassword}
                     />
                     <span className="error-message">{errors.confirmPassword && errors.confirmPassword}</span>
                 </div>

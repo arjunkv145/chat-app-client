@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react"
 // import axios from "./api/axios"
+import useAxiosPrivate from "./hooks/useAxiosPrivate"
 
 const AuthContext = createContext([{}, () => { }])
 
@@ -7,41 +8,38 @@ function AuthProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
         accessToken: null,
-        isLoggedIn: false,
-        initialLoadingState: true
+        isLoggedIn: false
     })
+    console.log(auth.isLoggedIn)
+    const [initialLoadingState, setInitialLoadingState] = useState(true)
+    const axiosPrivate = useAxiosPrivate()
 
-    // useEffect(() => {
-    // const controller = new AbortController()
-    // let isMounted = true
-    //     axios.post('refreshtoken', { signal: controller.signal })
-    //         .then(res => {
-    //             if (res.data.success === true) {
-    //                 isMounted && setAuth(prev => ({
-    //                     ...prev,
-    //                     user: res.data.user,
-    //                     accessToken: res.data.accessToken,
-    //                     isLoggedIn: true,
-    //                     initialLoadingState: false
-    //                 }))
-    //             }
-    //             console.log(res)
-    //         })
-    //         .catch(err => {
-    //             console.log(err.response.data)
-    //             isMounted && setAuth(prev => ({
-    //                 ...prev,
-    //                 initialLoadingState: false
-    //             }))
-    //         })
-    //     return () => {
-    //         controller.abort()
-    //         isMounted = false
-    //     }
-    // }, [])
+    useEffect(() => {
+        const controller = new AbortController()
+        let isMounted = true
+
+        const isTokenValid = async () => {
+            try {
+                const res = await axiosPrivate.get('/', { signal: controller.signal })
+                console.log("hi")
+                console.log(res)
+                console.log("hi")
+            } catch (err) {
+                console.log(err.response)
+            } finally {
+                isMounted && setInitialLoadingState(false)
+            }
+        }
+
+        isTokenValid()
+        return () => {
+            controller.abort()
+            isMounted = false
+        }
+    }, [axiosPrivate])
 
     return (
-        <AuthContext.Provider value={{ auth, setAuth }}>
+        <AuthContext.Provider value={{ auth, setAuth, initialLoadingState }}>
             {props.children}
         </AuthContext.Provider>
     );
