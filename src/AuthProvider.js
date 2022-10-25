@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState } from "react"
-// import axios from "./api/axios"
-import useAxiosPrivate from "./hooks/useAxiosPrivate"
+import axiosInstance from "./api/axios"
 
 const AuthContext = createContext([{}, () => { }])
 
@@ -10,9 +9,7 @@ function AuthProvider(props) {
         accessToken: null,
         isLoggedIn: false
     })
-    console.log(auth.isLoggedIn)
     const [initialLoadingState, setInitialLoadingState] = useState(true)
-    const axiosPrivate = useAxiosPrivate()
 
     useEffect(() => {
         const controller = new AbortController()
@@ -20,12 +17,14 @@ function AuthProvider(props) {
 
         const isTokenValid = async () => {
             try {
-                const res = await axiosPrivate.get('/', { signal: controller.signal })
-                console.log("hi")
-                console.log(res)
-                console.log("hi")
+                const res = await axiosInstance.get('/', { signal: controller.signal })
+                isMounted && setAuth(prev => ({
+                    ...prev,
+                    user: res.data.user,
+                    isLoggedIn: true,
+                    accessToken: res.data.accessToken
+                }))
             } catch (err) {
-                console.log(err.response)
             } finally {
                 isMounted && setInitialLoadingState(false)
             }
@@ -36,7 +35,7 @@ function AuthProvider(props) {
             controller.abort()
             isMounted = false
         }
-    }, [axiosPrivate])
+    }, [])
 
     return (
         <AuthContext.Provider value={{ auth, setAuth, initialLoadingState }}>

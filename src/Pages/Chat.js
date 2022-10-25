@@ -1,21 +1,13 @@
 import "./sassStyles/chat.scss"
-import { useEffect } from "react"
 import useAuth from "../hooks/useAuth"
-import axios from "../api/axios"
-import { Link, useNavigate } from "react-router-dom"
+import axiosInstance from "../api/axios"
+import { Link } from "react-router-dom"
 
 function Chat() {
-    const { auth, setAuth, initialLoadingState } = useAuth()
-    const navigate = useNavigate()
-    useEffect(() => {
-        if (initialLoadingState === false && auth.isLoggedIn === false) {
-            navigate('/')
-        }
-    }, [initialLoadingState, auth.isLoggedIn, navigate])
+    const { setAuth } = useAuth()
 
     const logout = () => {
-        axios.get('logout').then(res => {
-            console.log(res.data)
+        axiosInstance.get('logout').then(res => {
             setAuth(prev => ({
                 ...prev,
                 user: null,

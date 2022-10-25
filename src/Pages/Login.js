@@ -1,17 +1,16 @@
 import "./sassStyles/login.scss"
-import axios from "../api/axios"
+import axiosInstance from "../api/axios"
 import useAuth from "../hooks/useAuth"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useState, useEffect, useCallback, useRef } from "react"
 
 function Login() {
-    const { auth, setAuth, initialLoadingState } = useAuth()
+    const { setAuth } = useAuth()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [errors, setErrors] = useState({ email: null, password: null })
     const [serverError, setServerError] = useState(null)
     const isSubmittedOnce = useRef(false)
-    const navigate = useNavigate()
 
     const handleErrors = useCallback(() => {
         let emailErrorMessage = null
@@ -41,7 +40,7 @@ function Login() {
         const submitStatus = handleErrors()
         if (submitStatus === true) {
             setServerError(null)
-            axios.post('login', { email, password })
+            axiosInstance.post('login', { email, password })
                 .then((res) => {
                     if (res.data.success === true) {
                         setAuth(prev => ({
@@ -65,12 +64,6 @@ function Login() {
             handleErrors()
         }
     }, [email, password, handleErrors])
-
-    useEffect(() => {
-        if (initialLoadingState === false && auth.isLoggedIn === true) {
-            navigate('/chat')
-        }
-    }, [initialLoadingState, auth.isLoggedIn, navigate])
 
     return (
         <div className="login-page">

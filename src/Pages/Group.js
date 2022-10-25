@@ -1,20 +1,36 @@
-import React, { useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import useAuth from '../hooks/useAuth'
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
 function Group() {
-    const { auth, initialLoadingState } = useAuth()
-    const navigate = useNavigate()
+    const axiosPrivate = useAxiosPrivate()
+    const [groups, setGroups] = useState(null)
+    console.log('groups are ', groups)
+
     useEffect(() => {
-        if (initialLoadingState === false && auth.isLoggedIn === false) {
-            navigate('/')
+        const controller = new AbortController()
+        let isMounted = true
+
+        const getGroups = async () => {
+            try {
+                const res = await axiosPrivate.get('groups')
+                isMounted && setGroups(res.data.groups)
+            } catch (err) {
+                console.log("error is", err)
+            }
         }
-    }, [initialLoadingState, auth.isLoggedIn, navigate])
+
+        getGroups()
+        return () => {
+            controller.abort()
+            isMounted = false
+        }
+    }, [axiosPrivate])
 
     return (
         <div>
             Group
-            <Link to='/chat'>go to groups page</Link>
+            <Link to='/chat'>go to chat page</Link>
         </div>
     )
 }

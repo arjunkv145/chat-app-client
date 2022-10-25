@@ -1,5 +1,5 @@
 import "./sassStyles/register.scss"
-import axios from "../api/axios"
+import axiosInstance from "../api/axios"
 import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
@@ -8,14 +8,17 @@ const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
 function Register() {
     const { setAuth } = useAuth()
+
     const [userName, setUserName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+
     const userNameRef = useRef()
     const emailRef = useRef()
     const passwordRef = useRef()
     const confirmPasswordRef = useRef()
+    
     const [errors, setErrors] = useState({
         userName: null,
         email: null,
@@ -90,7 +93,7 @@ function Register() {
             let userNameAvailableMessage = null
             try {
                 isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, userName: true }))
-                const res = await axios.get(`check_username/${userName.trim()}`, { signal: controller.signal })
+                const res = await axiosInstance.get(`check_username/${userName.trim()}`, { signal: controller.signal })
                 if (res.data.message === "Username is available") {
                     userNameAvailableMessage = res.data.message
                 } else if (res.data.message === "Username is not available") {
@@ -123,7 +126,7 @@ function Register() {
             let emailAvailableMessage = null
             try {
                 isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, email: true }))
-                const res = await axios.get(`check_email/${email.trim()}`)
+                const res = await axiosInstance.get(`check_email/${email.trim()}`)
                 if (res.data.message === "Email is available") {
                     emailAvailableMessage = res.data.message
                 } else if (res.data.message === "Email is not available") {
@@ -157,7 +160,7 @@ function Register() {
             credentialsAvailable.email === 'Email is available'
         ) ? true : false
         if (submitStatus === true) {
-            axios.post('register', { userName, email, password })
+            axiosInstance.post('register', { userName, email, password })
                 .then((res) => {
                     setAuth(prev => ({
                         ...prev,
@@ -239,7 +242,7 @@ function Register() {
                 </div>
                 <button>Register</button>
             </form>
-            <Link to='/login'>Login</Link>
+            <Link to='/'>Login</Link>
         </div>
     );
 }

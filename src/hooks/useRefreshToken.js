@@ -1,4 +1,4 @@
-import axios from '../api/axios'
+import axiosInstance from '../api/axios'
 import useAuth from './useAuth'
 
 function useRefreshToken() {
@@ -6,8 +6,7 @@ function useRefreshToken() {
 
     const refreshToken = async () => {
         try {
-            const res = await axios.post('refreshtoken')
-            console.log(res)
+            const res = await axiosInstance.get('/')
             setAuth(prev => ({
                 ...prev,
                 user: res.data.user,
@@ -16,8 +15,7 @@ function useRefreshToken() {
             }))
             return res.data.accessToken
         } catch (err) {
-            console.log(err.response.data)
-            return null
+            return ''
         }
     }
     return refreshToken

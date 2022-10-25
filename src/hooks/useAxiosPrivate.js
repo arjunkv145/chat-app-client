@@ -1,46 +1,40 @@
-import { useEffect, useRef } from 'react'
-import axios from '../api/axios'
+import { useEffect } from 'react'
+import axiosInstance from '../api/axios'
 import useAuth from './useAuth'
 import useRefreshToken from './useRefreshToken'
+import jwt_decode from 'jwt-decode'
+import axios from 'axios'
 
 function useAxiosPrivate() {
     const refreshToken = useRefreshToken()
-    const { auth = {} } = useAuth()
-    const { accessToken = '' } = auth
-    let sentOnce = useRef(false)
+    const { auth, setAuth } = useAuth()
 
     useEffect(() => {
-        const requestInterceptor = axios.interceptors.request.use(
-            config => {
+        const requestInterceptor = axiosInstance.interceptors.request.use(
+            async config => {
+                const { exp } = jwt_decode(auth.accessToken)
+                const isExpired = Date.now() >= exp * 1000
                 if (!config.headers['Authorization']) {
-                    config.headers['Authorization'] = `Bearer ${accessToken}`
+                    config.headers['Authorization'] = `Bearer ${auth?.accessToken}`
+                }
+                if (isExpired) {
+                    console.log('got new token')
+                    const res = await axios.get('http://localhost:3030/api/', { withCredentials: true })
+                    setAuth(prev => ({
+                        ...prev,
+                        accessToken: res.data.accessToken
+                    }))
+                    config.headers['Authorization'] = `Bearer ${res.data.accessToken}`
                 }
                 return config
+
             }, err => Promise.reject(err)
         )
-        const responseInterceptor = axios.interceptors.response.use(
-            res => res,
-            async (err) => {
-                const prevRequest = err.config
-                if (err.response.status === 403 && !sentOnce.current) {
-                    sentOnce.current = true
-                    const newAccessToken = await refreshToken()
-                    if (newAccessToken !== null) {
-                        console.log(1)
-                        prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`
-                        return axios(prevRequest)
-                    }
-                }
-                console.log(2)
-                return Promise.reject(err)
-            }
-        )
         return () => {
-            axios.interceptors.request.eject(requestInterceptor)
-            axios.interceptors.response.eject(responseInterceptor)
+            axiosInstance.interceptors.request.eject(requestInterceptor)
         }
-    }, [accessToken, refreshToken])
-    return axios
+    }, [auth.accessToken, setAuth, refreshToken])
+    return axiosInstance
 }
 
 export default useAxiosPrivate
