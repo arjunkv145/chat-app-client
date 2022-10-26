@@ -16,7 +16,7 @@ function Group() {
                 const res = await axiosPrivate.get('groups')
                 isMounted && setGroups(res.data.groups)
             } catch (err) {
-                console.log("error is", err)
+                alert('server not responding')
             }
         }
 

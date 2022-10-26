@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
+import InternetConnection from './InternetConnection'
 
 function AuthRoute() {
     const { auth, initialLoadingState } = useAuth()
@@ -24,12 +25,17 @@ function AuthRoute() {
     return (
         <>
             {
-                initialLoadingState ? 'loading' : 
-                (
-                    ( ( currentPath === '/' || currentPath === '/register' ) && auth.isLoggedIn === false )
-                    ||
-                    ( currentPath !== '/' && currentPath !== '/register' && auth.isLoggedIn === true )
-                ) ? <Outlet /> : ''
+                initialLoadingState ?
+                    'loading' :
+                    (
+                        ((currentPath === '/' || currentPath === '/register') && auth.isLoggedIn === false)
+                        ||
+                        (currentPath !== '/' && currentPath !== '/register' && auth.isLoggedIn === true)
+                    ) &&
+                    <>
+                        <InternetConnection />
+                        <Outlet />
+                    </>
             }
         </>
     )

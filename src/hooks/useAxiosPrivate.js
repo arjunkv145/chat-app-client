@@ -1,12 +1,10 @@
 import { useEffect } from 'react'
 import axiosInstance from '../api/axios'
 import useAuth from './useAuth'
-import useRefreshToken from './useRefreshToken'
 import jwt_decode from 'jwt-decode'
 import axios from 'axios'
 
 function useAxiosPrivate() {
-    const refreshToken = useRefreshToken()
     const { auth, setAuth } = useAuth()
 
     useEffect(() => {
@@ -18,13 +16,22 @@ function useAxiosPrivate() {
                     config.headers['Authorization'] = `Bearer ${auth?.accessToken}`
                 }
                 if (isExpired) {
-                    console.log('got new token')
-                    const res = await axios.get('http://localhost:3030/api/', { withCredentials: true })
-                    setAuth(prev => ({
-                        ...prev,
-                        accessToken: res.data.accessToken
-                    }))
-                    config.headers['Authorization'] = `Bearer ${res.data.accessToken}`
+                    try {
+                        const res = await axios.get('http://localhost:3030/api/', { withCredentials: true })
+                        setAuth(prev => ({
+                            ...prev,
+                            accessToken: res.data.accessToken
+                        }))
+                        config.headers['Authorization'] = `Bearer ${res.data.accessToken}`
+                    } catch (err) {
+                        setAuth(prev => ({
+                            ...prev,
+                            user: null,
+                            accessToken: null,
+                            isLoggedIn: false
+                        }))
+                        return Promise.reject(err)
+                    }
                 }
                 return config
 
@@ -33,7 +40,7 @@ function useAxiosPrivate() {
         return () => {
             axiosInstance.interceptors.request.eject(requestInterceptor)
         }
-    }, [auth.accessToken, setAuth, refreshToken])
+    }, [auth.accessToken, setAuth])
     return axiosInstance
 }
 
