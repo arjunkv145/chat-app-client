@@ -47,7 +47,8 @@ function Login() {
                             ...prev,
                             user: res.data.user,
                             accessToken: res.data.accessToken,
-                            isLoggedIn: true
+                            isLoggedIn: true,
+                            emailVerified: res.data.user.emailVerified
                         }))
                     } else if (res.data.success === false) {
                         setServerError(res.data.message)
@@ -99,7 +100,8 @@ function Login() {
                 </div>
                 <button>Login</button>
             </form>
-            <Link to='/register'>Register</Link>
+            <Link to='/forgottenpassword'>forgot password</Link>
+            <Link to='/register'>create and account</Link>
         </div>
     );
 }

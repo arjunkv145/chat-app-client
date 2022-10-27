@@ -12,7 +12,8 @@ function Chat() {
                 ...prev,
                 user: null,
                 accessToken: null,
-                isLoggedIn: false
+                isLoggedIn: false,
+                emailVerified: false
             }))
         })
     }

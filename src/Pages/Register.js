@@ -18,7 +18,7 @@ function Register() {
     const emailRef = useRef()
     const passwordRef = useRef()
     const confirmPasswordRef = useRef()
-    
+
     const [errors, setErrors] = useState({
         userName: null,
         email: null,
@@ -166,7 +166,8 @@ function Register() {
                         ...prev,
                         user: res.data.user,
                         accessToken: res.data.accessToken,
-                        isLoggedIn: true
+                        isLoggedIn: true,
+                        emailVerified: res.data.user.emailVerified
                     }))
                 })
                 .catch(err => {

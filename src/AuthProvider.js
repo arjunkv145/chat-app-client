@@ -7,7 +7,8 @@ function AuthProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
         accessToken: null,
-        isLoggedIn: false
+        isLoggedIn: false,
+        emailVerified: false
     })
     const [initialLoadingState, setInitialLoadingState] = useState(true)
 
@@ -22,6 +23,7 @@ function AuthProvider(props) {
                     ...prev,
                     user: res.data.user,
                     isLoggedIn: true,
+                    emailVerified: res.data.user.emailVerified,
                     accessToken: res.data.accessToken
                 }))
             } catch (err) {
