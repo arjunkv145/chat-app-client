@@ -11,13 +11,13 @@ function useAxiosPrivate() {
         const requestInterceptor = axiosInstance.interceptors.request.use(
             async config => {
                 const { exp } = jwt_decode(auth.accessToken)
-                const isExpired = Date.now() >= exp * 1000
+                const isExpired = Date.now() >= ((exp - 10) * 1000)
                 if (!config.headers['Authorization']) {
                     config.headers['Authorization'] = `Bearer ${auth?.accessToken}`
                 }
                 if (isExpired) {
                     try {
-                        const res = await axios.get('http://localhost:3030/api/', { withCredentials: true })
+                        const res = await axios.get('http://localhost:3030/api/user', { withCredentials: true })
                         setAuth(prev => ({
                             ...prev,
                             accessToken: res.data.accessToken
@@ -37,6 +37,7 @@ function useAxiosPrivate() {
 
             }, err => Promise.reject(err)
         )
+
         return () => {
             axiosInstance.interceptors.request.eject(requestInterceptor)
         }

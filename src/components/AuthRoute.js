@@ -18,17 +18,14 @@ function AuthRoute() {
         <>
             {
                 initialLoadingState ?
-                    'loading' :
+                    <div className='loading-animation'></div> :
                     auth.isLoggedIn && (
                         auth.emailVerified ?
-                            <>
+                            <div className='app-container'>
                                 <header>header</header>
                                 <Outlet />
                                 <footer>footer</footer>
-                            </> :
-                            <>
-                                <VerifyYourEmail />
-                            </>
+                            </div> : <VerifyYourEmail />
                     )
             }
         </>

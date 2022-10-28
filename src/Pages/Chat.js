@@ -19,7 +19,7 @@ function Chat() {
     }
 
     return (
-        <div className="chat-page">
+        <div className="chat-container">
             chat page
             <Link to='/group'>go to groups page</Link>
             <button onClick={logout}>Logout</button>

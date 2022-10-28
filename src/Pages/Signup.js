@@ -6,7 +6,7 @@ import useAuth from "../hooks/useAuth"
 
 const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
-function Register() {
+function Signup() {
     const { setAuth } = useAuth()
 
     const [userName, setUserName] = useState('')
@@ -93,7 +93,7 @@ function Register() {
             let userNameAvailableMessage = null
             try {
                 isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, userName: true }))
-                const res = await axiosInstance.get(`check_username/${userName.trim()}`, { signal: controller.signal })
+                const res = await axiosInstance.get(`signup/isusernameavailable/${userName.trim()}`, { signal: controller.signal })
                 if (res.data.message === "Username is available") {
                     userNameAvailableMessage = res.data.message
                 } else if (res.data.message === "Username is not available") {
@@ -126,7 +126,7 @@ function Register() {
             let emailAvailableMessage = null
             try {
                 isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, email: true }))
-                const res = await axiosInstance.get(`check_email/${email.trim()}`)
+                const res = await axiosInstance.get(`signup/isemailavailable/${email.trim()}`)
                 if (res.data.message === "Email is available") {
                     emailAvailableMessage = res.data.message
                 } else if (res.data.message === "Email is not available") {
@@ -160,7 +160,7 @@ function Register() {
             credentialsAvailable.email === 'Email is available'
         ) ? true : false
         if (submitStatus === true) {
-            axiosInstance.post('register', { userName, email, password })
+            axiosInstance.post('signup/newuser', { userName, email, password })
                 .then((res) => {
                     setAuth(prev => ({
                         ...prev,
@@ -176,7 +176,7 @@ function Register() {
         }
     }
     return (
-        <div className="register-page">
+        <div className="signup-page">
             <form onSubmit={handleSubmit}>
                 <span className="error-message">
                     {serverError && serverError}
@@ -248,4 +248,4 @@ function Register() {
     );
 }
 
-export default Register
+export default Signup

@@ -18,11 +18,8 @@ function CheckIsLoggedIn() {
         <>
             {
                 initialLoadingState ?
-                    'loading' :
-                    !auth.isLoggedIn &&
-                    <>
-                        <Outlet />
-                    </>
+                    <div className='loading-animation'></div> :
+                    !auth.isLoggedIn && <Outlet />
             }
         </>
     )

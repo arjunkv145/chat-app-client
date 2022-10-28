@@ -56,6 +56,7 @@ function Login() {
                 })
                 .catch(err => {
                     setServerError('Server not responding.')
+                    setTimeout(() => setServerError(null), 2000)
                 })
         }
     }
@@ -67,11 +68,11 @@ function Login() {
     }, [email, password, handleErrors])
 
     return (
-        <div className="login-page">
+        <div className="form-container">
+            <span className="error-message">
+                {serverError && serverError}
+            </span>
             <form onSubmit={handleSubmit}>
-                <span className="error-message">
-                    {serverError && serverError}
-                </span>
                 <div>
                     <label htmlFor="email">Email</label>
                     <input
@@ -101,7 +102,7 @@ function Login() {
                 <button>Login</button>
             </form>
             <Link to='/forgottenpassword'>forgot password</Link>
-            <Link to='/register'>create and account</Link>
+            <Link to='/signup'>create and account</Link>
         </div>
     );
 }

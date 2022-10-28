@@ -56,6 +56,7 @@ function PasswordReset() {
                 setServerMessage(res.data.message)
             } catch (err) {
                 setServerMessage('Server not responding.')
+                setTimeout(() => setServerMessage(null), 2000)
             }
         }
     }

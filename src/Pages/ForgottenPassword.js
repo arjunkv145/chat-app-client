@@ -27,10 +27,11 @@ function ForgottenPassword() {
         const submitStatus = handleEmail()
         if (submitStatus === null) {
             try {
-                const res = await axiosInstance.get(`/passwordreset/${email}`)
+                const res = await axiosInstance.get(`/passwordreset/sendmail/${email}`)
                 setServerMessage(res.data.message)
             } catch (err) {
                 setServerMessage("Server not responding")
+                setTimeout(() => setServerMessage(null), 2000)
             }
         }
     }

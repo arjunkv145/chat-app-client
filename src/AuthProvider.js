@@ -18,7 +18,7 @@ function AuthProvider(props) {
 
         const isTokenValid = async () => {
             try {
-                const res = await axiosInstance.get('/', { signal: controller.signal })
+                const res = await axiosInstance.get('/user', { signal: controller.signal })
                 isMounted && setAuth(prev => ({
                     ...prev,
                     user: res.data.user,

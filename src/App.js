@@ -5,7 +5,7 @@ import Chat from "./Pages/Chat"
 import ErrorPage from "./Pages/ErrorPage"
 import Group from "./Pages/Group"
 import Login from "./Pages/Login"
-import Register from "./Pages/Register"
+import Signup from "./Pages/Signup"
 import ForgottenPassword from "./Pages/ForgottenPassword"
 import InternetConnection from "./components/InternetConnection"
 import PasswordReset from "./Pages/PasswordReset"
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
                 element: <CheckIsLoggedIn />,
                 children: [
                     { path: '/', element: <Login /> },
-                    { path: '/register', element: <Register /> },
+                    { path: '/signup', element: <Signup /> },
                     { path: '/forgottenpassword', element: <ForgottenPassword /> },
                     { path: '/passwordreset/:passwordresettoken', element: <PasswordReset /> },
                 ]

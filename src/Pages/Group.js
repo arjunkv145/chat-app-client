@@ -5,7 +5,8 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate'
 function Group() {
     const axiosPrivate = useAxiosPrivate()
     const [groups, setGroups] = useState(null)
-    console.log('groups are ', groups)
+    const [loading, setLoading] = useState(true)
+    const [serverError, setServerError] = useState(null)
 
     useEffect(() => {
         const controller = new AbortController()
@@ -13,10 +14,12 @@ function Group() {
 
         const getGroups = async () => {
             try {
-                const res = await axiosPrivate.get('groups')
+                const res = await axiosPrivate.get('group', { signal: controller.signal })
                 isMounted && setGroups(res.data.groups)
             } catch (err) {
-                alert('server not responding')
+                isMounted && setServerError('server not responding')
+            } finally {
+                isMounted && setLoading(false)
             }
         }
 
@@ -28,8 +31,12 @@ function Group() {
     }, [axiosPrivate])
 
     return (
-        <div>
+        <div className='group-container'>
             Group
+            <p>{serverError && serverError}</p>
+            {
+                loading ? 'loading' : <p>{groups && groups.join(', ')}</p>
+            }
             <Link to='/chat'>go to chat page</Link>
         </div>
     )
