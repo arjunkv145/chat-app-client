@@ -1,4 +1,4 @@
-@mixin text( $font-family, $font-weight, $font-size, $color: $text-color-dark ) {
+@mixin text( $font-family, $font-weight, $font-size, $color ) {
     font: {
         family: $font-family;
         weight: $font-weight;

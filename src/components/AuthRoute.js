@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import VerifyYourEmail from '../Pages/VerifyYourEmail'
+import LoadingAnimation from './LoadingAnimation'
 
 function AuthRoute() {
     const { auth, initialLoadingState } = useAuth()
@@ -18,13 +19,12 @@ function AuthRoute() {
         <>
             {
                 initialLoadingState ?
-                    <div className='loading-animation'></div> :
+                    <LoadingAnimation /> :
                     auth.isLoggedIn && (
-                        auth.emailVerified ?
+                        auth.user.emailVerified ?
                             <div className='app-container'>
-                                <header>header</header>
+                                <nav>header</nav>
                                 <Outlet />
-                                <footer>footer</footer>
                             </div> : <VerifyYourEmail />
                     )
             }

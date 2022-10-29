@@ -1,0 +1,16 @@
+@import '../../sassStyles/variables';
+@import '../../sassStyles/mixins';
+
+.btn {
+    @include text($secondary-font, 700, 1.125rem, $dark-grey-color);
+    background-image: linear-gradient(45deg ,$primary-color1, $primary-color2);
+    padding: .6em 1.6em;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 200ms ease-in;
+
+    &:hover {
+        background-image: linear-gradient(135deg ,$primary-color1, $primary-color2);
+    }
+}

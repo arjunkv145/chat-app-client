@@ -1,8 +1,9 @@
-import "./sassStyles/register.scss"
+import "./sassStyles/signup.scss"
 import axiosInstance from "../api/axios"
 import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
+import Button from "../components/Button"
 
 const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
@@ -25,21 +26,13 @@ function Signup() {
         password: null,
         confirmPassword: null
     })
-    const [serverError, setServerError] = useState(null)
-    const [credentialsAvailable, setCredentialsAvailable] = useState({
-        userName: null,
-        email: null
-    })
-    const [credentialsAvailableLoadingState, setCredentialsAvailableLoadingState] = useState({
-        userName: false,
-        email: false
-    })
+    const [serverMessage, setServerMessage] = useState(null)
 
     const handleUserName = () => {
         let userNameErrorMessage = null
         const { value } = userNameRef.current
         if (value.trim() === '') {
-            userNameErrorMessage = 'UserName is required'
+            userNameErrorMessage = 'Username is required'
         }
         setUserName(value)
         setErrors(prev => ({ ...prev, userName: userNameErrorMessage }))
@@ -52,7 +45,7 @@ function Signup() {
         if (value.trim() === '') {
             emailErrorMessage = 'Email is required'
         } else if (value.match(regexEmail) === null) {
-            emailErrorMessage = 'Email is not valid'
+            emailErrorMessage = 'This email is not valid'
         }
         setEmail(value)
         setErrors(prev => ({ ...prev, email: emailErrorMessage }))
@@ -87,23 +80,21 @@ function Signup() {
     useEffect(() => {
         const controller = new AbortController()
         let isMounted = true
-        isMounted && setCredentialsAvailable(prev => ({ ...prev, userName: null }))
-        isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, userName: false }))
+
         const fetchData = async () => {
-            let userNameAvailableMessage = null
+            let userNameErrorMessage = null
+            isMounted && setErrors(prev => ({ ...prev, userName: null }))
             try {
-                isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, userName: true }))
                 const res = await axiosInstance.get(`signup/isusernameavailable/${userName.trim()}`, { signal: controller.signal })
                 if (res.data.message === "Username is available") {
-                    userNameAvailableMessage = res.data.message
-                } else if (res.data.message === "Username is not available") {
-                    userNameAvailableMessage = res.data.message
+                    userNameErrorMessage = res.data.message
+                } else if (res.data.message === "This username is already taken") {
+                    userNameErrorMessage = res.data.message
                 }
             } catch (err) {
-                userNameAvailableMessage = "server not responding"
+                userNameErrorMessage = "server not responding"
             } finally {
-                isMounted && setCredentialsAvailable(prev => ({ ...prev, userName: userNameAvailableMessage }))
-                isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, userName: false }))
+                isMounted && setErrors(prev => ({ ...prev, userName: userNameErrorMessage }))
             }
         }
 
@@ -120,23 +111,21 @@ function Signup() {
     useEffect(() => {
         const controller = new AbortController()
         let isMounted = true
-        isMounted && setCredentialsAvailable(prev => ({ ...prev, email: null }))
-        isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, email: false }))
+
         const fetchData = async () => {
-            let emailAvailableMessage = null
+            let emailErrorMessage = null
+            isMounted && setErrors(prev => ({ ...prev, email: null }))
             try {
-                isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, email: true }))
                 const res = await axiosInstance.get(`signup/isemailavailable/${email.trim()}`)
                 if (res.data.message === "Email is available") {
-                    emailAvailableMessage = res.data.message
-                } else if (res.data.message === "Email is not available") {
-                    emailAvailableMessage = res.data.message
+                    emailErrorMessage = res.data.message
+                } else if (res.data.message === "This email is already taken") {
+                    emailErrorMessage = res.data.message
                 }
             } catch (err) {
-                emailAvailableMessage = "server not responding"
+                emailErrorMessage = "server not responding"
             } finally {
-                isMounted && setCredentialsAvailable(prev => ({ ...prev, email: emailAvailableMessage }))
-                isMounted && setCredentialsAvailableLoadingState(prev => ({ ...prev, email: false }))
+                isMounted && setErrors(prev => ({ ...prev, email: emailErrorMessage }))
             }
         }
         if (email.trim() !== '' && email.match(regexEmail) !== null) {
@@ -149,102 +138,114 @@ function Signup() {
         }
     }, [email])
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault()
         const submitStatus = (
             handleUserName() &&
             handleEmail() &&
             handlePassword() &&
             handleConfirmPassword() &&
-            credentialsAvailable.userName === 'Username is available' &&
-            credentialsAvailable.email === 'Email is available'
+            errors.userName === 'Username is available' &&
+            errors.email === 'Email is available'
         ) ? true : false
         if (submitStatus === true) {
-            axiosInstance.post('signup/newuser', { userName, email, password })
-                .then((res) => {
-                    setAuth(prev => ({
-                        ...prev,
-                        user: res.data.user,
-                        accessToken: res.data.accessToken,
-                        isLoggedIn: true,
-                        emailVerified: res.data.user.emailVerified
-                    }))
-                })
-                .catch(err => {
-                    setServerError('Server not responding.')
-                })
+            try {
+                const res = await axiosInstance.post('signup/newuser', { userName, email, password })
+                setAuth(prev => ({
+                    ...prev,
+                    user: res.data.user,
+                    accessToken: res.data.accessToken,
+                    isLoggedIn: true
+                }))
+            } catch (err) {
+                setServerMessage('Server not responding.')
+            } finally {
+                setTimeout(() => setServerMessage(null), 2000)
+            }
         }
     }
     return (
-        <div className="signup-page">
-            <form onSubmit={handleSubmit}>
-                <span className="error-message">
-                    {serverError && serverError}
+        <main className="signup-container">
+            <h1 className="title">Chat App</h1>
+            {
+                serverMessage &&
+                <span className="server-message">
+                    {serverMessage}
                 </span>
-                <div>
-                    <label htmlFor="userName">User name</label>
+            }
+            <form onSubmit={handleSubmit}>
+                <div className="input-container">
                     <input
                         type="text"
-                        name="userName"
-                        id="userName"
+                        placeholder="Enter your username"
+                        autoComplete="off"
                         value={userName}
                         ref={userNameRef}
                         onChange={handleUserName}
                     />
-                    <span className="error-message">{errors.userName && errors.userName}</span>
-                    <span className="error-message">
-                        {credentialsAvailable.userName && credentialsAvailable.userName}
-                    </span>
-                    <span className="error-message">
-                        {credentialsAvailableLoadingState.userName && 'Loading...'}
-                    </span>
+                    {
+                        (errors.userName && errors.userName !== 'Username is available') &&
+                        <span className="input-error-message">
+                            {errors.userName}
+                        </span>
+                    }
                 </div>
-                <div>
-                    <label htmlFor="email">Email</label>
+                <div className="input-container">
                     <input
                         type="text"
-                        name="email"
-                        id="email"
+                        placeholder="Enter your email"
+                        autoComplete="off"
                         value={email}
                         ref={emailRef}
                         onChange={handleEmail}
                     />
-                    <span className="error-message">{errors.email && errors.email}</span>
-                    <span className="error-message">
-                        {credentialsAvailable.email && credentialsAvailable.email}
-                    </span>
-                    <span className="error-message">
-                        {credentialsAvailableLoadingState.email && 'Loading...'}
-                    </span>
+                    {
+                        (errors.email && errors.email !== 'Email is available') &&
+                        <span className="input-error-message">
+                            {errors.email}
+                        </span>
+                    }
                 </div>
-                <div>
-                    <label htmlFor="password">Password</label>
+                <div className="input-container">
                     <input
                         type="password"
-                        name="password"
-                        id="password"
+                        placeholder="Enter your password"
                         value={password}
                         ref={passwordRef}
                         onChange={handlePassword}
                     />
-                    <span className="error-message">{errors.password && errors.password}</span>
+                    {
+                        errors.password &&
+                        <span className="input-error-message">
+                            {errors.password}
+                        </span>
+                    }
                 </div>
-                <div>
-                    <label htmlFor="cpassword">Confirm password</label>
+                <div className="input-container">
                     <input
                         type="password"
-                        name="confirmPassword"
-                        id="confirmPassword"
+                        placeholder="Re-enter your password"
                         value={confirmPassword}
                         ref={confirmPasswordRef}
                         onChange={handleConfirmPassword}
                     />
-                    <span className="error-message">{errors.confirmPassword && errors.confirmPassword}</span>
+                    {
+                        errors.confirmPassword &&
+                        <span className="input-error-message">
+                            {errors.confirmPassword}
+                        </span>
+                    }
                 </div>
-                <button>Register</button>
+                <div className="btn-signup">
+                    <Button>signup</Button>
+                </div>
             </form>
-            <Link to='/'>Login</Link>
-        </div>
+            <div className="btn-login">
+                <Link to='/'>
+                    <Button>login to your account</Button>
+                </Link>
+            </div>
+        </main>
     );
 }
 

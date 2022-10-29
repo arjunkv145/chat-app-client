@@ -19,7 +19,10 @@ function InternetConnection() {
     return (
         <>
             {
-                !internetConnection && <div className='internet-connection'>you are offline</div>
+                !internetConnection &&
+                <div>
+                    you are offline
+                </div>
             }
             <Outlet />
         </>

@@ -31,6 +31,7 @@ function ForgottenPassword() {
                 setServerMessage(res.data.message)
             } catch (err) {
                 setServerMessage("Server not responding")
+            } finally {
                 setTimeout(() => setServerMessage(null), 2000)
             }
         }

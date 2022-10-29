@@ -1,7 +1,7 @@
 @import '../../sassStyles/variables';
 @import '../../sassStyles/mixins';
 
-.login-container {
+.signup-container {
     width: 80%;
     max-width: 600px;
     margin: 4em auto;
@@ -50,24 +50,14 @@
             @include text($secondary-font, 500, .8rem, $primary-color1);
         }
     }
-    .btn-login {
+    .btn-signup {
         text-align: center;
         margin-top: .5em;
         button {
             padding: .6em 2em;
         }
     }
-    .link-container {
-        margin-top: 1em;
-        text-align: center;
-        a {
-            @include text($secondary-font, 400, .9rem, $white);
-            letter-spacing: 0.5px;
-            text-decoration: none;
-            display: inline-block;
-        }
-    }
-    .btn-signup {
+    .btn-login {
         width: 80%;
         margin: 2em auto;
         text-align: center;
