@@ -1,4 +1,4 @@
-import "./sassStyles/login.scss"
+import "./sassStyles/form.scss"
 import axiosInstance from "../api/axios"
 import useAuth from "../hooks/useAuth"
 import { Link } from "react-router-dom"
@@ -10,8 +10,8 @@ function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [errors, setErrors] = useState({ email: null, password: null })
-    const [serverMessage, setServerMessage] = useState(null)
     const isSubmittedOnce = useRef(false)
+    const [openPopupAlert, setOpenPopupAlert] = useState(false)
 
     const handleErrors = useCallback(() => {
         let emailErrorMessage = null
@@ -50,12 +50,20 @@ function Login() {
                         isLoggedIn: true
                     }))
                 } else {
-                    setServerMessage(res.data.message)
+                    if (res.data.message === "User doesn't exist") {
+                        setErrors(prev => ({
+                            ...prev,
+                            email: "The email you provided doesn't match any accounts"
+                        }))
+                    } else if (res.data.message === "Wrong password") {
+                        setErrors(prev => ({
+                            ...prev,
+                            password: "The password you entered is incorrect"
+                        }))
+                    }
                 }
             } catch (err) {
-                setServerMessage('Server not responding.')
-            } finally {
-                setTimeout(() => setServerMessage(null), 2000)
+                setOpenPopupAlert(true)
             }
         }
     }
@@ -67,14 +75,8 @@ function Login() {
     }, [email, password, handleErrors])
 
     return (
-        <main className="login-container">
+        <main className="form-container">
             <h1 className="title">Chat App</h1>
-            {
-                serverMessage &&
-                <span className="server-message">
-                    {serverMessage}
-                </span>
-            }
             <form onSubmit={handleSubmit}>
                 <div className="input-container">
                     <input
@@ -105,17 +107,26 @@ function Login() {
                         </span>
                     }
                 </div>
-                <div className="btn-login">
+                <div className="btn-submit">
                     <Button>login</Button>
                 </div>
             </form>
             <div className="link-container">
                 <Link to='/forgottenpassword'>forgot your password?</Link>
             </div>
-            <div className="btn-signup">
+            <div className="btn-signup-link">
                 <Link to='/signup'>
                     <Button>create an account</Button>
                 </Link>
+            </div>
+            <div className={`popup-container ${openPopupAlert && 'open'}`} onClick={() => setOpenPopupAlert(false)}>
+                <div className={`popup ${openPopupAlert && 'open'}`} onClick={e => e.stopPropagation()}>
+                    <div className="popup-title">Server not responding</div>
+                    <div className="popup-content">
+                        The server is not responding at the moment, you may try again later.
+                    </div>
+                    <Button onClick={() => setOpenPopupAlert(false)}>close</Button>
+                </div>
             </div>
         </main>
     );

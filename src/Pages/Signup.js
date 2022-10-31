@@ -1,4 +1,4 @@
-import "./sassStyles/signup.scss"
+import "./sassStyles/form.scss"
 import axiosInstance from "../api/axios"
 import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
@@ -26,7 +26,7 @@ function Signup() {
         password: null,
         confirmPassword: null
     })
-    const [serverMessage, setServerMessage] = useState(null)
+    const [openPopupAlert, setOpenPopupAlert] = useState(false)
 
     const handleUserName = () => {
         let userNameErrorMessage = null
@@ -158,21 +158,13 @@ function Signup() {
                     isLoggedIn: true
                 }))
             } catch (err) {
-                setServerMessage('Server not responding.')
-            } finally {
-                setTimeout(() => setServerMessage(null), 2000)
+                setOpenPopupAlert(true)
             }
         }
     }
     return (
-        <main className="signup-container">
+        <main className="form-container">
             <h1 className="title">Chat App</h1>
-            {
-                serverMessage &&
-                <span className="server-message">
-                    {serverMessage}
-                </span>
-            }
             <form onSubmit={handleSubmit}>
                 <div className="input-container">
                     <input
@@ -236,14 +228,23 @@ function Signup() {
                         </span>
                     }
                 </div>
-                <div className="btn-signup">
+                <div className="btn-submit">
                     <Button>signup</Button>
                 </div>
             </form>
-            <div className="btn-login">
+            <div className="btn-login-link">
                 <Link to='/'>
                     <Button>login to your account</Button>
                 </Link>
+            </div>
+            <div className={`popup-container ${openPopupAlert && 'open'}`} onClick={() => setOpenPopupAlert(false)}>
+                <div className={`popup ${openPopupAlert && 'open'}`} onClick={e => e.stopPropagation()}>
+                    <div className="popup-title">Server not responding</div>
+                    <div className="popup-content">
+                        The server is not responding at the moment, you may try again later.
+                    </div>
+                    <Button className="btn" onClick={() => setOpenPopupAlert(false)}>close</Button>
+                </div>
             </div>
         </main>
     );

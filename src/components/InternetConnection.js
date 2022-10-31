@@ -6,6 +6,20 @@ function InternetConnection() {
 
     const setOnline = () => setInternetConnection(true)
     const setOffline = () => setInternetConnection(false)
+    const style = {
+        fontFamily: 'Roboto, sans-serif',
+        fontWeight: '400',
+        fontSize: '.8rem',
+        letterSpacing: '1px',
+        background: '#f54b67',
+        color: '#f5f5f5',
+        textAlign: 'center',
+        padding: '.3em',
+        position: 'absolute',
+        top: '0',
+        left: '0',
+        width: '100%'
+    }
 
     useEffect(() => {
         window.addEventListener('online', setOnline)
@@ -20,7 +34,7 @@ function InternetConnection() {
         <>
             {
                 !internetConnection &&
-                <div>
+                <div style={style}>
                     you are offline
                 </div>
             }
