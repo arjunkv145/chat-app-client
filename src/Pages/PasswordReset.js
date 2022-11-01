@@ -1,11 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axiosInstance from '../api/axios'
+import Button from '../components/Button'
+import LoadingAnimation from '../components/LoadingAnimation'
+import PopupAlert from '../components/PopupAlert'
+import ErrorPage from './ErrorPage'
 
 function PasswordReset() {
     const { passwordresettoken } = useParams()
     const [loading, setLoading] = useState(true)
     const [isExpired, setIsExpired] = useState(false)
+    const [openPopupAlert, setOpenPopupAlert] = useState(false)
 
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -18,7 +23,10 @@ function PasswordReset() {
         confirmPassword: null
     })
 
-    const [serverMessage, setServerMessage] = useState(null)
+    const [serverResponse, setServerResponse] = useState({
+        title: null,
+        body: null
+    })
 
     const handlePassword = () => {
         let passwordErrorMessage = null
@@ -53,10 +61,29 @@ function PasswordReset() {
         if (submitStatus === true) {
             try {
                 const res = await axiosInstance.post('passwordreset', { passwordResetToken: passwordresettoken, password: password })
-                setServerMessage(res.data.message)
+                setServerResponse({
+                    title: "Success!",
+                    body: res.data.message
+                })
             } catch (err) {
-                setServerMessage('Server not responding.')
-                setTimeout(() => setServerMessage(null), 2000)
+                if (err?.response?.data?.message === "You can't use the old password") {
+                    setServerResponse({
+                        title: "Passwrod reset failed",
+                        body: err.response.data.message
+                    })
+                } else if (err?.response?.data?.message === "This link is expired") {
+                    setServerResponse({
+                        title: "Passwrod reset failed",
+                        body: err.response.data.message
+                    })
+                } else {
+                    setServerResponse({
+                        title: "Server not responding",
+                        body: "The server is not responding at the moment, please try again later."
+                    })
+                }
+            } finally {
+                setOpenPopupAlert(true)
             }
         }
     }
@@ -67,13 +94,7 @@ function PasswordReset() {
 
         const isTokenValid = async () => {
             try {
-                const res = await axiosInstance.get(`passwordreset/isexpired/${passwordresettoken}`, { signal: controller.signal })
-
-                if (res.data.isexpired === true) {
-                    isMounted && setIsExpired(true)
-                } else {
-                    isMounted && setIsExpired(false)
-                }
+                await axiosInstance.get(`passwordreset/isexpired/${passwordresettoken}`, { signal: controller.signal })
             } catch (err) {
                 isMounted && setIsExpired(true)
             } finally {
@@ -89,33 +110,57 @@ function PasswordReset() {
     }, [passwordresettoken])
 
     return (
-        <div>
+        <>
             {
-                loading ? 'loading' : (
-                    isExpired ? 'This link is expired' :
-                        <>
-                            {serverMessage && serverMessage}
+                loading ? <LoadingAnimation /> : (
+                    isExpired ? <ErrorPage /> :
+                        <div className='form-container'>
+                            <h1 className="title">Reset your password</h1>
                             <form onSubmit={handleSubmit}>
-                                <input
-                                    type="password"
-                                    value={password}
-                                    onChange={handlePassword}
-                                    ref={passwordRef}
-                                />
-                                <span>{errors.password && errors.password}</span>
-                                <input
-                                    type="password"
-                                    value={confirmPassword}
-                                    onChange={handleConfirmPassword}
-                                    ref={confirmPasswordRef}
-                                />
-                                <span>{errors.confirmPassword && errors.confirmPassword}</span>
-                                <button>send</button>
+                                <div className="input-container">
+                                    <input
+                                        type="password"
+                                        placeholder="Enter your password"
+                                        value={password}
+                                        ref={passwordRef}
+                                        onChange={handlePassword}
+                                    />
+                                    {
+                                        errors.password &&
+                                        <span className="input-error-message">
+                                            {errors.password}
+                                        </span>
+                                    }
+                                </div>
+                                <div className="input-container">
+                                    <input
+                                        type="password"
+                                        placeholder="Re-enter your password"
+                                        value={confirmPassword}
+                                        ref={confirmPasswordRef}
+                                        onChange={handleConfirmPassword}
+                                    />
+                                    {
+                                        errors.confirmPassword &&
+                                        <span className="input-error-message">
+                                            {errors.confirmPassword}
+                                        </span>
+                                    }
+                                </div>
+                                <div className="btn-submit">
+                                    <Button>Reset</Button>
+                                </div>
                             </form>
-                        </>
+                            <PopupAlert
+                                title={serverResponse.title}
+                                body={serverResponse.body}
+                                openPopupAlert={openPopupAlert}
+                                setOpenPopupAlert={setOpenPopupAlert}
+                            />
+                        </div>
                 )
             }
-        </div>
+        </>
     )
 }
 

@@ -1,9 +1,9 @@
-import "./sassStyles/form.scss"
 import axiosInstance from "../api/axios"
 import useAuth from "../hooks/useAuth"
 import { Link } from "react-router-dom"
 import { useState, useEffect, useCallback, useRef } from "react"
 import Button from "../components/Button"
+import PopupAlert from "../components/PopupAlert"
 
 function Login() {
     const { setAuth } = useAuth()
@@ -42,28 +42,26 @@ function Login() {
         if (submitStatus === true) {
             try {
                 const res = await axiosInstance.post('login', { email, password })
-                if (res.data.success === true) {
-                    setAuth(prev => ({
+                setAuth(prev => ({
+                    ...prev,
+                    user: res.data.user,
+                    accessToken: res.data.accessToken,
+                    isLoggedIn: true
+                }))
+            } catch (err) {
+                if (err?.response?.data?.message === "User doesn't exist") {
+                    setErrors(prev => ({
                         ...prev,
-                        user: res.data.user,
-                        accessToken: res.data.accessToken,
-                        isLoggedIn: true
+                        email: "The email you provided doesn't match any accounts",
+                    }))
+                } else if (err?.response?.data?.message === "Wrong password") {
+                    setErrors(prev => ({
+                        ...prev,
+                        password: "The password you entered is incorrect",
                     }))
                 } else {
-                    if (res.data.message === "User doesn't exist") {
-                        setErrors(prev => ({
-                            ...prev,
-                            email: "The email you provided doesn't match any accounts"
-                        }))
-                    } else if (res.data.message === "Wrong password") {
-                        setErrors(prev => ({
-                            ...prev,
-                            password: "The password you entered is incorrect"
-                        }))
-                    }
+                    setOpenPopupAlert(true)
                 }
-            } catch (err) {
-                setOpenPopupAlert(true)
             }
         }
     }
@@ -112,22 +110,22 @@ function Login() {
                 </div>
             </form>
             <div className="link-container">
-                <Link to='/forgottenpassword'>forgot your password?</Link>
+                <p className="forgot-password-link">
+                    <Link to='/forgottenpassword'>forgot your password?</Link>
+                </p>
+                <p className="signup-link">
+                    Don't have an account?&nbsp;
+                    <Link to='/signup'>
+                        Sign up
+                    </Link>
+                </p>
             </div>
-            <div className="btn-signup-link">
-                <Link to='/signup'>
-                    <Button>create an account</Button>
-                </Link>
-            </div>
-            <div className={`popup-container ${openPopupAlert && 'open'}`} onClick={() => setOpenPopupAlert(false)}>
-                <div className={`popup ${openPopupAlert && 'open'}`} onClick={e => e.stopPropagation()}>
-                    <div className="popup-title">Server not responding</div>
-                    <div className="popup-content">
-                        The server is not responding at the moment, you may try again later.
-                    </div>
-                    <Button onClick={() => setOpenPopupAlert(false)}>close</Button>
-                </div>
-            </div>
+            <PopupAlert
+                title="Server not responding"
+                body="The server is not responding at the moment, please try again later."
+                openPopupAlert={openPopupAlert}
+                setOpenPopupAlert={setOpenPopupAlert}
+            />
         </main>
     );
 }

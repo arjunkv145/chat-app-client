@@ -10,11 +10,12 @@ import ForgottenPassword from "./Pages/ForgottenPassword"
 import InternetConnection from "./components/InternetConnection"
 import PasswordReset from "./Pages/PasswordReset"
 
+import './Pages/sassStyles/form.scss'
+
 const router = createBrowserRouter([
     {
         path: '/',
         element: <InternetConnection />,
-        errorElement: <ErrorPage />,
         children: [
             {
                 element: <CheckIsLoggedIn />,
@@ -33,7 +34,8 @@ const router = createBrowserRouter([
                 ]
             }
         ]
-    }
+    },
+    { path: '/*', element: <ErrorPage /> }
 ])
 
 function App() {

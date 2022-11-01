@@ -1,9 +1,9 @@
-import "./sassStyles/form.scss"
 import axiosInstance from "../api/axios"
 import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 import Button from "../components/Button"
+import PopupAlert from "../components/PopupAlert"
 
 const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
@@ -232,20 +232,20 @@ function Signup() {
                     <Button>signup</Button>
                 </div>
             </form>
-            <div className="btn-login-link">
-                <Link to='/'>
-                    <Button>login to your account</Button>
-                </Link>
+            <div className="link-container">
+                <p className="login-link">
+                    Already have an account?&nbsp;
+                    <Link to='/'>
+                        login
+                    </Link>
+                </p>
             </div>
-            <div className={`popup-container ${openPopupAlert && 'open'}`} onClick={() => setOpenPopupAlert(false)}>
-                <div className={`popup ${openPopupAlert && 'open'}`} onClick={e => e.stopPropagation()}>
-                    <div className="popup-title">Server not responding</div>
-                    <div className="popup-content">
-                        The server is not responding at the moment, you may try again later.
-                    </div>
-                    <Button className="btn" onClick={() => setOpenPopupAlert(false)}>close</Button>
-                </div>
-            </div>
+            <PopupAlert
+                title="Server not responding"
+                body="The server is not responding at the moment, please try again later."
+                openPopupAlert={openPopupAlert}
+                setOpenPopupAlert={setOpenPopupAlert}
+            />
         </main>
     );
 }

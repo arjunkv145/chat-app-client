@@ -25,7 +25,9 @@ function AuthRoute() {
                             <div className='app-container'>
                                 <nav>header</nav>
                                 <Outlet />
-                            </div> : <VerifyYourEmail />
+                            </div>
+                            :
+                            <VerifyYourEmail />
                     )
             }
         </>

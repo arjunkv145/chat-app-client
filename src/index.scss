@@ -1,4 +1,5 @@
 @import './sassStyles/variables';
+@import './sassStyles/mixins';
 
 * {
   box-sizing: border-box;
@@ -7,19 +8,27 @@
 }
 
 body {
-  background-color: $secondary-color;
+  background-color: $black-color;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::-webkit-input-placeholder {
-  color: #BEBEBE;
+  @include text($secondary-font, 700, .8rem, $light-grey-color);
+  letter-spacing: 1px;
 }
 
 :-ms-input-placeholder {
-  color: #BEBEBE;
+  @include text($secondary-font, 700, .8rem, $light-grey-color);
+  letter-spacing: 1px;
+}
+
+::-moz-placeholder {
+  @include text($secondary-font, 700, .8rem, $light-grey-color);
+  letter-spacing: 1px;
 }
 
 ::placeholder {
-  color: #BEBEBE;
+  @include text($secondary-font, 700, .8rem, $light-grey-color);
+  letter-spacing: 1px;
 }

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import PopupAlert from '../components/PopupAlert'
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
 function Group() {
     const axiosPrivate = useAxiosPrivate()
     const [groups, setGroups] = useState(null)
     const [loading, setLoading] = useState(true)
-    const [serverError, setServerError] = useState(null)
+    const [openPopupAlert, setOpenPopupAlert] = useState(false)
 
     useEffect(() => {
         const controller = new AbortController()
@@ -17,7 +18,7 @@ function Group() {
                 const res = await axiosPrivate.get('group', { signal: controller.signal })
                 isMounted && setGroups(res.data.groups)
             } catch (err) {
-                isMounted && setServerError('server not responding')
+                isMounted && setOpenPopupAlert(true)
             } finally {
                 isMounted && setLoading(false)
             }
@@ -33,11 +34,16 @@ function Group() {
     return (
         <div className='group-container'>
             Group
-            <p>{serverError && serverError}</p>
             {
                 loading ? 'loading' : <p>{groups && groups.join(', ')}</p>
             }
             <Link to='/chat'>go to chat page</Link>
+            <PopupAlert
+                title="Server not responding"
+                body="The server is not responding at the moment, please try again later."
+                openPopupAlert={openPopupAlert}
+                setOpenPopupAlert={setOpenPopupAlert}
+            />
         </div>
     )
 }

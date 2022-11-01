@@ -1,5 +1,7 @@
 import React, { useRef, useState } from 'react'
 import axiosInstance from '../api/axios'
+import Button from '../components/Button'
+import PopupAlert from '../components/PopupAlert'
 
 const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
@@ -7,7 +9,11 @@ function ForgottenPassword() {
     const [email, setEmail] = useState('')
     const emailRef = useRef()
     const [emailError, setEmailError] = useState(null)
-    const [serverMessage, setServerMessage] = useState(null)
+    const [openPopupAlert, setOpenPopupAlert] = useState(false)
+    const [serverResponse, setServerResponse] = useState({
+        title: null,
+        body: null
+    })
 
     const handleEmail = () => {
         let emailErrorMessage = null
@@ -27,25 +33,60 @@ function ForgottenPassword() {
         const submitStatus = handleEmail()
         if (submitStatus === null) {
             try {
-                const res = await axiosInstance.get(`/passwordreset/sendmail/${email}`)
-                setServerMessage(res.data.message)
+                await axiosInstance.get(`/passwordreset/sendmail/${email}`)
+                setServerResponse({
+                    title: 'Password reset link sent!',
+                    body: 'A link has been sent to your mail to reset your password'
+                })
             } catch (err) {
-                setServerMessage("Server not responding")
+                if (err?.response?.data?.message === "User doesn't exist") {
+                    setServerResponse(({
+                        title: "Account doesn't exist",
+                        body: "The email you provided doesn't match any accounts",
+                    }))
+                } else {
+                    setServerResponse({
+                        title: "Server not responding",
+                        body: "The server is not responding at the moment, please try again later."
+                    })
+                }
             } finally {
-                setTimeout(() => setServerMessage(null), 2000)
+                setOpenPopupAlert(true)
             }
         }
     }
 
     return (
-        <div>
-            <span>{serverMessage && serverMessage}</span>
+        <div className='form-container'>
+            <h1 className='title'>Send password reset link</h1>
             <form onSubmit={handleSubmit}>
-                <input type="text" value={email} onChange={handleEmail} ref={emailRef} />
-                <span>{emailError && emailError}</span>
-                <button>send</button>
-                <p>click send again if you didnt receive the mail</p>
+                <div className="input-container">
+                    <input
+                        type="text"
+                        placeholder="Email"
+                        autoComplete="off"
+                        value={email}
+                        onChange={handleEmail}
+                        ref={emailRef}
+                    />
+                    {
+                        emailError &&
+                        <span className="input-error-message">
+                            {emailError}
+                        </span>
+                    }
+                </div>
+                <div className="btn-submit">
+                    <Button>send</Button>
+                </div>
+                <p className='general-message'>Click send again if you didn't receive the mail</p>
             </form>
+            <PopupAlert
+                title={serverResponse.title}
+                body={serverResponse.body}
+                openPopupAlert={openPopupAlert}
+                setOpenPopupAlert={setOpenPopupAlert}
+            />
         </div>
     )
 }

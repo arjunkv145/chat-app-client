@@ -1,5 +1,5 @@
 import React from 'react'
-import './sassStyles/loading.scss'
+import './sassStyles/loadingAnimation.scss'
 
 function LoadingAnimation() {
     return (

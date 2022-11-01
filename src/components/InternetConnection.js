@@ -11,13 +11,14 @@ function InternetConnection() {
         fontWeight: '400',
         fontSize: '.8rem',
         letterSpacing: '1px',
-        background: '#f54b67',
+        background: '#ff6666',
         color: '#f5f5f5',
         textAlign: 'center',
         padding: '.3em',
         position: 'absolute',
         top: '0',
         left: '0',
+        zIndex: '20',
         width: '100%'
     }
 
