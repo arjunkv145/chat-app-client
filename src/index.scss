@@ -32,3 +32,15 @@ body {
   @include text($secondary-font, 700, .8rem, $light-grey-color);
   letter-spacing: 1px;
 }
+
+body::-webkit-scrollbar {
+  width: 0.25em;
+}
+
+body::-webkit-scrollbar-track {
+  background: $dark-grey-color;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: $violet-color;
+}

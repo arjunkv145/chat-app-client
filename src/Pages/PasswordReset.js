@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axiosInstance from '../api/axios'
 import Button from '../components/Button'
-import LoadingAnimation from '../components/LoadingAnimation'
+import PageLoader from '../components/PageLoader'
 import PopupAlert from '../components/PopupAlert'
 import ErrorPage from './ErrorPage'
 
@@ -112,7 +112,7 @@ function PasswordReset() {
     return (
         <>
             {
-                loading ? <LoadingAnimation /> : (
+                loading ? <PageLoader /> : (
                     isExpired ? <ErrorPage /> :
                         <div className='form-container'>
                             <h1 className="title">Reset your password</h1>

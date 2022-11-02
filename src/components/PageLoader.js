@@ -1,9 +1,9 @@
 import React from 'react'
-import './sassStyles/loadingAnimation.scss'
+import './sassStyles/pageLoader.scss'
 
-function LoadingAnimation() {
+function PageLoader() {
     return (
-        <div className='loading-container'>
+        <div className='page-loading-container'>
             <div className='loading-circle circle1'></div>
             <div className='loading-circle circle2'></div>
             <div className='loading-circle circle3'></div>
@@ -11,4 +11,4 @@ function LoadingAnimation() {
     )
 }
 
-export default LoadingAnimation
+export default PageLoader

@@ -3,7 +3,9 @@ import './sassStyles/button.scss'
 
 function Button(props) {
     return (
-        <button className='btn' {...props}>{props.children}</button>
+        <button className='btn' {...props}>
+            {props.children}
+        </button>
     )
 }
 

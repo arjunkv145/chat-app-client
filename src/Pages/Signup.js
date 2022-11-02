@@ -26,30 +26,46 @@ function Signup() {
         password: null,
         confirmPassword: null
     })
+    const [credentialsAvailable, setCredentialsAvailable] = useState({
+        userName: false,
+        email: false
+    })
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
 
     const handleUserName = () => {
-        let userNameErrorMessage = null
+        setCredentialsAvailable(prev => ({
+            ...prev,
+            userName: false
+        }))
+
         const { value } = userNameRef.current
-        if (value.trim() === '') {
-            userNameErrorMessage = 'Username is required'
-        }
         setUserName(value)
-        setErrors(prev => ({ ...prev, userName: userNameErrorMessage }))
-        return userNameErrorMessage === null ? true : false
+
+        if (value.trim() === '') {
+            setErrors(prev => ({ ...prev, userName: 'Username is required' }))
+            return false
+        }
+        return true
     }
 
     const handleEmail = () => {
-        let emailErrorMessage = null
+        setCredentialsAvailable(prev => ({
+            ...prev,
+            false: false
+        }))
+
         const { value } = emailRef.current
-        if (value.trim() === '') {
-            emailErrorMessage = 'Email is required'
-        } else if (value.match(regexEmail) === null) {
-            emailErrorMessage = 'This email is not valid'
-        }
         setEmail(value)
-        setErrors(prev => ({ ...prev, email: emailErrorMessage }))
-        return emailErrorMessage === null ? true : false
+
+        if (value.trim() === '') {
+            setErrors(prev => ({ ...prev, email: 'Email is required' }))
+            return false
+        } else if (value.match(regexEmail) === null) {
+            setErrors(prev => ({ ...prev, email: 'This email is not valid' }))
+            return false
+        }
+
+        return true
     }
 
     const handlePassword = () => {
@@ -87,7 +103,10 @@ function Signup() {
             try {
                 const res = await axiosInstance.get(`signup/isusernameavailable/${userName.trim()}`, { signal: controller.signal })
                 if (res.data.message === "Username is available") {
-                    userNameErrorMessage = res.data.message
+                    setCredentialsAvailable(prev => ({
+                        ...prev,
+                        userName: true
+                    }))
                 } else if (res.data.message === "This username is already taken") {
                     userNameErrorMessage = res.data.message
                 }
@@ -118,7 +137,10 @@ function Signup() {
             try {
                 const res = await axiosInstance.get(`signup/isemailavailable/${email.trim()}`)
                 if (res.data.message === "Email is available") {
-                    emailErrorMessage = res.data.message
+                    setCredentialsAvailable(prev => ({
+                        ...prev,
+                        email: true
+                    }))
                 } else if (res.data.message === "This email is already taken") {
                     emailErrorMessage = res.data.message
                 }
@@ -145,8 +167,8 @@ function Signup() {
             handleEmail() &&
             handlePassword() &&
             handleConfirmPassword() &&
-            errors.userName === 'Username is available' &&
-            errors.email === 'Email is available'
+            credentialsAvailable.userName === true &&
+            credentialsAvailable.email === true
         ) ? true : false
         if (submitStatus === true) {
             try {
@@ -158,6 +180,13 @@ function Signup() {
                     isLoggedIn: true
                 }))
             } catch (err) {
+                setOpenPopupAlert(true)
+            }
+        } else {
+            if (
+                errors.userName === 'server not responding' ||
+                errors.email === 'server not responding'
+            ) {
                 setOpenPopupAlert(true)
             }
         }

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
-import LoadingAnimation from './LoadingAnimation'
+import PageLoader from './PageLoader'
 
 function CheckIsLoggedIn() {
     const { auth, initialLoadingState } = useAuth()
@@ -19,7 +19,7 @@ function CheckIsLoggedIn() {
         <>
             {
                 initialLoadingState ?
-                    <LoadingAnimation /> :
+                    <PageLoader /> :
                     !auth.isLoggedIn && <Outlet />
             }
         </>

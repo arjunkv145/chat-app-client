@@ -7,11 +7,24 @@ import PopupAlert from '../components/PopupAlert'
 function VerifyYourEmail() {
     const { auth } = useAuth()
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
+    const [serverResponse, setServerResponse] = useState({
+        title: null,
+        body: null
+    })
 
     const resend = async () => {
         try {
             await axiosInstance.get(`signup/verifyyouremail/resend/${auth.user.email}`)
+            setServerResponse({
+                title: "New link sent!",
+                body: "A new link has been sent to your email. Verify your account by clicking the link."
+            })
         } catch (err) {
+            setServerResponse({
+                title: "Server not responding",
+                body: "We couldn't send a new link, please try again later."
+            })
+        } finally {
             setOpenPopupAlert(true)
         }
     }
@@ -25,8 +38,8 @@ function VerifyYourEmail() {
             </p>
             <Button onClick={resend}>resend</Button>
             <PopupAlert
-                title="Server not responding"
-                body="We couldn't send a new email verification link, please try again later"
+                title={serverResponse.title}
+                body={serverResponse.body}
                 openPopupAlert={openPopupAlert}
                 setOpenPopupAlert={setOpenPopupAlert}
             />
