@@ -11,7 +11,7 @@
     }
     .message {
         @include text($secondary-font, 400, 1rem, $half-white-color);
-        margin-top: 1em;
+        margin-top: 1.6em;
         letter-spacing: 1px;
     }
     .status {

@@ -1,16 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import axiosInstance from '../api/axios'
+import axiosInstance from '../api/axiosInstance'
 import Button from '../components/Button'
 import PageLoader from '../components/PageLoader'
 import PopupAlert from '../components/PopupAlert'
-import ErrorPage from './ErrorPage'
+
+export const loader = async ({ request, params }) => {
+    try {
+        const { data } = await axiosInstance.get(`passwordreset/isexpired/${params.passwordresettoken}`, { signal: request.signal })
+        return { data }
+    } catch (err) {
+        throw new Response("Page Not Found", { status: 404 })
+    }
+}
 
 function PasswordReset() {
     const { passwordresettoken } = useParams()
-    const [loading, setLoading] = useState(true)
-    const [isExpired, setIsExpired] = useState(false)
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -60,6 +67,7 @@ function PasswordReset() {
         ) ? true : false
         if (submitStatus === true) {
             try {
+                setIsLoading(true)
                 const res = await axiosInstance.post('passwordreset', { passwordResetToken: passwordresettoken, password: password })
                 setServerResponse({
                     title: "Success!",
@@ -83,83 +91,59 @@ function PasswordReset() {
                     })
                 }
             } finally {
+                setIsLoading(false)
                 setOpenPopupAlert(true)
             }
         }
     }
 
-    useEffect(() => {
-        const controller = new AbortController()
-        let isMounted = true
-
-        const isTokenValid = async () => {
-            try {
-                await axiosInstance.get(`passwordreset/isexpired/${passwordresettoken}`, { signal: controller.signal })
-            } catch (err) {
-                isMounted && setIsExpired(true)
-            } finally {
-                isMounted && setLoading(false)
-            }
-        }
-
-        isTokenValid()
-        return () => {
-            controller.abort()
-            isMounted = false
-        }
-    }, [passwordresettoken])
-
     return (
         <>
-            {
-                loading ? <PageLoader /> : (
-                    isExpired ? <ErrorPage /> :
-                        <div className='form-container'>
-                            <h1 className="title">Reset your password</h1>
-                            <form onSubmit={handleSubmit}>
-                                <div className="input-container">
-                                    <input
-                                        type="password"
-                                        placeholder="Enter your password"
-                                        value={password}
-                                        ref={passwordRef}
-                                        onChange={handlePassword}
-                                    />
-                                    {
-                                        errors.password &&
-                                        <span className="input-error-message">
-                                            {errors.password}
-                                        </span>
-                                    }
-                                </div>
-                                <div className="input-container">
-                                    <input
-                                        type="password"
-                                        placeholder="Re-enter your password"
-                                        value={confirmPassword}
-                                        ref={confirmPasswordRef}
-                                        onChange={handleConfirmPassword}
-                                    />
-                                    {
-                                        errors.confirmPassword &&
-                                        <span className="input-error-message">
-                                            {errors.confirmPassword}
-                                        </span>
-                                    }
-                                </div>
-                                <div className="btn-submit">
-                                    <Button>Reset</Button>
-                                </div>
-                            </form>
-                            <PopupAlert
-                                title={serverResponse.title}
-                                body={serverResponse.body}
-                                openPopupAlert={openPopupAlert}
-                                setOpenPopupAlert={setOpenPopupAlert}
-                            />
-                        </div>
-                )
-            }
+            <main className='form-container'>
+                <h1 className="title">Reset your password</h1>
+                <form onSubmit={handleSubmit}>
+                    <div className="input-container">
+                        <input
+                            type="password"
+                            placeholder="Enter your password"
+                            value={password}
+                            ref={passwordRef}
+                            onChange={handlePassword}
+                        />
+                        {
+                            errors.password &&
+                            <span className="input-error-message">
+                                {errors.password}
+                            </span>
+                        }
+                    </div>
+                    <div className="input-container">
+                        <input
+                            type="password"
+                            placeholder="Re-enter your password"
+                            value={confirmPassword}
+                            ref={confirmPasswordRef}
+                            onChange={handleConfirmPassword}
+                        />
+                        {
+                            errors.confirmPassword &&
+                            <span className="input-error-message">
+                                {errors.confirmPassword}
+                            </span>
+                        }
+                    </div>
+                    <div className="btn-submit">
+                        <Button>Reset</Button>
+                    </div>
+                </form>
+            </main>
+            <PopupAlert
+                title={serverResponse.title}
+                body={serverResponse.body}
+                openPopupAlert={openPopupAlert}
+                setOpenPopupAlert={setOpenPopupAlert}
+            />
+            {isLoading && <PageLoader />}
         </>
     )
 }

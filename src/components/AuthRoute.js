@@ -1,35 +1,44 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import VerifyYourEmail from '../Pages/VerifyYourEmail'
+import InternetConnection from './InternetConnection'
 import Navbar from './Navbar'
-import PageLoader from './PageLoader'
 
 function AuthRoute() {
-    const { auth, initialLoadingState } = useAuth()
+    const { auth } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
     const currentPath = location.pathname
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        if (initialLoadingState === false && auth.isLoggedIn === false) {
+        if (auth.isLoggedIn === false) {
             navigate('/', { state: { prevPath: currentPath }, replace: true })
         }
-    }, [auth.isLoggedIn, initialLoadingState, navigate, currentPath])
+        setIsLoading(false)
+    }, [currentPath, navigate, auth.isLoggedIn])
+
+    useEffect(() => {
+        document.body.style.backgroundColor = '#333333'
+    }, [])
+
     return (
         <>
             {
-                initialLoadingState ?
-                    <PageLoader /> :
-                    auth.isLoggedIn && (
-                        auth.user.emailVerified ?
-                            <div className='app-container'>
-                                <Navbar />
-                                <Outlet />
-                            </div>
-                            :
+                (auth.isLoggedIn && !isLoading) && (
+                    auth.user.emailVerified ?
+                        <>
+                            <InternetConnection />
+                            <Navbar />
+                            <Outlet />
+                        </>
+                        :
+                        <>
+                            <InternetConnection />
                             <VerifyYourEmail />
-                    )
+                        </>
+                )
             }
         </>
     )

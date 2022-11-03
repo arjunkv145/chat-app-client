@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import PopupAlert from '../components/PopupAlert'
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
@@ -32,19 +31,20 @@ function Group() {
     }, [axiosPrivate])
 
     return (
-        <div className='group-container'>
-            Group
-            {
-                loading ? 'loading' : <p>{groups && groups.join(', ')}</p>
-            }
-            <Link to='/chat'>go to chat page</Link>
+        <>
+            <main className='group-container'>
+                <h1 className='title'>Group</h1>
+                {
+                    loading ? 'loading' : <p>{groups && groups.join(', ')}</p>
+                }
+            </main>
             <PopupAlert
                 title="Server not responding"
                 body="The server is not responding at the moment, please try again later."
                 openPopupAlert={openPopupAlert}
                 setOpenPopupAlert={setOpenPopupAlert}
             />
-        </div>
+        </>
     )
 }
 

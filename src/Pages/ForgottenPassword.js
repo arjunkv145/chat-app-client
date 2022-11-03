@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
-import axiosInstance from '../api/axios'
+import axiosInstance from '../api/axiosInstance'
 import Button from '../components/Button'
+import PageLoader from '../components/PageLoader'
 import PopupAlert from '../components/PopupAlert'
 
 const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
@@ -10,6 +11,7 @@ function ForgottenPassword() {
     const emailRef = useRef()
     const [emailError, setEmailError] = useState(null)
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [serverResponse, setServerResponse] = useState({
         title: null,
         body: null
@@ -33,6 +35,7 @@ function ForgottenPassword() {
         const submitStatus = handleEmail()
         if (submitStatus === null) {
             try {
+                setIsLoading(true)
                 await axiosInstance.get(`/passwordreset/sendmail/${email}`)
                 setServerResponse({
                     title: 'Password reset link sent!',
@@ -51,43 +54,47 @@ function ForgottenPassword() {
                     })
                 }
             } finally {
+                setIsLoading(false)
                 setOpenPopupAlert(true)
             }
         }
     }
 
     return (
-        <div className='form-container'>
-            <h1 className='title'>Send password reset link</h1>
-            <form onSubmit={handleSubmit}>
-                <div className="input-container">
-                    <input
-                        type="text"
-                        placeholder="Email"
-                        autoComplete="off"
-                        value={email}
-                        onChange={handleEmail}
-                        ref={emailRef}
-                    />
-                    {
-                        emailError &&
-                        <span className="input-error-message">
-                            {emailError}
-                        </span>
-                    }
-                </div>
-                <div className="btn-submit">
-                    <Button>send</Button>
-                </div>
-                <p className='general-message'>Click send again if you didn't receive the mail</p>
-            </form>
+        <>
+            <main className='form-container'>
+                <h1 className='title'>Send password reset link</h1>
+                <form onSubmit={handleSubmit}>
+                    <div className="input-container">
+                        <input
+                            type="text"
+                            placeholder="Email"
+                            autoComplete="off"
+                            value={email}
+                            onChange={handleEmail}
+                            ref={emailRef}
+                        />
+                        {
+                            emailError &&
+                            <span className="input-error-message">
+                                {emailError}
+                            </span>
+                        }
+                    </div>
+                    <div className="btn-submit">
+                        <Button>send</Button>
+                    </div>
+                    <p className='general-message'>Click send again if you didn't receive the mail</p>
+                </form>
+            </main>
             <PopupAlert
                 title={serverResponse.title}
                 body={serverResponse.body}
                 openPopupAlert={openPopupAlert}
                 setOpenPopupAlert={setOpenPopupAlert}
             />
-        </div>
+            {isLoading && <PageLoader />}
+        </>
     )
 }
 

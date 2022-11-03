@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import axiosInstance from '../api/axios'
+import axiosInstance from '../api/axiosInstance'
 import useAuth from './useAuth'
 import jwt_decode from 'jwt-decode'
 import axios from 'axios'

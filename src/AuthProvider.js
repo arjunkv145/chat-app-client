@@ -1,7 +1,6 @@
-import { createContext, useEffect, useState } from "react"
-import axiosInstance from "./api/axios"
+import { createContext, useState } from "react"
 
-const AuthContext = createContext([{}, () => { }])
+const AuthContext = createContext()
 
 function AuthProvider(props) {
     const [auth, setAuth] = useState({
@@ -9,36 +8,9 @@ function AuthProvider(props) {
         accessToken: null,
         isLoggedIn: false
     })
-    const [initialLoadingState, setInitialLoadingState] = useState(true)
-
-    useEffect(() => {
-        const controller = new AbortController()
-        let isMounted = true
-
-        const isTokenValid = async () => {
-            try {
-                const res = await axiosInstance.get('/user', { signal: controller.signal })
-                isMounted && setAuth(prev => ({
-                    ...prev,
-                    user: res.data.user,
-                    isLoggedIn: true,
-                    accessToken: res.data.accessToken
-                }))
-            } catch (err) {
-            } finally {
-                isMounted && setInitialLoadingState(false)
-            }
-        }
-
-        isTokenValid()
-        return () => {
-            controller.abort()
-            isMounted = false
-        }
-    }, [])
 
     return (
-        <AuthContext.Provider value={{ auth, setAuth, initialLoadingState }}>
+        <AuthContext.Provider value={{ auth, setAuth }}>
             {props.children}
         </AuthContext.Provider>
     );

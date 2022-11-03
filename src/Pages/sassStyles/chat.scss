@@ -3,21 +3,20 @@
 
 .chat-container {
     margin-left: 4em;
-    padding: 2em;
+    padding: 1em;
+    background-color: $dark-grey-color;
 
     .title {
         @include text($primary-font, 600, 2rem, $light-grey-color);
     }
-    .group-link {
-        @include text($secondary-font, 600, 1rem, $light-grey-color);
-        display: block;
-        text-decoration: none;
-        margin: 2em 0;
+    button {
+        margin-top: 2em;
     }
     .dummy-text {
         @include text($secondary-font, 400, .8rem, $light-grey-color);
         letter-spacing: 1px;
         line-height: 20px;
+        margin-top: 2em;
     }
 }
 

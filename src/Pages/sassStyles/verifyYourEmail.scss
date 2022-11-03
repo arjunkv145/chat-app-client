@@ -1,0 +1,46 @@
+@import '../../sassStyles/variables';
+@import '../../sassStyles/mixins';
+
+.verify-your-email-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 500px;
+    padding: 2em;
+    background-color: $dark-grey-color;
+    border: none;
+    border-radius: 3px;
+    @include flex(column, center, center);
+
+    .title {
+        @include text($secondary-font, 700, 1.6rem, $half-white-color);
+        text-align: center;
+    }
+    .body {
+        @include text($primary-font, 400, .9rem, $half-white-color);
+        letter-spacing: .5px;
+        margin-top: 1.6em;
+    }
+    button {
+        margin-top: .8em;
+    }
+}
+@media screen and (max-width: 550px) {
+    .verify-your-email-container {
+        top: 0;
+        left: 0;
+        transform: translate(0%, 0%);
+        max-width: 550px;
+        height: 100vh;
+        justify-content: flex-start;
+
+        .title {
+            font-size: 1.4rem;
+        }
+        .body {
+            font-size: 0.8rem;
+        }
+    }
+}

@@ -1,14 +1,16 @@
-import axiosInstance from "../api/axios"
+import axiosInstance from "../api/axiosInstance"
 import { useState, useEffect, useRef } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 import Button from "../components/Button"
 import PopupAlert from "../components/PopupAlert"
+import PageLoader from "../components/PageLoader"
 
 const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
 function Signup() {
     const { setAuth } = useAuth()
+    const navigate = useNavigate()
 
     const [userName, setUserName] = useState('')
     const [email, setEmail] = useState('')
@@ -31,6 +33,7 @@ function Signup() {
         email: false
     })
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleUserName = () => {
         setCredentialsAvailable(prev => ({
@@ -172,6 +175,7 @@ function Signup() {
         ) ? true : false
         if (submitStatus === true) {
             try {
+                setIsLoading(true)
                 const res = await axiosInstance.post('signup/newuser', { userName, email, password })
                 setAuth(prev => ({
                     ...prev,
@@ -179,8 +183,11 @@ function Signup() {
                     accessToken: res.data.accessToken,
                     isLoggedIn: true
                 }))
+                navigate('/chat', { replace: true })
             } catch (err) {
                 setOpenPopupAlert(true)
+            } finally {
+                setIsLoading(false)
             }
         } else {
             if (
@@ -192,91 +199,94 @@ function Signup() {
         }
     }
     return (
-        <main className="form-container">
-            <h1 className="title">Chat App</h1>
-            <form onSubmit={handleSubmit}>
-                <div className="input-container">
-                    <input
-                        type="text"
-                        placeholder="Enter your username"
-                        autoComplete="off"
-                        value={userName}
-                        ref={userNameRef}
-                        onChange={handleUserName}
-                    />
-                    {
-                        (errors.userName && errors.userName !== 'Username is available') &&
-                        <span className="input-error-message">
-                            {errors.userName}
-                        </span>
-                    }
+        <>
+            <main className="form-container">
+                <h1 className="title">Chat App</h1>
+                <form onSubmit={handleSubmit}>
+                    <div className="input-container">
+                        <input
+                            type="text"
+                            placeholder="Enter your username"
+                            autoComplete="off"
+                            value={userName}
+                            ref={userNameRef}
+                            onChange={handleUserName}
+                        />
+                        {
+                            (errors.userName && errors.userName !== 'Username is available') &&
+                            <span className="input-error-message">
+                                {errors.userName}
+                            </span>
+                        }
+                    </div>
+                    <div className="input-container">
+                        <input
+                            type="text"
+                            placeholder="Enter your email"
+                            autoComplete="off"
+                            value={email}
+                            ref={emailRef}
+                            onChange={handleEmail}
+                        />
+                        {
+                            (errors.email && errors.email !== 'Email is available') &&
+                            <span className="input-error-message">
+                                {errors.email}
+                            </span>
+                        }
+                    </div>
+                    <div className="input-container">
+                        <input
+                            type="password"
+                            placeholder="Enter your password"
+                            value={password}
+                            ref={passwordRef}
+                            onChange={handlePassword}
+                        />
+                        {
+                            errors.password &&
+                            <span className="input-error-message">
+                                {errors.password}
+                            </span>
+                        }
+                    </div>
+                    <div className="input-container">
+                        <input
+                            type="password"
+                            placeholder="Re-enter your password"
+                            value={confirmPassword}
+                            ref={confirmPasswordRef}
+                            onChange={handleConfirmPassword}
+                        />
+                        {
+                            errors.confirmPassword &&
+                            <span className="input-error-message">
+                                {errors.confirmPassword}
+                            </span>
+                        }
+                    </div>
+                    <div className="btn-submit">
+                        <Button>signup</Button>
+                    </div>
+                </form>
+                <div className="link-container">
+                    <p className="login-link">
+                        Already have an account?&nbsp;
+                        <Link to='/'>
+                            login
+                        </Link>
+                    </p>
                 </div>
-                <div className="input-container">
-                    <input
-                        type="text"
-                        placeholder="Enter your email"
-                        autoComplete="off"
-                        value={email}
-                        ref={emailRef}
-                        onChange={handleEmail}
-                    />
-                    {
-                        (errors.email && errors.email !== 'Email is available') &&
-                        <span className="input-error-message">
-                            {errors.email}
-                        </span>
-                    }
-                </div>
-                <div className="input-container">
-                    <input
-                        type="password"
-                        placeholder="Enter your password"
-                        value={password}
-                        ref={passwordRef}
-                        onChange={handlePassword}
-                    />
-                    {
-                        errors.password &&
-                        <span className="input-error-message">
-                            {errors.password}
-                        </span>
-                    }
-                </div>
-                <div className="input-container">
-                    <input
-                        type="password"
-                        placeholder="Re-enter your password"
-                        value={confirmPassword}
-                        ref={confirmPasswordRef}
-                        onChange={handleConfirmPassword}
-                    />
-                    {
-                        errors.confirmPassword &&
-                        <span className="input-error-message">
-                            {errors.confirmPassword}
-                        </span>
-                    }
-                </div>
-                <div className="btn-submit">
-                    <Button>signup</Button>
-                </div>
-            </form>
-            <div className="link-container">
-                <p className="login-link">
-                    Already have an account?&nbsp;
-                    <Link to='/'>
-                        login
-                    </Link>
-                </p>
-            </div>
+            </main>
             <PopupAlert
                 title="Server not responding"
                 body="The server is not responding at the moment, please try again later."
                 openPopupAlert={openPopupAlert}
                 setOpenPopupAlert={setOpenPopupAlert}
             />
-        </main>
-    );
+            {isLoading && <PageLoader />}
+        </>
+    )
 }
 
 export default Signup

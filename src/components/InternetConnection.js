@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Outlet } from 'react-router-dom'
 
 function InternetConnection() {
     const [internetConnection, setInternetConnection] = useState(navigator.onLine)
@@ -39,7 +38,6 @@ function InternetConnection() {
                     you are offline
                 </div>
             }
-            <Outlet />
         </>
     )
 }

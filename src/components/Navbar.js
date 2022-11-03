@@ -1,50 +1,65 @@
 import React from 'react'
 import './sassStyles/navbar.scss'
 import { Bolt, Add, Public, Settings, Diversity2 } from '@mui/icons-material'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 function Navbar() {
     return (
         <nav className='nav-container'>
             <ul className='nav'>
                 <li className='nav-item'>
-                    <Link to='/chat' className='nav-link'>
+                    <NavLink
+                        to='/chat'
+                        className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                    >
                         <span className='nav-icon'>
                             <Bolt />
                         </span>
-                    </Link>
+                    </NavLink>
                     <span className='nav-tooltip'>Chat</span>
                 </li>
                 <li className='nav-item'>
-                    <Link to='/group' className='nav-link'>
+                    <NavLink
+                        to='/group'
+                        className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                    >
                         <span className='nav-icon'>
                             <Diversity2 />
                         </span>
-                    </Link>
+                    </NavLink>
                     <span className='nav-tooltip'>Group</span>
                 </li>
                 <li className='nav-item'>
-                    <Link to='/chat' className='nav-link'>
+                    <NavLink
+                        to='/publicgroup'
+                        className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                    >
                         <span className='nav-icon'>
                             <Public />
                         </span>
-                    </Link>
+                    </NavLink>
                     <span className='nav-tooltip'>Public group</span>
                 </li>
                 <li className='nav-item'>
-                    <Link to='/chat' className='nav-link'>
+                    <NavLink
+                        to='/addfriend'
+                        className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                    >
                         <span className='nav-icon'>
                             <Add />
                         </span>
-                    </Link>
+                    </NavLink>
                     <span className='nav-tooltip'>Add friend</span>
                 </li>
                 <li className='nav-item'>
-                    <Link to='/chat' className='nav-link'>
+                    <NavLink
+                        to='/settings'
+                        className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                    >
                         <span className='nav-icon'>
                             <Settings />
                         </span>
-                    </Link>
+                    </NavLink>
                     <span className='nav-tooltip'>Settings</span>
                 </li>
             </ul>
