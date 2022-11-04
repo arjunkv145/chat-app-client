@@ -1,25 +1,37 @@
 import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLoaderData, useLocation } from 'react-router-dom'
+import axiosInstance from '../api/axiosInstance'
 import ChatUsersList from '../components/ChatUsersList'
 import "./sassStyles/chat.scss"
 
+export const loader = async ({ request }) => {
+    const { data } = await axiosInstance.get('/userslist', { signal: request.signal })
+    return data
+}
+
 function Chat() {
-    const users = [
-        { id: 1, user: "user1" },
-        { id: 2, user: "user2" },
-        { id: 3, user: "user3" },
-        { id: 4, user: "user4" },
-        { id: 5, user: "user5" },
-    ]
+    const location = useLocation()
+    const { usersList } = useLoaderData()
 
     return (
-        <>
-            <main className="chat-container">
+        <main className="chat-container">
+            <section
+                className={location.pathname === '/chat' ? 'users-section' : 'users-section hide'}
+            >
                 <h1 className="title">Chat</h1>
-                <ChatUsersList usersList={users} />
+                <ChatUsersList usersList={usersList} />
+            </section>
+            <section
+                className={location.pathname === '/chat' ? 'message-section hide' : 'message-section'}
+            >
+                {
+                    location.pathname === '/chat'
+                    &&
+                    <span className='start-message'>Start chatting</span>
+                }
                 <Outlet />
-            </main>
-        </>
+            </section>
+        </main>
     )
 }
 

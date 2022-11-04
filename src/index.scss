@@ -11,6 +11,8 @@ body {
   background-color: $black-color;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  overflow-x: hidden;
 }
 
 ::-webkit-input-placeholder {
@@ -31,6 +33,22 @@ body {
 ::placeholder {
   @include text($secondary-font, 700, .8rem, $light-grey-color);
   letter-spacing: 1px;
+}
+
+input:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+input:focus:-ms-input-placeholder {
+  color: transparent;
+}
+input:focus:-moz-placeholder {
+  color: transparent;
+}
+input:focus::-moz-placeholder {
+  color: transparent;
+}
+input:focus::placeholder {
+  color: transparent;
 }
 
 body::-webkit-scrollbar {

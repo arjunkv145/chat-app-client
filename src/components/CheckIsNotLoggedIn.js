@@ -15,6 +15,10 @@ function CheckIsNotLoggedIn() {
         setIsLoading(false)
     }, [navigate, auth.isLoggedIn])
 
+    useEffect(() => {
+        document.body.style.backgroundColor = '#1a1a1a'
+    }, [])
+
     return (
         <>
             {

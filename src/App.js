@@ -1,7 +1,7 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import CheckIsNotLoggedIn from "./components/CheckIsNotLoggedIn"
 import AuthRoute from "./components/AuthRoute"
-import Chat from "./Pages/Chat"
+import Chat, { loader as chatLoader } from "./Pages/Chat"
 import ErrorPage from "./Pages/ErrorPage"
 import Group from "./Pages/Group"
 import Login from "./Pages/Login"
@@ -14,7 +14,7 @@ import PublicGroup from "./Pages/PublicGroup"
 import Root, { loader as rootLoader } from './components/Root'
 
 import './Pages/sassStyles/form.scss'
-import ChatMessage from "./components/ChatMessage"
+import ChatMessage, { loader as chatMessageLoader } from "./components/ChatMessage"
 
 const router = createBrowserRouter([
     {
@@ -41,9 +41,14 @@ const router = createBrowserRouter([
                 children: [
                     {
                         path: '/chat',
+                        loader: chatLoader,
                         element: <Chat />,
                         children: [
-                            { path: ':chatId', element: <ChatMessage /> }
+                            {
+                                path: ':userId',
+                                loader: chatMessageLoader,
+                                element: <ChatMessage />
+                            }
                         ]
                     },
                     { path: '/group', element: <Group /> },

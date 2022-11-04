@@ -37,21 +37,6 @@
             &:focus {
                 outline: none;
             }
-            &:focus::-webkit-input-placeholder {
-                color: transparent;
-            }
-            &:focus:-ms-input-placeholder {
-                color: transparent;
-            }
-            &:focus:-moz-placeholder {
-                color: transparent;
-            }
-            &:focus::-moz-placeholder {
-                color: transparent;
-            }
-            &:focus::placeholder {
-                color: transparent;
-            }
         }
         .input-error-message {
             @include text($secondary-font, 500, .8rem, $red-color);

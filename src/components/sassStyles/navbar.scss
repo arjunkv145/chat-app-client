@@ -4,6 +4,7 @@
 .nav-container {
     background-color: $black-color;
     position: fixed;
+    z-index: 99;
 
     .nav {
         list-style: none;
@@ -169,7 +170,6 @@
                     background-color: $black-color;
                     border-radius: 1px;
                     transform: rotate(45deg);
-                    z-index: -5;
                 }
             }
         }

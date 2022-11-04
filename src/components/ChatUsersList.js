@@ -1,12 +1,27 @@
+import { AccountCircle } from '@mui/icons-material'
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import CustomNavLink from './CustomNavLink'
+import './sassStyles/chatUsersList.scss'
 
 function ChatUsersList({ usersList }) {
     return (
         <div className='chat-users-list'>
             {
                 usersList.map(user => (
-                    <NavLink to={`/chat/` + user.id} key={user.id}>{user.user}</NavLink>
+                    <CustomNavLink
+                        to={`/chat/` + user.id}
+                        key={user.id}
+                        className={({ isActive }) => isActive ? 'chat-link active' : 'chat-link'}
+                    >
+                        <div className='chat-user'>
+                            <div className='user-image'>
+                                <AccountCircle />
+                            </div>
+                            <div className='user-name'>
+                                {user.userName}
+                            </div>
+                        </div>
+                    </CustomNavLink>
                 ))
             }
         </div>
