@@ -99,40 +99,46 @@ function PasswordReset() {
 
     return (
         <>
-            <main className='form-container'>
-                <h1 className="title">Reset your password</h1>
+            <main className="form">
+                <h1 className="form__title">Reset your password</h1>
                 <form onSubmit={handleSubmit}>
-                    <div className="input-container">
+                    <div className="form__input-wrapper">
                         <input
                             type="password"
                             placeholder="Enter your password"
                             value={password}
                             ref={passwordRef}
                             onChange={handlePassword}
+                            className="form_input"
                         />
                         {
                             errors.password &&
-                            <span className="input-error-message">
+                            <span
+                                className="form__error-message"
+                            >
                                 {errors.password}
                             </span>
                         }
                     </div>
-                    <div className="input-container">
+                    <div className="form__input-wrapper">
                         <input
                             type="password"
                             placeholder="Re-enter your password"
                             value={confirmPassword}
                             ref={confirmPasswordRef}
                             onChange={handleConfirmPassword}
+                            className="form__input"
                         />
                         {
                             errors.confirmPassword &&
-                            <span className="input-error-message">
+                            <span
+                                className="form__error-message"
+                            >
                                 {errors.confirmPassword}
                             </span>
                         }
                     </div>
-                    <div className="btn-submit">
+                    <div className="form__btn-wrapper">
                         <Button>Reset</Button>
                     </div>
                 </form>

@@ -1,0 +1,95 @@
+@use '../abstract/' as *;
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+    margin: 0;
+}
+
+ul[role='list'],
+ol[role='list'] {
+    list-style: none;
+}
+
+html:focus-within {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    text-rendering: optimizeSpeed;
+    line-height: 1.5;
+    background-color: color(neutral, 1000);
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a:not([class]) {
+    text-decoration-skip-ink: auto;
+}
+
+img,
+picture {
+    max-width: 100%;
+    display: block;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+::-webkit-input-placeholder {
+    @include font($secondary-font, semibold, .8rem);
+    color: color(neutral, 400);
+    letter-spacing: 1px;
+}
+  
+:-ms-input-placeholder {
+    @include font($secondary-font, semibold, .8rem);
+    color: color(neutral, 400);
+    letter-spacing: 1px;
+}
+  
+::-moz-placeholder {
+    @include font($secondary-font, semibold, .8rem);
+    color: color(neutral, 400);
+    letter-spacing: 1px;
+}
+  
+::placeholder {
+    @include font($secondary-font, semibold, .8rem);
+    color: color(neutral, 400);
+    letter-spacing: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html:focus-within {
+        scroll-behavior: auto;
+    }
+    
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

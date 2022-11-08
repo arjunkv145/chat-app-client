@@ -1,5 +1,4 @@
 import React from 'react'
-import './sassStyles/navbar.scss'
 import { Bolt, Add, Public, Settings, Diversity2 } from '@mui/icons-material'
 import CustomNavLink from './CustomNavLink'
 

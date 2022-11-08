@@ -4,7 +4,6 @@ import axiosInstance from "../api/axiosInstance"
 import { useNavigate } from "react-router-dom"
 import PopupAlert from '../components/PopupAlert'
 import Button from '../components/Button'
-import './sassStyles/settings.scss'
 
 function Settings() {
     const { setAuth } = useAuth()
@@ -28,7 +27,7 @@ function Settings() {
 
     return (
         <>
-            <main className='settings-container'>
+            <main className='settings'>
                 <Button onClick={logout}>Logout</Button>
             </main>
             <PopupAlert

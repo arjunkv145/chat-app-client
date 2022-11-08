@@ -85,52 +85,58 @@ function Login() {
 
     return (
         <>
-            <main className="form-container">
-                <h1 className="title">Chat App</h1>
+            <main className="form">
+                <h1 className="form__title">Chat App</h1>
                 <form onSubmit={handleSubmit}>
-                    <div className="input-container">
+                    <div className="form__input-wrapper">
                         <input
                             type="text"
                             placeholder="Email"
                             autoComplete="off"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
+                            className="form__input"
                         />
                         {
                             errors.email &&
-                            <span className="input-error-message">
+                            <span
+                                className="form__error-message"
+                            >
                                 {errors.email}
                             </span>
                         }
                     </div>
-                    <div className="input-container">
+                    <div className="form__input-wrapper">
                         <input
                             type="password"
                             placeholder="Password"
                             value={password}
                             onChange={e => setPassword(e.target.value)}
+                            className="form__input"
                         />
                         {
                             errors.password &&
-                            <span className="input-error-message">
+                            <span
+                                className="form__error-message"
+                            >
                                 {errors.password}
                             </span>
                         }
                     </div>
-                    <div className="btn-submit">
+                    <div className="form__btn-wrapper">
                         <Button>login</Button>
                     </div>
                 </form>
-                <div className="link-container">
-                    <p className="forgot-password-link">
-                        <Link to='/forgottenpassword'>forgot your password?</Link>
-                    </p>
-                    <p className="signup-link">
+                <div className="form__link-wrapper">
+                    <span className="form__link-forgot-your-password">
+                        <Link to='/forgotyourpassword'>forgot your password?</Link>
+                    </span>
+                    <span className="form__link-signup">
                         Don't have an account?&nbsp;
                         <Link to='/signup'>
-                            Sign up
+                            sign up
                         </Link>
-                    </p>
+                    </span>
                 </div>
             </main>
             <PopupAlert

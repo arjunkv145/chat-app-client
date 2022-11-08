@@ -6,7 +6,7 @@ import PopupAlert from '../components/PopupAlert'
 
 const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
-function ForgottenPassword() {
+function ForgotYourPassword() {
     const [email, setEmail] = useState('')
     const emailRef = useRef()
     const [emailError, setEmailError] = useState(null)
@@ -62,10 +62,10 @@ function ForgottenPassword() {
 
     return (
         <>
-            <main className='form-container'>
-                <h1 className='title'>Send password reset link</h1>
+            <main className='form'>
+                <h1 className='form__title'>Send password reset link</h1>
                 <form onSubmit={handleSubmit}>
-                    <div className="input-container">
+                    <div className="form__input-wrapper">
                         <input
                             type="text"
                             placeholder="Email"
@@ -73,18 +73,21 @@ function ForgottenPassword() {
                             value={email}
                             onChange={handleEmail}
                             ref={emailRef}
+                            className="form__input"
                         />
                         {
                             emailError &&
-                            <span className="input-error-message">
+                            <span
+                                className="form__error-message"
+                            >
                                 {emailError}
                             </span>
                         }
                     </div>
-                    <div className="btn-submit">
+                    <div className="form__btn-wrapper">
                         <Button>send</Button>
                     </div>
-                    <p className='general-message'>Click send again if you didn't receive the mail</p>
+                    <p className='form__message'>Click send again if you didn't receive the mail</p>
                 </form>
             </main>
             <PopupAlert
@@ -98,4 +101,4 @@ function ForgottenPassword() {
     )
 }
 
-export default ForgottenPassword
+export default ForgotYourPassword

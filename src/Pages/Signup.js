@@ -200,10 +200,10 @@ function Signup() {
     }
     return (
         <>
-            <main className="form-container">
-                <h1 className="title">Chat App</h1>
+            <main className="form">
+                <h1 className="form__title">Chat App</h1>
                 <form onSubmit={handleSubmit}>
-                    <div className="input-container">
+                    <div className="form__input-wrapper">
                         <input
                             type="text"
                             placeholder="Enter your username"
@@ -211,15 +211,18 @@ function Signup() {
                             value={userName}
                             ref={userNameRef}
                             onChange={handleUserName}
+                            className="form__input"
                         />
                         {
                             (errors.userName && errors.userName !== 'Username is available') &&
-                            <span className="input-error-message">
+                            <span
+                                className="form__error-message"
+                            >
                                 {errors.userName}
                             </span>
                         }
                     </div>
-                    <div className="input-container">
+                    <div className="form__input-wrapper">
                         <input
                             type="text"
                             placeholder="Enter your email"
@@ -227,55 +230,64 @@ function Signup() {
                             value={email}
                             ref={emailRef}
                             onChange={handleEmail}
+                            className="form__input"
                         />
                         {
                             (errors.email && errors.email !== 'Email is available') &&
-                            <span className="input-error-message">
+                            <span
+                                className="form__error-message"
+                            >
                                 {errors.email}
                             </span>
                         }
                     </div>
-                    <div className="input-container">
+                    <div className="form__input-wrapper">
                         <input
                             type="password"
                             placeholder="Enter your password"
                             value={password}
                             ref={passwordRef}
                             onChange={handlePassword}
+                            className="form__input"
                         />
                         {
                             errors.password &&
-                            <span className="input-error-message">
+                            <span
+                                className="form__error-message"
+                            >
                                 {errors.password}
                             </span>
                         }
                     </div>
-                    <div className="input-container">
+                    <div className="form__input-wrapper">
                         <input
                             type="password"
                             placeholder="Re-enter your password"
                             value={confirmPassword}
                             ref={confirmPasswordRef}
                             onChange={handleConfirmPassword}
+                            className="form__input"
                         />
                         {
                             errors.confirmPassword &&
-                            <span className="input-error-message">
+                            <span
+                                className="form__error-message"
+                            >
                                 {errors.confirmPassword}
                             </span>
                         }
                     </div>
-                    <div className="btn-submit">
+                    <div className="form__btn-wrapper">
                         <Button>signup</Button>
                     </div>
                 </form>
-                <div className="link-container">
-                    <p className="login-link">
+                <div className="form__link-wrapper">
+                    <span className="form__link-login">
                         Already have an account?&nbsp;
                         <Link to='/'>
                             login
                         </Link>
-                    </p>
+                    </span>
                 </div>
             </main>
             <PopupAlert

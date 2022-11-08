@@ -1,0 +1,38 @@
+@use './color' as *;
+@use './typography' as *;
+@use './breakpoints' as *;
+
+@function color($color, $tone){
+    @if map-has-key($colors, $color){
+        $color: map-get($colors, $color);
+
+            @if map-has-key($color, $tone){
+                $tone: map-get($color, $tone);
+                @return $tone;
+            }
+
+            @warn "unknown tone `#{$tone}`";
+            @return null;        
+    }
+
+    @warn "unknown color `#{$color}`";
+    @return null;
+}
+
+@function weight($weight){
+    @if map-has-key($font-weights, $weight){
+        $weight: map-get($font-weights, $weight);
+        @return $weight;
+    }
+    @warn "unknown weight `#{$weight}`";
+    @return null;
+}
+
+@function breakpoint($bp){
+    @if map-has-key($breakpoints, $bp){
+        $bp: map-get($breakpoints, $bp);
+        @return $bp;
+    }
+    @warn "unknown breakpoint `#{$bp}`";
+    @return null;
+}

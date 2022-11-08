@@ -3,7 +3,6 @@ import Button from '../components/Button'
 import axiosInstance from '../api/axiosInstance'
 import useAuth from '../hooks/useAuth'
 import PopupAlert from '../components/PopupAlert'
-import './sassStyles/verifyYourEmail.scss'
 import PageLoader from '../components/PageLoader'
 
 function VerifyYourEmail() {
@@ -43,9 +42,9 @@ function VerifyYourEmail() {
 
     return (
         <>
-            <main className='verify-your-email-container'>
-                <h1 className='title'>Verify your email account</h1>
-                <p className='body'>
+            <main className='verify-your-email'>
+                <h1 className='verify-your-email__title'>Verify your email account</h1>
+                <p className='verify-your-email__content'>
                     A link has been sent to your account to verify your email.
                     Click resend if you haven't received the link.
                 </p>

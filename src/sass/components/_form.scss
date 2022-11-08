@@ -1,0 +1,103 @@
+@use '../abstract/' as *;
+
+.form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 550px;
+    padding: 2em;
+    background-color: color(neutral, 900);
+    border: none;
+    border-radius: 3px;
+    @include flex(column, center, center);
+
+    &__title {
+        @include font($secondary-font, bold, 1.6rem);
+        color: color(neutral, 200);
+        text-align: center;
+    }
+    form {
+        margin-top: 2em;
+        width: 100%;
+    }
+    &__input-wrapper {
+        height: 70px;
+    }
+    &__input {
+        @include font($secondary-font, bold, .8rem);
+        color: color(neutral, 300);
+        letter-spacing: 0.0625em;
+        width: 100%;
+        padding: 1em 1.2em;
+        background-color: color(neutral, 1000);
+        border: none;
+        border-radius: 3px;
+
+        &:focus {
+            outline: none;
+        }
+    }
+    &__error-message {
+        @include font($secondary-font, medium, .8rem);
+        color: color(red, light);
+        letter-spacing: .8px;
+    }
+    &__btn-wrapper {
+        button {
+            width: 100%;
+        }
+    }
+    &__link-wrapper {
+        margin-top: .5em;
+        width: 100%;
+        @include flex(row, space-between, center);
+
+        a {
+            text-decoration: none;
+            color: color(blue, light);
+        }
+    }
+    &__link-forgot-your-password {
+        @include font($primary-font, medium, .9rem);
+    }
+    &__link-signup, &__link-login {
+        @include font($primary-font, medium, .9rem);
+        color: color(neutral, 400);
+    }
+    &__link-login {
+        width: 100%;
+        text-align: center;
+    }
+    .general-message {
+        @include font($primary-font, medium, .9rem);
+        color: color(neutral, 700);
+        margin-top: .5em;
+        text-align: center;
+    }
+
+    @include mq(max-width, medium) {
+        max-width: map-get($breakpoints, small);
+
+        &__link-wrapper {
+            flex-direction: column;
+        }
+        &__link-signup {
+            margin-top: .5em;
+        }
+    }
+
+    @include mq(max-width, small) {
+        top: 0;
+        left: 0;
+        transform: translate(0%, 0%);
+        max-width: 550px;
+        height: 100vh;
+        justify-content: flex-start;
+
+        &__title {
+            font-size: 1.4rem;
+        }
+    }
+}

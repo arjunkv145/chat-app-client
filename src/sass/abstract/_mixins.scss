@@ -1,0 +1,24 @@
+@use './functions' as *;
+
+@mixin font($family, $weight, $size) {
+    font: {
+        family: $family;
+        weight: weight($weight);
+        size: $size;
+    }
+}
+
+@mixin flex($direction, $justify-contents, $align-items) {
+    display: flex;
+    flex-direction: $direction;
+    justify-content: $justify-contents;
+    align-items: $align-items;
+}
+
+@mixin mq($width-type, $bp) {
+    $bp: breakpoint($bp);
+
+    @media screen and (#{$width-type}: $bp) {
+        @content;
+    }
+}

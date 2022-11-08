@@ -1,5 +1,4 @@
 import React from 'react'
-import './sassStyles/button.scss'
 
 function Button(props) {
     return (

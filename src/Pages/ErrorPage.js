@@ -1,18 +1,17 @@
 import React from 'react'
 import { useRouteError } from 'react-router-dom'
-import './sassStyles/errorPage.scss'
 
 function ErrorPage() {
     const error = useRouteError()
 
     return (
-        <div className="error-page">
-            <h1 className='title'>Oops!</h1>
-            <p className='message'>Sorry, an unexpected error has occurred.</p>
-            <p className='status'>
+        <main className="error">
+            <h1 className='error__title'>Oops!</h1>
+            <p className='error__content'>Sorry, an unexpected error has occurred.</p>
+            <p className='error__info'>
                 <i>{error.statusText || error.message || error.data}</i>
             </p>
-        </div>
+        </main>
     )
 }
 

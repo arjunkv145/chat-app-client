@@ -19,10 +19,6 @@ function AuthRoute() {
         setIsLoading(false)
     }, [currentPath, navigate, auth.isLoggedIn])
 
-    useEffect(() => {
-        document.body.style.backgroundColor = '#333333'
-    }, [])
-
     return (
         <>
             {

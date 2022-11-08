@@ -1,5 +1,4 @@
 import React from 'react'
-import './sassStyles/pageLoader.scss'
 
 function PageLoader() {
     return (

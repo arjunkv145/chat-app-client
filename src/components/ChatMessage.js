@@ -3,7 +3,6 @@ import React from 'react'
 import { NavLink, useLoaderData } from 'react-router-dom'
 import axiosInstance from '../api/axiosInstance'
 import Button from './Button'
-import './sassStyles/chatMessage.scss'
 
 export const loader = async ({ params, request }) => {
     const { data } = await axiosInstance.get('/user/' + params.userId, { signal: request.signal })

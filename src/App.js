@@ -6,15 +6,15 @@ import ErrorPage from "./Pages/ErrorPage"
 import Group from "./Pages/Group"
 import Login from "./Pages/Login"
 import Signup from "./Pages/Signup"
-import ForgottenPassword from "./Pages/ForgottenPassword"
+import ForgotYourPassword from "./Pages/ForgotYourPassword"
 import PasswordReset, { loader as passwordResetLoader } from "./Pages/PasswordReset"
 import AddFriend from "./Pages/AddFriend"
 import Settings from "./Pages/Settings"
 import PublicGroup from "./Pages/PublicGroup"
 import Root, { loader as rootLoader } from './components/Root'
-
-import './Pages/sassStyles/form.scss'
 import ChatMessage, { loader as chatMessageLoader } from "./components/ChatMessage"
+
+import './sass/main.scss'
 
 const router = createBrowserRouter([
     {
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
                 children: [
                     { path: '/', element: <Login /> },
                     { path: '/signup', element: <Signup /> },
-                    { path: '/forgottenpassword', element: <ForgottenPassword /> },
+                    { path: '/forgotyourpassword', element: <ForgotYourPassword /> },
                     {
                         path: '/passwordreset/:passwordresettoken',
                         loader: passwordResetLoader,
