@@ -1,7 +1,6 @@
-@import '../../sassStyles/variables';
-@import '../../sassStyles/mixins';
+@use '../abstract/' as *;
 
-.page-loading-container {
+.page-loader {
     position: absolute;
     top: 0;
     left: 0;
@@ -9,13 +8,13 @@
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.6);
 
-    .loading-circle {
+    &__circle {
         border: 5px solid transparent;
-        border-top: 5px solid $violet-color;
-        border-right: 5px solid $violet-color;
+        border-top: 5px solid color(violet, dark);
+        border-right: 5px solid color(violet, dark);
         border-radius: 100%;
     }
-    .circle1 {
+    &--circle1 {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -24,7 +23,7 @@
         height:60px;
         animation: page-loader-spin-left 2s linear infinite;
     }
-    .circle2 {
+    &--circle2 {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -33,7 +32,7 @@
         height:40px;
         animation: page-loader-spin-right 2s linear infinite;
     }
-    .circle3 {
+    &--circle3 {
         position: absolute;
         top: 50%;
         left: 50%;

@@ -4,6 +4,8 @@
 *::before,
 *::after {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body,
@@ -32,6 +34,7 @@ body {
     min-height: 100vh;
     text-rendering: optimizeSpeed;
     line-height: 1.5;
+    letter-spacing: .5px;
     background-color: color(neutral, 1000);
 
     -webkit-font-smoothing: antialiased;
@@ -53,28 +56,29 @@ button,
 textarea,
 select {
     font: inherit;
+    letter-spacing: inherit;
 }
 
 ::-webkit-input-placeholder {
-    @include font($secondary-font, semibold, .8rem);
+    @include font($secondary-font, bold, .8rem);
     color: color(neutral, 400);
     letter-spacing: 1px;
 }
   
 :-ms-input-placeholder {
-    @include font($secondary-font, semibold, .8rem);
+    @include font($secondary-font, bold, .8rem);
     color: color(neutral, 400);
     letter-spacing: 1px;
 }
   
 ::-moz-placeholder {
-    @include font($secondary-font, semibold, .8rem);
+    @include font($secondary-font, bold, .8rem);
     color: color(neutral, 400);
     letter-spacing: 1px;
 }
   
 ::placeholder {
-    @include font($secondary-font, semibold, .8rem);
+    @include font($secondary-font, bold, .8rem);
     color: color(neutral, 400);
     letter-spacing: 1px;
 }

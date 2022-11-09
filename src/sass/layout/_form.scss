@@ -26,9 +26,8 @@
         height: 70px;
     }
     &__input {
-        @include font($secondary-font, bold, .8rem);
+        @include font($primary-font, bold, .8rem);
         color: color(neutral, 300);
-        letter-spacing: 0.0625em;
         width: 100%;
         padding: 1em 1.2em;
         background-color: color(neutral, 1000);
@@ -70,9 +69,9 @@
         width: 100%;
         text-align: center;
     }
-    .general-message {
+    &__message {
         @include font($primary-font, medium, .9rem);
-        color: color(neutral, 700);
+        color: color(neutral, 400);
         margin-top: .5em;
         text-align: center;
     }

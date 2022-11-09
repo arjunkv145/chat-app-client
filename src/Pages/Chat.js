@@ -17,8 +17,8 @@ function Chat() {
             <section
                 className={
                     location.pathname === '/chat' ?
-                        'chat__user-list-container' :
-                        'chat__user-list-container hide'
+                        'chat__user-list-section' :
+                        'chat__user-list-section hide'
                 }
             >
                 <h1 className="chat__title">Chat</h1>
@@ -27,8 +27,8 @@ function Chat() {
             <section
                 className={
                     location.pathname === '/chat' ?
-                        'chat__message-container hide' :
-                        'chat__message-container'
+                        'chat__message-section hide' :
+                        'chat__message-section'
                 }
             >
                 {

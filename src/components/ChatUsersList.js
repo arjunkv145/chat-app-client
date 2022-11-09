@@ -10,13 +10,17 @@ function ChatUsersList({ usersList }) {
                     <CustomNavLink
                         to={`/chat/` + user.id}
                         key={user.id}
-                        className={({ isActive }) => isActive ? 'chat-link active' : 'chat-link'}
+                        className={
+                            ({ isActive }) => isActive ?
+                                'chat-users-list__link active' :
+                                'chat-users-list__link'
+                        }
                     >
-                        <div className='chat-user'>
-                            <div className='user-image'>
+                        <div className='chat-users-list__user'>
+                            <div className='chat-users-list__user-image'>
                                 <AccountCircle />
                             </div>
-                            <div className='user-name'>
+                            <div className='chat-users-list__user-name'>
                                 {user.userName}
                             </div>
                         </div>

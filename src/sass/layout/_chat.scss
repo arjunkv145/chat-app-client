@@ -1,0 +1,71 @@
+@use '../abstract/' as *;
+
+.chat {
+    margin-left: 4em;
+    width: calc(100% - 4em);
+    height: 100vh;
+    display: flex;
+
+    &__user-list-section {
+        width: 200px;
+        height: 100%;
+        background-color: hsl(0, 0%, 20%);
+        transition: transform $transition-duration $transition-timing-function;
+    }
+    &__title {
+        @include font($primary-font, bold, 1.4rem);
+        color: color(neutral, 200);
+        height: 50px;
+        padding: .5em 0 0 .5em;
+        box-shadow: 0 6px 5px -5px color(neutral, 1000);
+    }
+    &__message-section {
+        height: 100%;
+        width: calc(100% - 200px);
+        background-color: hsl(0, 0%, 25%);
+        @include flex(row, center, center);
+        transition: transform $transition-duration $transition-timing-function;
+    }
+    &__start-message {
+        @include font($primary-font, semibold, 1.4rem);
+        color: color(neutral, 200);
+    }
+
+    @include mq(max-width, medium) {
+        margin-left: 0;
+        width: 100%;
+        height: calc(100vh - 4em);
+    }
+    @include mq(max-width, small) {
+        height: calc(100vh - 3.6em);
+
+        &__user-list-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 3.6em);
+        }
+        &__message-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 3.6em);
+        }
+        &__user-list-section.hide {
+            width: 0%;
+            transform: translateX(-100%);
+        }
+        &__message-section.hide {
+            width: 0%;
+            transform: translateX(100%);
+        }
+        &__title {
+            display: none;
+        }
+        &__start-message {
+            display: none;
+        }
+    }
+}

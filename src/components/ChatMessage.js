@@ -14,25 +14,22 @@ function ChatMessage() {
 
     return (
         <div className='chat-message'>
-            <div className='chat-header'>
-                <div className='chat-close-mobile'>
+            <div className='chat-message__header'>
+                <div className='chat-message__close-btn'>
                     <NavLink to='/chat'>
-                        <span className='left-arrow-icon'>
+                        <span className='chat-message__left-arrow-icon'>
                             <ArrowBackIos />
                         </span>
                     </NavLink>
                 </div>
-                <div className='user-image'>
+                <div className='chat-message__user-image'>
                     <AccountCircle />
                 </div>
-                <div className='user-name'>
+                <div className='chat-message__user-name'>
                     {user.userName}
                 </div>
-                <NavLink to='/chat' className='chat-close-desktop'>
-                    <Button>close</Button>
-                </NavLink>
             </div>
-            <div className='chat-messages'>
+            <div className='chat-message__message'>
                 <p>dfdfgdfg</p>
                 <p>dfdfgdfg</p>
                 <p>dfdfgdfg</p>
@@ -78,10 +75,10 @@ function ChatMessage() {
                 <p>dfdfgdfg</p>
                 <p>dfdfgdfg</p>
             </div>
-            <div className='chat-send-form'>
+            <div className='chat-message__send'>
                 <input
                     type='text'
-                    className='chat-input'
+                    className='chat-message__input'
                     placeholder="Type a message..."
                     autoComplete="off"
                 />

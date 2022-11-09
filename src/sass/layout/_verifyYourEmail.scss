@@ -1,7 +1,6 @@
-@import '../../sassStyles/variables';
-@import '../../sassStyles/mixins';
+@use '../abstract/' as *;
 
-.verify-your-email-container {
+.verify-your-email {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -9,26 +8,26 @@
     width: 100%;
     max-width: 500px;
     padding: 2em;
-    background-color: $dark-grey-color;
+    background-color: color(neutral, 900);
     border: none;
     border-radius: 3px;
     @include flex(column, center, center);
 
-    .title {
-        @include text($secondary-font, 700, 1.6rem, $half-white-color);
+    &__title {
+        @include font($primary-font, bold, 1.6rem);
+        color: color(neutral, 200);
         text-align: center;
     }
-    .body {
-        @include text($primary-font, 400, .9rem, $half-white-color);
-        letter-spacing: .5px;
+    &__content {
+        @include font($secondary-font, regular, .9rem);
+        color: color(neutral, 300);
         margin-top: 1.6em;
     }
     button {
         margin-top: .8em;
     }
-}
-@media screen and (max-width: 550px) {
-    .verify-your-email-container {
+
+    @include mq(max-width, medium) {
         top: 0;
         left: 0;
         transform: translate(0%, 0%);
@@ -36,10 +35,10 @@
         height: 100vh;
         justify-content: flex-start;
 
-        .title {
+        &__title {
             font-size: 1.4rem;
         }
-        .body {
+        &__content {
             font-size: 0.8rem;
         }
     }

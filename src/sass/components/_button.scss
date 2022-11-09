@@ -9,7 +9,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color $transition-speed $transition-timing-function;
+    transition: background-color $transition-duration $transition-timing-function;
 
     &:hover {
         background-color: color(violet, darker);
