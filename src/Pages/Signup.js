@@ -1,6 +1,6 @@
 import axiosInstance from "../api/axiosInstance"
 import { useState, useEffect, useRef } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 import Button from "../components/Button"
 import PopupAlert from "../components/PopupAlert"
@@ -10,7 +10,6 @@ const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
 function Signup() {
     const { setAuth } = useAuth()
-    const navigate = useNavigate()
 
     const [userName, setUserName] = useState('')
     const [email, setEmail] = useState('')
@@ -183,7 +182,6 @@ function Signup() {
                     accessToken: res.data.accessToken,
                     isLoggedIn: true
                 }))
-                navigate('/chat', { replace: true })
             } catch (err) {
                 setOpenPopupAlert(true)
             } finally {

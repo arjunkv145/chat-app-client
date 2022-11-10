@@ -60,7 +60,7 @@ function InternetConnection() {
         <>
             <div
                 className={
-                    `internet-connection ${internetConnection && 'online'} ${showICComponent && 'visible'}`
+                    `internet-connection ${internetConnection ? 'online' : ''} ${showICComponent ? 'visible' : ''}`
                 }
             >
                 {
@@ -69,7 +69,7 @@ function InternetConnection() {
             </div>
             <div
                 className={
-                    `backend-server-connection ${backendConnection && 'online'} ${showBCComponent && 'visible'}`
+                    `backend-server-connection ${backendConnection ? 'online' : ''} ${showBCComponent ? 'visible' : ''}`
                 }
             >
                 {

@@ -17,14 +17,14 @@
         transition: background-color $transition-duration $transition-timing-function;
 
         &:hover {
-            background-color: color(neutral, 900);
+            background-color: color(neutral, 800);
         }
         &:hover .chat-users-list__user-name {
             color: color(neutral, 200);
         }
     }
     &__link.active {
-        background-color: color(neutral, 900);
+        background-color: color(neutral, 800);
     }
     &__link.active &__user-name {
         color: color(neutral, 200);

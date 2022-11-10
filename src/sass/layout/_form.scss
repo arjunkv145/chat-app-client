@@ -23,7 +23,7 @@
         width: 100%;
     }
     &__input-wrapper {
-        height: 70px;
+        margin-bottom: .8em;
     }
     &__input {
         @include font($primary-font, bold, .8rem);
@@ -41,7 +41,6 @@
     &__error-message {
         @include font($secondary-font, medium, .8rem);
         color: color(red, light);
-        letter-spacing: .8px;
     }
     &__btn-wrapper {
         button {
@@ -97,6 +96,9 @@
 
         &__title {
             font-size: 1.4rem;
+        }
+        &__link-wrapper {
+            text-align: center;
         }
     }
 }

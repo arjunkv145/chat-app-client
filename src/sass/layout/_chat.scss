@@ -36,36 +36,26 @@
         width: 100%;
         height: calc(100vh - 4em);
     }
-    @include mq(max-width, small) {
-        height: calc(100vh - 3.6em);
-
+    @include mq(max-width, small-medium) {
         &__user-list-section {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: calc(100vh - 3.6em);
         }
         &__message-section {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: calc(100vh - 3.6em);
-        }
-        &__user-list-section.hide {
-            width: 0%;
-            transform: translateX(-100%);
+            height: 100vh;
+            z-index: 98;
         }
         &__message-section.hide {
-            width: 0%;
             transform: translateX(100%);
-        }
-        &__title {
-            display: none;
         }
         &__start-message {
             display: none;
         }
+    }
+    @include mq(max-width, small) {
+        height: calc(100vh - 3.6em);
     }
 }

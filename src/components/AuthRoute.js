@@ -20,13 +20,13 @@ function AuthRoute() {
     }, [currentPath, navigate, auth.isLoggedIn])
 
     return (
-        <div className='app-container'>
+        <div className='app'>
             {
                 (auth.isLoggedIn && !isLoading) && (
                     auth.user.emailVerified ?
                         <>
                             <InternetConnection />
-                            <div className='app'>
+                            <div className='app__main'>
                                 <Navbar />
                                 <Outlet />
                             </div>
@@ -34,9 +34,7 @@ function AuthRoute() {
                         :
                         <>
                             <InternetConnection />
-                            <div className='app'>
-                                <VerifyYourEmail />
-                            </div>
+                            <VerifyYourEmail />
                         </>
                 )
             }

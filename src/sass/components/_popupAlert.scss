@@ -13,6 +13,7 @@
     transition: opacity $transition-duration $transition-timing-function,
                 visibility $transition-duration $transition-timing-function;
     @include flex(row, center, center);
+    z-index: 101;
 
     .popup-alert {
         @include flex(column, center, center);
@@ -38,7 +39,6 @@
         &__body {
             @include font($secondary-font, medium, .9rem);
             color: color(neutral, 300);
-            letter-spacing: 0.5px;
             margin: .8em auto 0;
             text-align: center;
             width: 100%;

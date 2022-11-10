@@ -6,9 +6,10 @@
     @include flex(column, flex-start, flex-start);
 
     &__header {
-        height: 60px;
+        height: 50px;
         width: 100%;
         padding-left: .5em;
+        box-shadow: 0 6px 5px -5px color(neutral, 1000);
         @include flex(row, flex-start, center);
     }
     &__close-btn {
@@ -42,19 +43,12 @@
         color: color(neutral, 400);
         margin-left: .6em;
     }
-    &__message {
-        height: calc(100% - 120px);
-        width: 100%;
+    &__messages {
+        height: calc(100% - 100px);
+        width: 98%;
+        margin: 0 auto;
+        padding: 0 .4em;
         overflow: auto;
-        p {
-            @include font($primary-font, semibold, .8rem);
-            color: color(neutral, 200);
-            padding: .8em 1.2em;
-            margin: .4em 0 .4em 1em;
-            border: none;
-            border-radius: 5px;
-            max-width: 100px;
-        }
         &::-webkit-scrollbar {
             width: 0.3em;
         }
@@ -67,22 +61,51 @@
             background: rgba(102, 102, 255, .5);
         }
     }
-    .chat-send-form {
-        height: 60px;
-        width: 100%;
-        @include flex(row, space-evenly, center);
+    &__message-wrapper {
+        @include flex(column, flex-start, flex-start);
+        margin: .6em 0;
+
+        &.sent {
+            align-items: flex-end;
+        }
     }
-    .chat-input {
+    &__message {
         @include font($primary-font, semibold, .8rem);
+        background-color: color(violet, base);
         color: color(neutral, 200);
-        padding: 1em 1.2em;
-        width: calc(100% - 120px);
-        background-color: color(neutral, 300);
+        padding: .8em 1.2em;
+        border-radius: 5px;
+    }
+    &__send {
+        height: 50px;
+        width: 100%;
+        padding: 0 .6em;
+        @include flex(row, space-between, center);
+    }
+    &__input {
+        @include font($secondary-font, semibold, .8rem);
+        background-color: color(neutral, 1000);
+        color: color(neutral, 300);
+        padding: .8em 1.8em;
+        width: calc(100% - 55px);
         border: none;
-        border-radius: 3px;
+        border-radius: 50px;
 
         &:focus {
             outline: none;
+        }
+    }
+    &__btn-wrapper {
+        width: 45px;
+    }
+    .btn {
+        @include flex(row, center, center);
+        padding: .8em;
+        border-radius: 100%;
+
+        svg {
+            font-size: 1rem;
+            transform: translateX(1.5px);
         }
     }
     &::-webkit-scrollbar {

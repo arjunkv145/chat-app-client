@@ -3,7 +3,7 @@
 .nav {
     background-color: color(neutral, 1000);
     position: fixed;
-    z-index: 98;
+    z-index: 97;
 
     &__list {
         list-style: none;
@@ -71,6 +71,9 @@
             flex-direction: row;
             justify-content: center;
         }
+        &__list-item {
+            justify-content: center;
+        }
         &__link {
             &::before {
                 top: 53px;
@@ -119,10 +122,11 @@
             font-size: 1.3rem;
         }
         &__list-item {
-            width: 3.6em;
+            width: auto;
+            justify-content: center;
         }
         &__link {
-            margin: .4em;
+            margin: .4em  0;
         }
         &__icon {
             width: 2.8em;

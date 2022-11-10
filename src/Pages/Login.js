@@ -1,6 +1,6 @@
 import axiosInstance from "../api/axiosInstance"
 import useAuth from "../hooks/useAuth"
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useState, useEffect, useCallback, useRef } from "react"
 import Button from "../components/Button"
 import PopupAlert from "../components/PopupAlert"
@@ -8,9 +8,6 @@ import PageLoader from "../components/PageLoader"
 
 function Login() {
     const { setAuth } = useAuth()
-    const navigate = useNavigate()
-    const location = useLocation()
-    const prevPath = location?.state?.prevPath ? location.state.prevPath : '/chat'
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -56,7 +53,6 @@ function Login() {
                     accessToken: res.data.accessToken,
                     isLoggedIn: true
                 }))
-                navigate(prevPath, { replace: true })
             } catch (err) {
                 if (err?.response?.data?.message === "User doesn't exist") {
                     setErrors(prev => ({

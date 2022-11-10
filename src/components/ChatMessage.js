@@ -1,8 +1,9 @@
-import { AccountCircle, ArrowBackIos } from '@mui/icons-material'
-import React from 'react'
+import { AccountCircle, ArrowBackIos, Send } from '@mui/icons-material'
+import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, useLoaderData } from 'react-router-dom'
 import axiosInstance from '../api/axiosInstance'
 import Button from './Button'
+import useAuth from '../hooks/useAuth'
 
 export const loader = async ({ params, request }) => {
     const { data } = await axiosInstance.get('/user/' + params.userId, { signal: request.signal })
@@ -11,6 +12,55 @@ export const loader = async ({ params, request }) => {
 
 function ChatMessage() {
     const { user } = useLoaderData()
+    const { socket } = useAuth()
+    const [message, setMessage] = useState('')
+    const [messagesElement, setMessagesElement] = useState([])
+    const messageRef = useRef(null)
+    const messagesContainerRef = useRef(null)
+
+    const sendMessage = e => {
+        e.preventDefault()
+        if (message === '') {
+            return null
+        }
+        socket.emit('send_message', { message })
+        setMessagesElement(prev => [
+            ...prev,
+            <div className='chat-message__message-wrapper sent' key={prev.length + 1}>
+                <span className='chat-message__message'>
+                    {message}
+                </span>
+            </div>
+        ])
+        setMessage('')
+    }
+
+    useEffect(() => {
+        messageRef.current.focus()
+    }, [])
+
+    useEffect(() => {
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+    }, [messagesElement])
+
+    useEffect(() => {
+        const receiveMessage = data => {
+            console.log(data)
+            setMessagesElement(prev => [
+                ...prev,
+                <div className='chat-message__message-wrapper' key={prev.length + 1}>
+                    <span className='chat-message__message'>
+                        {data.message}
+                    </span>
+                </div>
+            ])
+        }
+        socket.on('receive_message', receiveMessage)
+
+        return () => {
+            socket.off('receive_message', receiveMessage)
+        }
+    }, [socket])
 
     return (
         <div className='chat-message'>
@@ -29,61 +79,23 @@ function ChatMessage() {
                     {user.userName}
                 </div>
             </div>
-            <div className='chat-message__message'>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
-                <p>dfdfgdfg</p>
+            <div className='chat-message__messages' ref={messagesContainerRef}>
+                {messagesElement}
             </div>
-            <div className='chat-message__send'>
+            <form className='chat-message__send' onSubmit={sendMessage}>
                 <input
                     type='text'
                     className='chat-message__input'
                     placeholder="Type a message..."
                     autoComplete="off"
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                    ref={messageRef}
                 />
-                <Button>send</Button>
-            </div>
+                <div className='chat-message__btn-wrapper'>
+                    <Button><Send /></Button>
+                </div>
+            </form>
         </div>
     )
 }

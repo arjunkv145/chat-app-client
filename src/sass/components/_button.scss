@@ -2,7 +2,6 @@
 
 .btn {
     @include font($primary-font, semibold, 1rem);
-    letter-spacing: .8px;
     background-color: color(violet, dark);
     color: color(neutral, 200);
     padding: .6em 1.6em;
