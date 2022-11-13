@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet, useLoaderData, useLocation } from 'react-router-dom'
 import axiosInstance from '../api/axiosInstance'
-import ChatUsersList from '../components/ChatUsersList'
+import ChatUsersList from '../components/chat/ChatUsersList'
 
 export const loader = async ({ request }) => {
     const { data } = await axiosInstance.get('/userslist', { signal: request.signal })
@@ -21,8 +21,10 @@ function Chat() {
                         'chat__user-list-section hide'
                 }
             >
-                <h1 className="chat__title">Chat</h1>
-                <ChatUsersList usersList={usersList} />
+                <h1 className='chat__title'>Chat</h1>
+                <div className='chat__users-list'>
+                    <ChatUsersList usersList={usersList} />
+                </div>
             </section>
             <section
                 className={

@@ -3,22 +3,13 @@ import useAuth from '../hooks/useAuth'
 
 function InternetConnection() {
     const [internetConnection, setInternetConnection] = useState(navigator.onLine)
-    const [showICComponent, setShowICComponent] = useState(false)
+    const [backendConnection, setBackendConnection] = useState(true)
 
     const { socket } = useAuth()
-    const [backendConnection, setBackendConnection] = useState(true)
-    const [showBCComponent, setShowBCComponent] = useState(false)
 
     useEffect(() => {
-        const setOnline = () => {
-            setInternetConnection(true)
-            setTimeout(() => setShowICComponent(false), 1000)
-        }
-
-        const setOffline = () => {
-            setInternetConnection(false)
-            setTimeout(() => setShowICComponent(true), 150)
-        }
+        const setOnline = () => setInternetConnection(true)
+        const setOffline = () => setInternetConnection(false)
 
         window.addEventListener('online', setOnline)
         window.addEventListener('offline', setOffline)
@@ -30,14 +21,8 @@ function InternetConnection() {
     }, [])
 
     useEffect(() => {
-        const setBackendUp = () => {
-            setBackendConnection(true)
-            setTimeout(() => setShowBCComponent(false), 1000)
-        }
-        const setBackendDown = () => {
-            setBackendConnection(false)
-            setTimeout(() => setShowBCComponent(true), 150)
-        }
+        const setBackendUp = () => setBackendConnection(true)
+        const setBackendDown = () => setBackendConnection(false)
 
         socket.on('reconnect', () => setBackendUp())
         socket.on('connect', () => setBackendUp())
@@ -58,23 +43,13 @@ function InternetConnection() {
 
     return (
         <>
-            <div
-                className={
-                    `internet-connection ${internetConnection ? 'online' : ''} ${showICComponent ? 'visible' : ''}`
-                }
-            >
-                {
-                    internetConnection ? 'Back online' : 'you are offline'
-                }
+            <div className={`connection connection--internet ${!internetConnection ? 'offline' : ''}`}>
+                    <h1 className='connection__title'>You are offline</h1>
+                    <p className='connection__content'>Check your internet connection and try again</p>
             </div>
-            <div
-                className={
-                    `backend-server-connection ${backendConnection ? 'online' : ''} ${showBCComponent ? 'visible' : ''}`
-                }
-            >
-                {
-                    backendConnection ? 'Server is up' : 'Server not responding'
-                }
+            <div className={`connection connection--backend ${!backendConnection ? 'backend-down' : ''}`}>
+                <h1 className='connection__title'>Server not responding</h1>
+                <p className='connection__content'>The server is not responding at the moment, please try again later</p>
             </div>
         </>
     )

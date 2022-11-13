@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
-import InternetConnection from './InternetConnection'
 
 function CheckIsNotLoggedIn() {
     const { auth } = useAuth()
@@ -20,12 +19,7 @@ function CheckIsNotLoggedIn() {
     return (
         <>
             {
-                (!auth.isLoggedIn && !isLoading)
-                &&
-                <>
-                    <InternetConnection />
-                    <Outlet />
-                </>
+                (!auth.isLoggedIn && !isLoading) && <Outlet />
             }
         </>
     )

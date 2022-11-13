@@ -12,7 +12,7 @@ import AddFriend from "./Pages/AddFriend"
 import Settings from "./Pages/Settings"
 import PublicGroup from "./Pages/PublicGroup"
 import Root, { loader as rootLoader } from './components/Root'
-import ChatMessage, { loader as chatMessageLoader } from "./components/ChatMessage"
+import ChatMessage, { loader as chatMessageLoader } from "./components/chat/ChatMessage"
 
 import './sass/main.scss'
 

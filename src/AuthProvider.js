@@ -1,7 +1,7 @@
 import { createContext, useState } from "react"
 import io from "socket.io-client"
 
-const socket = io.connect('http://localhost:3031/', {
+const socket = io.connect(process.env.REACT_APP_SOCKET_URL, {
     'reconnection': true,
     'reconnectionDelay': 500,
     'reconnectionAttempts': 10

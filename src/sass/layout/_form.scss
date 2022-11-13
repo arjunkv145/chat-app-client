@@ -14,8 +14,8 @@
     @include flex(column, center, center);
 
     &__title {
-        @include font($secondary-font, bold, 1.6rem);
-        color: color(neutral, 200);
+        @include font($primary-font, bold, 1.6rem);
+        color: color(neutral, 300);
         text-align: center;
     }
     form {
@@ -26,7 +26,7 @@
         margin-bottom: .8em;
     }
     &__input {
-        @include font($primary-font, bold, .8rem);
+        @include font($primary-font, medium, .8rem);
         color: color(neutral, 300);
         width: 100%;
         padding: 1em 1.2em;
@@ -40,7 +40,7 @@
     }
     &__error-message {
         @include font($secondary-font, medium, .8rem);
-        color: color(red, light);
+        color: color(red, lighter);
     }
     &__btn-wrapper {
         button {
@@ -54,14 +54,13 @@
 
         a {
             text-decoration: none;
-            color: color(blue, light);
+            color: color(blue, lighter);
         }
     }
-    &__link-forgot-your-password {
+    &__link-forgot-your-password, &__link-signup, &__link-login {
         @include font($primary-font, medium, .9rem);
     }
     &__link-signup, &__link-login {
-        @include font($primary-font, medium, .9rem);
         color: color(neutral, 400);
     }
     &__link-login {

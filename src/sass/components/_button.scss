@@ -2,7 +2,7 @@
 
 .btn {
     @include font($primary-font, semibold, 1rem);
-    background-color: color(violet, dark);
+    background-color: color(indigo, light);
     color: color(neutral, 200);
     padding: .6em 1.6em;
     border: none;
@@ -11,6 +11,6 @@
     transition: background-color $transition-duration $transition-timing-function;
 
     &:hover {
-        background-color: color(violet, darker);
+        background-color: color(indigo, base);
     }
 }

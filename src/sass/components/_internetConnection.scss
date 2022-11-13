@@ -1,28 +1,41 @@
 @use '../abstract/' as *;
 
-.internet-connection, .backend-server-connection {
-    @include font($secondary-font, semibold, .6rem);
-    background-color: color(red, base);
-    color: color(neutral, 200);
-    @include flex(row, center, center);
-    width: 100%;
-    height: 20px;
+.connection {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 200;
-    transform: translateY(-20px);
-    transition: transform $transition-duration $transition-timing-function,
-                background-color $transition-duration $transition-timing-function;
+    width: 100%;
+    height: 100vh;
+    background-color: color(neutral, 800);
+    @include flex(column, center, center);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.4);
+    transition-property: opacity, visibility, transform;
+    transition-duration: $transition-duration;
+    transition-timing-function: $transition-timing-function;
+    text-align: center;
 
-    &.online {
-        background-color: color(green, darker);
+    &__title {
+        @include font($primary-font, semibold, 1.2rem);
+        color: color(neutral, 300);
     }
-    &.visible {
-        transform: translateY(0px);
-    }
-}
 
-.backend-server-connection {
-    z-index: 199;
+    &__content {
+        @include font($secondary-font, medium, .8rem);
+        color: color(neutral, 400);
+    }
+    
+    &.offline, &.backend-down {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1);
+    }
+
+    &--internet {
+        z-index: 200;
+    }
+    &--backend {
+        z-index: 199;
+    }
 }

@@ -7,34 +7,45 @@
     display: flex;
 
     &__user-list-section {
-        width: 200px;
+        width: 250px;
         height: 100%;
-        background-color: hsl(0, 0%, 20%);
-        transition: transform $transition-duration $transition-timing-function;
+        background-color: color(neutral, 900);
     }
     &__title {
-        @include font($primary-font, bold, 1.4rem);
-        color: color(neutral, 200);
-        height: 50px;
+        @include font($primary-font, bold, 1.6rem);
+        color: color(neutral, 300);
+        width: 100%;
+        height: 60px;
         padding: .5em 0 0 .5em;
-        box-shadow: 0 6px 5px -5px color(neutral, 1000);
+        border-bottom: 1px solid color(neutral, 1000);
+        box-shadow: 0 5px 2px -5px color(neutral, 1000);
+    }
+    &__users-list {
+        width: 100%;
+        height: calc(100% - 50px);
     }
     &__message-section {
+        width: calc(100% - 250px);
         height: 100%;
-        width: calc(100% - 200px);
-        background-color: hsl(0, 0%, 25%);
+        background-color: color(neutral, 800);
         @include flex(row, center, center);
-        transition: transform $transition-duration $transition-timing-function;
     }
     &__start-message {
         @include font($primary-font, semibold, 1.4rem);
-        color: color(neutral, 200);
+        color: color(neutral, 400);
     }
 
     @include mq(max-width, medium) {
         margin-left: 0;
         width: 100%;
         height: calc(100vh - 4em);
+
+        &__user-list-section {
+            width: 200px;
+        }
+        &__message-section {
+            width: calc(100% - 200px);
+        }
     }
     @include mq(max-width, small-medium) {
         &__user-list-section {
@@ -47,9 +58,17 @@
             width: 100%;
             height: 100vh;
             z-index: 98;
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0px);
+            transition-property: opacity, visibility, transform;
+            transition-duration: $transition-duration;
+            transition-timing-function: $transition-timing-function;
         }
         &__message-section.hide {
-            transform: translateX(100%);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(40px);
         }
         &__start-message {
             display: none;

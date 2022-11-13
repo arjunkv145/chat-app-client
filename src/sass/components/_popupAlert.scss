@@ -32,13 +32,13 @@
         transition: transform $transition-duration cubic-bezier(0.52, 0.02, 0.33, 1.69);
 
         &__title {
-            @include font($primary-font, semibold, 1.4rem);
-            color: color(neutral, 200);
+            @include font($primary-font, bold, 1.4rem);
+            color: color(neutral, 300);
             text-align: center;
         }
         &__body {
             @include font($secondary-font, medium, .9rem);
-            color: color(neutral, 300);
+            color: color(neutral, 400);
             margin: .8em auto 0;
             text-align: center;
             width: 100%;

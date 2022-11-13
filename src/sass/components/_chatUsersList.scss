@@ -2,7 +2,7 @@
 
 .chat-users-list {
     width: 100%;
-    height: calc(100% - 50px);
+    height: 100%;
     overflow: auto;
 
     &::-webkit-scrollbar {
@@ -22,12 +22,22 @@
         &:hover .chat-users-list__user-name {
             color: color(neutral, 200);
         }
+        &:hover .chat-users-list__user-image {
+            svg {
+                color: color(indigo, lighter);
+            }
+        }
     }
     &__link.active {
         background-color: color(neutral, 800);
     }
     &__link.active &__user-name {
         color: color(neutral, 200);
+    }
+    &__link.active &__user-image {
+        svg {
+            color: color(indigo, lighter);
+        }
     }
     &__user {
         @include flex(row, flex-start, center);
@@ -37,14 +47,15 @@
 
         svg {
             font-size: 2rem;
-            color: color(violet, base);
+            color: color(indigo, base);
             filter: grayscale(60%);
+            transition: color $transition-duration $transition-timing-function;
         }
     }
     &__user-name {
         @include font($primary-font, semibold, .8rem);
         color: color(neutral, 400);
-        margin-left: .4em;
+        margin-left: .6em;
         transition: color $transition-duration $transition-timing-function;
     }
 }

@@ -1,6 +1,6 @@
 import { AccountCircle } from '@mui/icons-material'
 import React from 'react'
-import CustomNavLink from './CustomNavLink'
+import CustomNavLink from '../CustomNavLink'
 
 function ChatUsersList({ usersList }) {
     return (

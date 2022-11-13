@@ -13,8 +13,8 @@
         @include flex(row, flex-start, center);
     }
     &__close-btn {
-        width: 40px;
-        height: 40px;
+        width: 30px;
+        height: 30px;
         @include flex(row, center, center);
     }
     &__left-arrow-icon {
@@ -24,9 +24,8 @@
         @include flex(row, flex-start, center);
 
         svg {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             color: color(neutral, 400);
-            filter: grayscale(60%);
         }
     }
     &__user-image {
@@ -34,8 +33,7 @@
 
         svg {
             font-size: 2rem;
-            color: color(violet, base);
-            filter: grayscale(60%);
+            color: color(indigo, lighter);
         }
     }
     &__user-name {
@@ -54,11 +52,11 @@
         }
           
         &::-webkit-scrollbar-track {
-            background: color(neutral, 800);
+            background: color(neutral, 700);
         }
           
         &::-webkit-scrollbar-thumb {
-            background: rgba(102, 102, 255, .5);
+            background: color(neutral, 900);
         }
     }
     &__message-wrapper {
@@ -71,8 +69,8 @@
     }
     &__message {
         @include font($primary-font, semibold, .8rem);
-        background-color: color(violet, base);
-        color: color(neutral, 200);
+        background-color: color(indigo, lighter);
+        color: color(neutral, 300);
         padding: .8em 1.2em;
         border-radius: 5px;
     }
@@ -107,16 +105,5 @@
             font-size: 1rem;
             transform: translateX(1.5px);
         }
-    }
-    &::-webkit-scrollbar {
-        width: 0.3em;
-    }
-      
-    &::-webkit-scrollbar-track {
-        background: color(neutral, 800);
-    }
-      
-    &::-webkit-scrollbar-thumb {
-        background: color(violet, base);
     }
 }

@@ -1,9 +1,9 @@
 import { AccountCircle, ArrowBackIos, Send } from '@mui/icons-material'
 import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, useLoaderData } from 'react-router-dom'
-import axiosInstance from '../api/axiosInstance'
-import Button from './Button'
-import useAuth from '../hooks/useAuth'
+import axiosInstance from '../../api/axiosInstance'
+import Button from '../Button'
+import useAuth from '../../hooks/useAuth'
 
 export const loader = async ({ params, request }) => {
     const { data } = await axiosInstance.get('/user/' + params.userId, { signal: request.signal })
