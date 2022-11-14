@@ -9,6 +9,7 @@ import Signup from "./Pages/Signup"
 import ForgotYourPassword from "./Pages/ForgotYourPassword"
 import PasswordReset, { loader as passwordResetLoader } from "./Pages/PasswordReset"
 import AddFriend from "./Pages/AddFriend"
+import AddFriendMain from "./components/addFriend/AddFriendMain"
 import Settings from "./Pages/Settings"
 import PublicGroup from "./Pages/PublicGroup"
 import Root, { loader as rootLoader } from './components/Root'
@@ -53,7 +54,16 @@ const router = createBrowserRouter([
                     },
                     { path: '/group', element: <Group /> },
                     { path: '/publicgroup', element: <PublicGroup /> },
-                    { path: '/addfriend', element: <AddFriend /> },
+                    {
+                        path: '/addfriend/',
+                        element: <AddFriend />,
+                        children: [
+                            {
+                                path: ':option',
+                                element: <AddFriendMain />
+                            }
+                        ]
+                    },
                     { path: '/settings', element: <Settings /> },
                 ]
             }

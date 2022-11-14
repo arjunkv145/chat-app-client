@@ -6,32 +6,41 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
-    max-width: 500px;
     padding: 2em;
-    background-color: color(neutral, 900);
+    background-color: color(neutral, 800);
     border: none;
     border-radius: 3px;
     @include flex(column, center, center);
 
     &__title {
-        @include font($primary-font, bold, 1.6rem);
-        color: color(neutral, 200);
+        @include font($primary-font, semibold, 1.6rem);
+        color: color(neutral, 300);
         text-align: center;
     }
     &__content {
-        @include font($secondary-font, regular, .9rem);
-        color: color(neutral, 300);
+        @include font($secondary-font, medium, .9rem);
+        color: color(neutral, 400);
+        text-align: center;
         margin-top: 1.6em;
     }
     button {
         margin-top: .8em;
     }
+    &__logout {
+        @include font($secondary-font, semibold, .8rem);
+        color: color(neutral, 400);
+        text-align: center;
+        margin-top: 1.8em;
+        
+        a {
+            color: color(blue, light);
+        }
+    }
 
-    @include mq(max-width, medium) {
+    @include mq(max-width, small) {
         top: 0;
         left: 0;
         transform: translate(0%, 0%);
-        max-width: 550px;
         height: 100vh;
         justify-content: flex-start;
 
@@ -41,5 +50,11 @@
         &__content {
             font-size: 0.8rem;
         }
+    }
+    @include mq(min-width, small) {
+        max-width: map-get($breakpoints, small);
+    }
+    @include mq(min-width, small-medium) {
+        max-width: map-get($breakpoints, small-medium);
     }
 }

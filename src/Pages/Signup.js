@@ -5,6 +5,7 @@ import useAuth from "../hooks/useAuth"
 import Button from "../components/Button"
 import PopupAlert from "../components/PopupAlert"
 import PageLoader from "../components/PageLoader"
+import { v4 as uuidv4 } from 'uuid'
 
 const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
@@ -180,7 +181,8 @@ function Signup() {
                     ...prev,
                     user: res.data.user,
                     accessToken: res.data.accessToken,
-                    isLoggedIn: true
+                    isLoggedIn: true,
+                    sessionId: uuidv4()
                 }))
             } catch (err) {
                 setOpenPopupAlert(true)

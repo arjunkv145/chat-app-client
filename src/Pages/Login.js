@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import Button from "../components/Button"
 import PopupAlert from "../components/PopupAlert"
 import PageLoader from "../components/PageLoader"
+import { v4 as uuidv4 } from 'uuid'
 
 function Login() {
     const { setAuth } = useAuth()
@@ -51,7 +52,8 @@ function Login() {
                     ...prev,
                     user: res.data.user,
                     accessToken: res.data.accessToken,
-                    isLoggedIn: true
+                    isLoggedIn: true,
+                    sessionId: uuidv4()
                 }))
             } catch (err) {
                 if (err?.response?.data?.message === "User doesn't exist") {

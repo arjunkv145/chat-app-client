@@ -4,9 +4,12 @@ import axiosInstance from '../api/axiosInstance'
 import useAuth from '../hooks/useAuth'
 import PopupAlert from '../components/PopupAlert'
 import PageLoader from '../components/PageLoader'
+import { Link } from 'react-router-dom'
+import useSocket from '../hooks/useSocket'
 
 function VerifyYourEmail() {
-    const { auth } = useAuth()
+    const { auth, setAuth } = useAuth()
+    const socket = useSocket()
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [serverResponse, setServerResponse] = useState({
@@ -39,6 +42,29 @@ function VerifyYourEmail() {
             setOpenPopupAlert(true)
         }
     }
+    const logout = async e => {
+        e.preventDefault()
+        try {
+            setIsLoading(true)
+            await axiosInstance.get('logout')
+            socket.disconnect()
+            setIsLoading(false)
+            setAuth(prev => ({
+                ...prev,
+                user: null,
+                accessToken: null,
+                isLoggedIn: false,
+                sessionId: null
+            }))
+        } catch (err) {
+            setIsLoading(false)
+            setServerResponse({
+                title: "Can't log out",
+                body: "The server is not responding at the moment, please try again later."
+            })
+            setOpenPopupAlert(true)
+        }
+    }
 
     return (
         <>
@@ -49,6 +75,10 @@ function VerifyYourEmail() {
                     Click resend if you haven't received the link.
                 </p>
                 <Button onClick={resend}>resend</Button>
+                <p className='verify-your-email__logout'>
+                    Used a wrong email to signup? logout and signup with a new email.&nbsp;
+                    <Link to='#' onClick={logout}>logout</Link>
+                </p>
             </main>
             <PopupAlert
                 title={serverResponse.title}

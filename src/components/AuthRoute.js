@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import VerifyYourEmail from '../Pages/VerifyYourEmail'
+import SocketProvider from '../SocketProvider'
 import InternetConnection from './InternetConnection'
 import Navbar from './Navbar'
 
@@ -14,31 +15,35 @@ function AuthRoute() {
 
     useEffect(() => {
         if (auth.isLoggedIn === false) {
-            navigate('/', { state: { prevPath: currentPath }, replace: true })
+            if (currentPath.split('/')[1] === 'settings') {
+                navigate('/')
+            } else {
+                navigate('/', { state: { prevPath: currentPath }, replace: true })
+            }
         }
         setIsLoading(false)
     }, [currentPath, navigate, auth.isLoggedIn])
 
     return (
-        <div className='app'>
-            {
-                (auth.isLoggedIn && !isLoading) && (
-                    auth.user.emailVerified ?
-                        <>
-                            <InternetConnection />
-                            <div className='app__main'>
+        <SocketProvider>
+            <div className='app'>
+                {
+                    (auth.isLoggedIn && !isLoading) && (
+                        auth.user.emailVerified ?
+                            <>
+                                <InternetConnection />
                                 <Navbar />
                                 <Outlet />
-                            </div>
-                        </>
-                        :
-                        <>
-                            <InternetConnection />
-                            <VerifyYourEmail />
-                        </>
-                )
-            }
-        </div>
+                            </>
+                            :
+                            <>
+                                <InternetConnection />
+                                <VerifyYourEmail />
+                            </>
+                    )
+                }
+            </div>
+        </SocketProvider>
     )
 }
 

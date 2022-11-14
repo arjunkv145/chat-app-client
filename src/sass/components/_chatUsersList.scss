@@ -1,6 +1,6 @@
 @use '../abstract/' as *;
 
-.chat-users-list {
+.chat-users {
     width: 100%;
     height: 100%;
     overflow: auto;
@@ -17,19 +17,19 @@
         transition: background-color $transition-duration $transition-timing-function;
 
         &:hover {
-            background-color: color(neutral, 800);
+            background-color: color(neutral, 700);
         }
-        &:hover .chat-users-list__user-name {
+        &:hover .chat-users__user-name {
             color: color(neutral, 200);
         }
-        &:hover .chat-users-list__user-image {
+        &:hover .chat-users__user-image {
             svg {
                 color: color(indigo, lighter);
             }
         }
     }
     &__link.active {
-        background-color: color(neutral, 800);
+        background-color: color(neutral, 700);
     }
     &__link.active &__user-name {
         color: color(neutral, 200);

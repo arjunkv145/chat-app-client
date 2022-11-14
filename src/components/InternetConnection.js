@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import useAuth from '../hooks/useAuth'
+import useSocket from '../hooks/useSocket'
 
 function InternetConnection() {
     const [internetConnection, setInternetConnection] = useState(navigator.onLine)
     const [backendConnection, setBackendConnection] = useState(true)
 
-    const { socket } = useAuth()
+    const socket = useSocket()
 
     useEffect(() => {
         const setOnline = () => setInternetConnection(true)
@@ -41,11 +41,23 @@ function InternetConnection() {
         }
     }, [socket])
 
+    useEffect(() => {
+        const reloadPage = () => window.location.reload()
+
+        socket.on('logout', () => reloadPage())
+        socket.on('logoutAll', () => reloadPage())
+
+        return () => {
+            socket.off('logout', () => reloadPage())
+            socket.off('logoutAll', () => reloadPage())
+        }
+    }, [socket])
+
     return (
         <>
             <div className={`connection connection--internet ${!internetConnection ? 'offline' : ''}`}>
-                    <h1 className='connection__title'>You are offline</h1>
-                    <p className='connection__content'>Check your internet connection and try again</p>
+                <h1 className='connection__title'>You are offline</h1>
+                <p className='connection__content'>Check your internet connection and try again</p>
             </div>
             <div className={`connection connection--backend ${!backendConnection ? 'backend-down' : ''}`}>
                 <h1 className='connection__title'>Server not responding</h1>

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Outlet, useLoaderData } from 'react-router-dom'
 import axiosInstance from '../api/axiosInstance'
 import useAuth from '../hooks/useAuth'
+import { v4 as uuidv4 } from 'uuid'
 
 export const loader = async ({ request }) => {
     try {
@@ -24,7 +25,8 @@ function Root() {
                 ...prev,
                 user: data.user,
                 accessToken: data.accessToken,
-                isLoggedIn: true
+                isLoggedIn: true,
+                sessionId: uuidv4()
             }))
         }
     }, [data.accessToken, data.success, data.user, setAuth])

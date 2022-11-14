@@ -1,25 +1,47 @@
 import React, { useState } from 'react'
 import useAuth from "../hooks/useAuth"
 import axiosInstance from "../api/axiosInstance"
-import { useNavigate } from "react-router-dom"
 import PopupAlert from '../components/PopupAlert'
 import Button from '../components/Button'
+import useSocket from '../hooks/useSocket'
 
 function Settings() {
-    const { setAuth } = useAuth()
-    const navigate = useNavigate()
+    const { auth, setAuth } = useAuth()
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
+    const socket = useSocket()
 
     const logout = async () => {
         try {
             await axiosInstance.get('logout')
+            socket.emit('logout', {
+                room: `${auth.user.userName} ${auth.sessionId}`
+            })
+            socket.disconnect()
             setAuth(prev => ({
                 ...prev,
                 user: null,
                 accessToken: null,
-                isLoggedIn: false
+                isLoggedIn: false,
+                sessionId: null
             }))
-            navigate('/')
+        } catch (err) {
+            setOpenPopupAlert(true)
+        }
+    }
+    const logoutAll = async () => {
+        try {
+            await axiosInstance.get('logout/all')
+            socket.emit('logoutAll', {
+                room: `${auth.user.userName} ${auth.sessionId}`
+            })
+            socket.disconnect()
+            setAuth(prev => ({
+                ...prev,
+                user: null,
+                accessToken: null,
+                isLoggedIn: false,
+                sessionId: null
+            }))
         } catch (err) {
             setOpenPopupAlert(true)
         }
@@ -28,7 +50,8 @@ function Settings() {
     return (
         <>
             <main className='settings'>
-                <Button onClick={logout}>Logout</Button>
+                <Button onClick={logout}>logout</Button>
+                <Button onClick={logoutAll}>logout of all devices</Button>
             </main>
             <PopupAlert
                 title="Can't log out"

@@ -2,25 +2,25 @@ import { AccountCircle } from '@mui/icons-material'
 import React from 'react'
 import CustomNavLink from '../CustomNavLink'
 
-function ChatUsersList({ usersList }) {
+function ChatUsers({ users }) {
     return (
-        <div className='chat-users-list'>
+        <div className='chat-users'>
             {
-                usersList.map(user => (
+                users.map(user => (
                     <CustomNavLink
                         to={`/chat/` + user.id}
                         key={user.id}
                         className={
                             ({ isActive }) => isActive ?
-                                'chat-users-list__link active' :
-                                'chat-users-list__link'
+                                'chat-users__link active' :
+                                'chat-users__link'
                         }
                     >
-                        <div className='chat-users-list__user'>
-                            <div className='chat-users-list__user-image'>
+                        <div className='chat-users__user'>
+                            <div className='chat-users__user-image'>
                                 <AccountCircle />
                             </div>
-                            <div className='chat-users-list__user-name'>
+                            <div className='chat-users__user-name'>
                                 {user.userName}
                             </div>
                         </div>
@@ -31,4 +31,4 @@ function ChatUsersList({ usersList }) {
     )
 }
 
-export default ChatUsersList
+export default ChatUsers
