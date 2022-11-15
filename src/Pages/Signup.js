@@ -5,7 +5,6 @@ import useAuth from "../hooks/useAuth"
 import Button from "../components/Button"
 import PopupAlert from "../components/PopupAlert"
 import PageLoader from "../components/PageLoader"
-import { v4 as uuidv4 } from 'uuid'
 
 const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
@@ -104,7 +103,7 @@ function Signup() {
             let userNameErrorMessage = null
             isMounted && setErrors(prev => ({ ...prev, userName: null }))
             try {
-                const res = await axiosInstance.get(`signup/isusernameavailable/${userName.trim()}`, { signal: controller.signal })
+                const res = await axiosInstance.get(`signup/is-username-available/${userName.trim()}`, { signal: controller.signal })
                 if (res.data.message === "Username is available") {
                     setCredentialsAvailable(prev => ({
                         ...prev,
@@ -138,7 +137,7 @@ function Signup() {
             let emailErrorMessage = null
             isMounted && setErrors(prev => ({ ...prev, email: null }))
             try {
-                const res = await axiosInstance.get(`signup/isemailavailable/${email.trim()}`)
+                const res = await axiosInstance.get(`signup/is-email-available/${email.trim()}`)
                 if (res.data.message === "Email is available") {
                     setCredentialsAvailable(prev => ({
                         ...prev,
@@ -163,6 +162,10 @@ function Signup() {
         }
     }, [email])
 
+    useEffect(() => {
+        userNameRef.current.focus()
+    }, [])
+
     const handleSubmit = async e => {
         e.preventDefault()
         const submitStatus = (
@@ -176,14 +179,13 @@ function Signup() {
         if (submitStatus === true) {
             try {
                 setIsLoading(true)
-                const res = await axiosInstance.post('signup/newuser', { userName, email, password })
-                setAuth(prev => ({
-                    ...prev,
+                const res = await axiosInstance.post('signup/new-user', { userName, email, password })
+                setAuth({
                     user: res.data.user,
                     accessToken: res.data.accessToken,
                     isLoggedIn: true,
-                    sessionId: uuidv4()
-                }))
+                    sessionId: res.data.sessionId
+                })
             } catch (err) {
                 setOpenPopupAlert(true)
             } finally {

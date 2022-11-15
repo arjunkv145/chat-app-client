@@ -15,11 +15,7 @@ function AuthRoute() {
 
     useEffect(() => {
         if (auth.isLoggedIn === false) {
-            if (currentPath.split('/')[1] === 'settings') {
-                navigate('/')
-            } else {
-                navigate('/', { state: { prevPath: currentPath }, replace: true })
-            }
+            navigate('/', { state: { prevPath: currentPath }, replace: true })
         }
         setIsLoading(false)
     }, [currentPath, navigate, auth.isLoggedIn])

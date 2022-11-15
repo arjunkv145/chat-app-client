@@ -2,8 +2,8 @@ import { AccountCircle, ArrowBackIos, Send } from '@mui/icons-material'
 import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, redirect, useLoaderData } from 'react-router-dom'
 import axiosInstance from '../../api/axiosInstance'
+import useSocket from '../../hooks/useSocket'
 import Button from '../Button'
-import useAuth from '../../hooks/useAuth'
 
 export const loader = async ({ params, request }) => {
     try {
@@ -16,7 +16,7 @@ export const loader = async ({ params, request }) => {
 
 function ChatMessage() {
     const { user } = useLoaderData()
-    const { socket } = useAuth()
+    const socket = useSocket()
     const [message, setMessage] = useState('')
     const [messagesElement, setMessagesElement] = useState([])
     const messageRef = useRef(null)

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axiosInstance from '../api/axiosInstance'
 import Button from '../components/Button'
@@ -7,7 +7,7 @@ import PopupAlert from '../components/PopupAlert'
 
 export const loader = async ({ request, params }) => {
     try {
-        const { data } = await axiosInstance.get(`passwordreset/isexpired/${params.passwordresettoken}`, { signal: request.signal })
+        const { data } = await axiosInstance.get(`password-reset/is-expired/${params.passwordresettoken}`, { signal: request.signal })
         return { data }
     } catch (err) {
         throw new Response("Page Not Found", { status: 404 })
@@ -68,7 +68,7 @@ function PasswordReset() {
         if (submitStatus === true) {
             try {
                 setIsLoading(true)
-                const res = await axiosInstance.post('passwordreset', { passwordResetToken: passwordresettoken, password: password })
+                const res = await axiosInstance.post('password-reset', { passwordResetToken: passwordresettoken, password: password })
                 setServerResponse({
                     title: "Success!",
                     body: res.data.message
@@ -76,12 +76,12 @@ function PasswordReset() {
             } catch (err) {
                 if (err?.response?.data?.message === "You can't use the old password") {
                     setServerResponse({
-                        title: "Passwrod reset failed",
+                        title: "Password reset failed",
                         body: err.response.data.message
                     })
                 } else if (err?.response?.data?.message === "This link is expired") {
                     setServerResponse({
-                        title: "Passwrod reset failed",
+                        title: "Password reset failed",
                         body: err.response.data.message
                     })
                 } else {
@@ -97,6 +97,10 @@ function PasswordReset() {
         }
     }
 
+    useEffect(() => {
+        passwordRef.current.focus()
+    }, [])
+
     return (
         <>
             <main className="form">
@@ -109,7 +113,7 @@ function PasswordReset() {
                             value={password}
                             ref={passwordRef}
                             onChange={handlePassword}
-                            className="form_input"
+                            className="form__input"
                         />
                         {
                             errors.password &&

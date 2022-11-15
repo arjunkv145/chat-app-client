@@ -4,7 +4,7 @@ const AuthContext = createContext()
 
 function AuthProvider(props) {
     const [auth, setAuth] = useState({
-        user: null,
+        user: {},
         accessToken: null,
         isLoggedIn: false,
         sessionId: null

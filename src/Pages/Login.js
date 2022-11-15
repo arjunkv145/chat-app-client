@@ -5,7 +5,6 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import Button from "../components/Button"
 import PopupAlert from "../components/PopupAlert"
 import PageLoader from "../components/PageLoader"
-import { v4 as uuidv4 } from 'uuid'
 
 function Login() {
     const { setAuth } = useAuth()
@@ -15,6 +14,7 @@ function Login() {
 
     const [errors, setErrors] = useState({ email: null, password: null })
     const isSubmittedOnce = useRef(false)
+    const inputRef = useRef(null)
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
@@ -48,13 +48,12 @@ function Login() {
             try {
                 setIsLoading(true)
                 const res = await axiosInstance.post('login', { email, password })
-                setAuth(prev => ({
-                    ...prev,
+                setAuth({
                     user: res.data.user,
                     accessToken: res.data.accessToken,
                     isLoggedIn: true,
-                    sessionId: uuidv4()
-                }))
+                    sessionId: res.data.sessionId
+                })
             } catch (err) {
                 if (err?.response?.data?.message === "User doesn't exist") {
                     setErrors(prev => ({
@@ -76,6 +75,10 @@ function Login() {
     }
 
     useEffect(() => {
+        inputRef.current.focus()
+    }, [])
+
+    useEffect(() => {
         if (isSubmittedOnce.current === true) {
             handleErrors()
         }
@@ -94,6 +97,7 @@ function Login() {
                             value={email}
                             onChange={e => setEmail(e.target.value)}
                             className="form__input"
+                            ref={inputRef}
                         />
                         {
                             errors.email &&
@@ -127,7 +131,7 @@ function Login() {
                 </form>
                 <div className="form__link-wrapper">
                     <span className="form__link-forgot-your-password">
-                        <Link to='/forgotyourpassword'>forgot your password?</Link>
+                        <Link to='/forgot-your-password'>forgot your password?</Link>
                     </span>
                     <span className="form__link-signup">
                         Don't have an account?&nbsp;

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import axiosInstance from '../api/axiosInstance'
 import Button from '../components/Button'
 import PageLoader from '../components/PageLoader'
@@ -36,7 +36,7 @@ function ForgotYourPassword() {
         if (submitStatus === null) {
             try {
                 setIsLoading(true)
-                await axiosInstance.get(`/passwordreset/sendmail/${email}`)
+                await axiosInstance.get(`/password-reset/send-mail/${email}`)
                 setServerResponse({
                     title: 'Password reset link sent!',
                     body: 'A link has been sent to your mail to reset your password'
@@ -59,6 +59,10 @@ function ForgotYourPassword() {
             }
         }
     }
+
+    useEffect(() => {
+        emailRef.current.focus()
+    }, [])
 
     return (
         <>

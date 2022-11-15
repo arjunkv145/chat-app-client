@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import useAuth from '../hooks/useAuth'
 import useSocket from '../hooks/useSocket'
 
 function InternetConnection() {
@@ -6,6 +7,7 @@ function InternetConnection() {
     const [backendConnection, setBackendConnection] = useState(true)
 
     const socket = useSocket()
+    const { auth } = useAuth()
 
     useEffect(() => {
         const setOnline = () => setInternetConnection(true)
@@ -24,34 +26,47 @@ function InternetConnection() {
         const setBackendUp = () => setBackendConnection(true)
         const setBackendDown = () => setBackendConnection(false)
 
-        socket.on('reconnect', () => setBackendUp())
-        socket.on('connect', () => setBackendUp())
+        socket.on('reconnect', setBackendUp)
+        socket.on('connect', setBackendUp)
 
-        socket.on('connect_error', () => setBackendDown())
-        socket.on('connect_failed', () => setBackendDown())
-        socket.on('disconnect', () => setBackendDown())
+        socket.on('connect_error', setBackendDown)
+        socket.on('connect_failed', setBackendDown)
+        socket.on('disconnect', setBackendDown)
 
         return () => {
-            socket.off('reconnect', () => setBackendUp())
-            socket.off('connect', () => setBackendUp())
+            socket.off('reconnect', setBackendUp)
+            socket.off('connect', setBackendUp)
 
-            socket.off('connect_error', () => setBackendDown())
-            socket.off('connect_failed', () => setBackendDown())
-            socket.off('disconnect', () => setBackendDown())
+            socket.off('connect_error', setBackendDown)
+            socket.off('connect_failed', setBackendDown)
+            socket.off('disconnect', setBackendDown)
         }
     }, [socket])
 
     useEffect(() => {
-        const reloadPage = () => window.location.reload()
-
-        socket.on('logout', () => reloadPage())
-        socket.on('logoutAll', () => reloadPage())
+        const logoutAll = () => window.location.reload()
+        const logout = sessionId => {
+            if (sessionId === auth.sessionId) {
+                window.location.reload()
+            }
+        }
+        socket.on('logout', logout)
+        socket.on('logoutAll', logoutAll)
 
         return () => {
-            socket.off('logout', () => reloadPage())
-            socket.off('logoutAll', () => reloadPage())
+            socket.off('logout', logout)
+            socket.off('logoutAll', logoutAll)
         }
-    }, [socket])
+    }, [socket, auth.sessionId])
+
+    useEffect(() => {
+        const reloadPage = () => window.location.reload()
+        socket.on('email is verified', reloadPage)
+
+        return () => {
+            socket.off('email is verified', reloadPage)
+        }
+    }, [socket, auth.sessionId])
 
     return (
         <>

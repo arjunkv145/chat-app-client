@@ -9,15 +9,24 @@ import Signup from "./Pages/Signup"
 import ForgotYourPassword from "./Pages/ForgotYourPassword"
 import PasswordReset, { loader as passwordResetLoader } from "./Pages/PasswordReset"
 import AddFriend from "./Pages/AddFriend"
-import AddFriendMain from "./components/addFriend/AddFriendMain"
+import AddFriendAdd from "./components/addFriend/Add"
+import AddFriendPending from "./components/addFriend/Pending"
+import AddFriendFriends from "./components/addFriend/Friends"
 import Settings from "./Pages/Settings"
 import PublicGroup from "./Pages/PublicGroup"
 import Root, { loader as rootLoader } from './components/Root'
 import ChatMessage, { loader as chatMessageLoader } from "./components/chat/ChatMessage"
+import EmailVerificationLink, { loader as emailVerificationLinkLoader } from "./Pages/EmailVerificationLink"
 
 import './sass/main.scss'
 
 const router = createBrowserRouter([
+    {
+        path: '/email-verification-link/:emailverificationtoken',
+        loader: emailVerificationLinkLoader,
+        element: <EmailVerificationLink />,
+        errorElement: <ErrorPage />,
+    },
     {
         path: '/',
         loader: rootLoader,
@@ -29,9 +38,9 @@ const router = createBrowserRouter([
                 children: [
                     { path: '/', element: <Login /> },
                     { path: '/signup', element: <Signup /> },
-                    { path: '/forgotyourpassword', element: <ForgotYourPassword /> },
+                    { path: '/forgot-your-password', element: <ForgotYourPassword /> },
                     {
-                        path: '/passwordreset/:passwordresettoken',
+                        path: '/password-reset/:passwordresettoken',
                         loader: passwordResetLoader,
                         element: <PasswordReset />
                     },
@@ -53,14 +62,22 @@ const router = createBrowserRouter([
                         ]
                     },
                     { path: '/group', element: <Group /> },
-                    { path: '/publicgroup', element: <PublicGroup /> },
+                    { path: '/public-group', element: <PublicGroup /> },
                     {
-                        path: '/addfriend/',
+                        path: '/add-friend',
                         element: <AddFriend />,
                         children: [
                             {
-                                path: ':option',
-                                element: <AddFriendMain />
+                                path: 'add',
+                                element: <AddFriendAdd />
+                            },
+                            {
+                                path: 'pending',
+                                element: <AddFriendPending />
+                            },
+                            {
+                                path: 'friends',
+                                element: <AddFriendFriends />
                             }
                         ]
                     },
@@ -68,7 +85,7 @@ const router = createBrowserRouter([
                 ]
             }
         ]
-    }
+    },
 ])
 
 function App() {

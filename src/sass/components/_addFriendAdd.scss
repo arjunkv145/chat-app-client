@@ -1,0 +1,19 @@
+@use '../abstract/' as *;
+
+.add-friend-add {
+    width: 100%;
+    height: 100%;
+    @include flex(row, center, flex-start);
+    padding-top: 2em;
+
+    form {
+        width: 90%;
+    }
+    button {
+        font: {
+            weight: 400;
+            size: .9rem;
+        };
+        width: 100px !important;
+    }
+}

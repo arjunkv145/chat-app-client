@@ -4,26 +4,28 @@ import axiosInstance from "../api/axiosInstance"
 import PopupAlert from '../components/PopupAlert'
 import Button from '../components/Button'
 import useSocket from '../hooks/useSocket'
+import { useNavigate } from 'react-router-dom'
 
 function Settings() {
     const { auth, setAuth } = useAuth()
-    const [openPopupAlert, setOpenPopupAlert] = useState(false)
     const socket = useSocket()
+    const navigate = useNavigate()
+    const [openPopupAlert, setOpenPopupAlert] = useState(false)
 
     const logout = async () => {
         try {
             await axiosInstance.get('logout')
             socket.emit('logout', {
-                room: `${auth.user.userName} ${auth.sessionId}`
+                room: auth.user.userName,
+                sessionId: auth.sessionId
             })
-            socket.disconnect()
-            setAuth(prev => ({
-                ...prev,
-                user: null,
+            setAuth({
+                user: {},
                 accessToken: null,
                 isLoggedIn: false,
                 sessionId: null
-            }))
+            })
+            navigate('/')
         } catch (err) {
             setOpenPopupAlert(true)
         }
@@ -32,16 +34,15 @@ function Settings() {
         try {
             await axiosInstance.get('logout/all')
             socket.emit('logoutAll', {
-                room: `${auth.user.userName} ${auth.sessionId}`
+                room: auth.user.userName
             })
-            socket.disconnect()
-            setAuth(prev => ({
-                ...prev,
-                user: null,
+            setAuth({
+                user: {},
                 accessToken: null,
                 isLoggedIn: false,
                 sessionId: null
-            }))
+            })
+            navigate('/')
         } catch (err) {
             setOpenPopupAlert(true)
         }

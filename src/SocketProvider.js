@@ -15,12 +15,11 @@ function SocketProvider(props) {
                 'reconnectionDelay': 500,
                 'reconnectionAttempts': 10,
                 query: {
-                    userName: auth?.user?.userName,
-                    sessionId: auth.sessionId
+                    userName: auth.user.userName
                 }
             }))
         }
-    }, [auth.isLoggedIn, auth?.user?.userName, auth.sessionId])
+    }, [auth.isLoggedIn, auth.user.userName, auth.sessionId])
 
     return (
         <SocketContext.Provider value={socket}>

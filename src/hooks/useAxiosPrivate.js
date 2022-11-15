@@ -37,9 +37,24 @@ function useAxiosPrivate() {
 
             }, err => Promise.reject(err)
         )
+        const responseInterceptor = axiosInstance.interceptors.response.use(
+            res => res,
+            err => {
+                if (err?.response?.status === 401) {
+                    setAuth({
+                        user: {},
+                        accessToken: null,
+                        isLoggedIn: false,
+                        sessionId: null
+                    })
+                }
+                return Promise.reject(err)
+            }
+        )
 
         return () => {
             axiosInstance.interceptors.request.eject(requestInterceptor)
+            axiosInstance.interceptors.response.eject(responseInterceptor)
         }
     }, [auth.accessToken, setAuth])
     return axiosInstance

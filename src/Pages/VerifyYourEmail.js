@@ -20,7 +20,7 @@ function VerifyYourEmail() {
     const resend = async () => {
         try {
             setIsLoading(true)
-            await axiosInstance.get(`signup/verifyyouremail/resend/${auth.user.email}`)
+            await axiosInstance.get(`signup/verify-your-email/resend/${auth.user.email}`)
             setServerResponse({
                 title: "New link sent!",
                 body: "A new link has been sent to your email. Verify your account by clicking the link."
@@ -49,13 +49,12 @@ function VerifyYourEmail() {
             await axiosInstance.get('logout')
             socket.disconnect()
             setIsLoading(false)
-            setAuth(prev => ({
-                ...prev,
-                user: null,
+            setAuth({
+                user: {},
                 accessToken: null,
                 isLoggedIn: false,
                 sessionId: null
-            }))
+            })
         } catch (err) {
             setIsLoading(false)
             setServerResponse({

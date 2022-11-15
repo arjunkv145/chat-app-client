@@ -30,7 +30,7 @@ function Navbar() {
                 </li>
                 <li className='nav__list-item'>
                     <CustomNavLink
-                        to='/publicgroup'
+                        to='/public-group'
                         className={({ isActive }) => isActive ? "nav__link active" : "nav__link"}
                     >
                         <span className='nav__icon'>
@@ -41,7 +41,7 @@ function Navbar() {
                 </li>
                 <li className='nav__list-item'>
                     <CustomNavLink
-                        to='/addfriend'
+                        to='/add-friend'
                         className={({ isActive }) => isActive ? "nav__link active" : "nav__link"}
                     >
                         <span className='nav__icon'>
