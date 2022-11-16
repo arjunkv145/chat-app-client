@@ -5,7 +5,7 @@ import axiosInstance from '../api/axiosInstance'
 
 export const loader = async ({ request, params }) => {
     try {
-        const { data } = await axiosInstance.get('/signup/verify-your-email/' + params.emailverificationtoken, { signal: request.signal })
+        const { data } = await axiosInstance.get('/signup/verify-your-email/' + params.emailVerificationToken, { signal: request.signal })
         const socket = io.connect(process.env.REACT_APP_SOCKET_URL, {
             'reconnection': true,
             'reconnectionDelay': 500,

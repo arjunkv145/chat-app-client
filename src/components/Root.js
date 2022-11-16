@@ -6,17 +6,17 @@ import useAuth from '../hooks/useAuth'
 export const loader = async ({ request }) => {
     try {
         const { data } = await axiosInstance.get('/user', { signal: request.signal })
-        return { data }
+        return data
     } catch (err) {
         const message = err?.response?.data?.message
         const data = { success: false, message: message ? message : 'Server not responding' }
-        return { data }
+        return data
     }
 }
 
 function Root() {
     const { setAuth } = useAuth()
-    const { data } = useLoaderData()
+    const data = useLoaderData()
 
     useEffect(() => {
         if (data.success === true) {

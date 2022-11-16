@@ -1,7 +1,7 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import CheckIsNotLoggedIn from "./components/CheckIsNotLoggedIn"
 import AuthRoute from "./components/AuthRoute"
-import Chat, { loader as chatLoader } from "./Pages/Chat"
+import Chat from "./Pages/Chat"
 import ErrorPage from "./Pages/ErrorPage"
 import Group from "./Pages/Group"
 import Login from "./Pages/Login"
@@ -15,14 +15,14 @@ import AddFriendFriends from "./components/addFriend/Friends"
 import Settings from "./Pages/Settings"
 import PublicGroup from "./Pages/PublicGroup"
 import Root, { loader as rootLoader } from './components/Root'
-import ChatMessage, { loader as chatMessageLoader } from "./components/chat/ChatMessage"
+import ChatMessage from "./components/chat/ChatMessage"
 import EmailVerificationLink, { loader as emailVerificationLinkLoader } from "./Pages/EmailVerificationLink"
 
 import './sass/main.scss'
 
 const router = createBrowserRouter([
     {
-        path: '/email-verification-link/:emailverificationtoken',
+        path: '/email-verification-link/:emailVerificationToken',
         loader: emailVerificationLinkLoader,
         element: <EmailVerificationLink />,
         errorElement: <ErrorPage />,
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
                     { path: '/signup', element: <Signup /> },
                     { path: '/forgot-your-password', element: <ForgotYourPassword /> },
                     {
-                        path: '/password-reset/:passwordresettoken',
+                        path: '/password-reset/:passwordResetToken',
                         loader: passwordResetLoader,
                         element: <PasswordReset />
                     },
@@ -51,14 +51,9 @@ const router = createBrowserRouter([
                 children: [
                     {
                         path: '/chat',
-                        loader: chatLoader,
                         element: <Chat />,
                         children: [
-                            {
-                                path: ':userId',
-                                loader: chatMessageLoader,
-                                element: <ChatMessage />
-                            }
+                            { path: ':chatId', element: <ChatMessage /> }
                         ]
                     },
                     { path: '/group', element: <Group /> },

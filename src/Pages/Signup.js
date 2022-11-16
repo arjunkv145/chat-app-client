@@ -105,7 +105,7 @@ function Signup() {
             try {
                 const res = await axiosInstance.get(`signup/is-username-available/${userName.trim()}`, { signal: controller.signal })
                 if (res.data.message === "Username is available") {
-                    setCredentialsAvailable(prev => ({
+                    isMounted && setCredentialsAvailable(prev => ({
                         ...prev,
                         userName: true
                     }))
@@ -139,7 +139,7 @@ function Signup() {
             try {
                 const res = await axiosInstance.get(`signup/is-email-available/${email.trim()}`)
                 if (res.data.message === "Email is available") {
-                    setCredentialsAvailable(prev => ({
+                    isMounted && setCredentialsAvailable(prev => ({
                         ...prev,
                         email: true
                     }))

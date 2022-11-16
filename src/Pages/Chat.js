@@ -1,22 +1,38 @@
-import React from 'react'
-import { Outlet, useLoaderData, useLocation } from 'react-router-dom'
-import axiosInstance from '../api/axiosInstance'
+import React, { useEffect, useState } from 'react'
+import useAxiosPrivate from '../hooks/useAxiosPrivate'
+import { Outlet, useLocation } from 'react-router-dom'
 import ChatUsers from '../components/chat/ChatUsers'
-
-export const loader = async ({ request }) => {
-    try {
-        const { data } = await axiosInstance.get('/userslist', { signal: request.signal })
-        return data
-    } catch (err) {
-        const message = err?.response?.data?.message
-        const data = { success: false, message: message ? message : 'Server not responding' }
-        return { data }
-    }
-}
 
 function Chat() {
     const location = useLocation()
-    const { usersList } = useLoaderData()
+    const [success, setSuccess] = useState(false)
+    const [chats, setChats] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+    const axiosPrivate = useAxiosPrivate()
+
+    useEffect(() => {
+        const controller = new AbortController()
+        let isMounted = true
+
+        const fetchData = async () => {
+            try {
+                const { data } = await axiosPrivate.get('/chat', { signal: controller.signal })
+                isMounted && setSuccess(true)
+                isMounted && setChats(data.chats)
+            } catch (err) {
+                isMounted && setSuccess(false)
+            } finally {
+                isMounted && setIsLoading(false)
+            }
+        }
+
+        fetchData()
+
+        return () => {
+            controller.abort()
+            isMounted = false
+        }
+    }, [axiosPrivate])
 
     return (
         <main className="chat main-resizable">
@@ -25,7 +41,7 @@ function Chat() {
             >
                 <h1 className='chat__title'>Chat</h1>
                 <div className='chat__users'>
-                    <ChatUsers users={usersList} />
+                    <ChatUsers chats={chats} isLoading={isLoading} success={success} />
                 </div>
             </section>
             <section

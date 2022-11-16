@@ -7,7 +7,7 @@ import PopupAlert from '../components/PopupAlert'
 
 export const loader = async ({ request, params }) => {
     try {
-        const { data } = await axiosInstance.get(`password-reset/is-expired/${params.passwordresettoken}`, { signal: request.signal })
+        const { data } = await axiosInstance.get(`password-reset/is-expired/${params.passwordResetToken}`, { signal: request.signal })
         return { data }
     } catch (err) {
         throw new Response("Page Not Found", { status: 404 })
@@ -15,7 +15,7 @@ export const loader = async ({ request, params }) => {
 }
 
 function PasswordReset() {
-    const { passwordresettoken } = useParams()
+    const { passwordResetToken } = useParams()
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
@@ -68,7 +68,7 @@ function PasswordReset() {
         if (submitStatus === true) {
             try {
                 setIsLoading(true)
-                const res = await axiosInstance.post('password-reset', { passwordResetToken: passwordresettoken, password: password })
+                const res = await axiosInstance.post('password-reset', { passwordResetToken, password })
                 setServerResponse({
                     title: "Success!",
                     body: res.data.message
