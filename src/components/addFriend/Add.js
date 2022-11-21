@@ -1,30 +1,34 @@
 import React, { useRef, useState } from 'react'
-import Button from '../Button'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
+import { useQuery } from "@tanstack/react-query"
 
 function AddFriendMain() {
     const [userName, setUserName] = useState('')
-    const [serverMessage, setServerMessage] = useState({
+    const [serverResponse, setServerResponse] = useState({
         success: false,
-        message: null
+        message: ''
     })
     const userNameRef = useRef()
     const axiosPrivate = useAxiosPrivate()
+    const { refetch } = useQuery({
+        queryKey: ['send-request'],
+        queryFn: () => axiosPrivate.post('friend/request', { userName }),
+        onSuccess: data => setServerResponse({
+            success: true,
+            message: data.data.message
+        }),
+        onError: error => setServerResponse({
+            success: false,
+            message: error.response.data.message
+        }),
+        enabled: false,
+        retry: 0
+    })
 
     const handleSubmit = async e => {
         e.preventDefault()
-        try {
-            const res = await axiosPrivate.post('friend/request', { userName })
-            setServerMessage({
-                success: res.data.success,
-                message: res.data.message,
-            })
-        } catch (err) {
-            setServerMessage({
-                success: false,
-                message: 'Server not responding',
-            })
-            console.log(err)
+        if (userName.trim() !== '') {
+            refetch()
         }
     }
 
@@ -43,15 +47,15 @@ function AddFriendMain() {
                     />
                 </div>
                 {
-                    serverMessage.message &&
+                    serverResponse.message &&
                     <span style={{ color: 'white' }}
-                        className={`add-friend-add__server-message ${serverMessage.success ? 'success' : 'fail'}`}
+                        className={`add-friend-add__server-message ${serverResponse.success ? 'success' : 'fail'}`}
                     >
-                        {serverMessage.message}
+                        {serverResponse.message}
                     </span>
                 }
                 <div className="add-friend-add__btn-wrapper">
-                    <Button>send request</Button>
+                    <button>send request</button>
                 </div>
             </form>
         </div>

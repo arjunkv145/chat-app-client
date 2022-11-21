@@ -1,5 +1,4 @@
 import React from 'react'
-import Button from './Button'
 
 function PopupAlert(props) {
     const { openPopupAlert, setOpenPopupAlert, title, body } = props
@@ -11,7 +10,7 @@ function PopupAlert(props) {
                 <div className="popup-alert__body">
                     {body}
                 </div>
-                <Button onClick={() => setOpenPopupAlert(false)}>close</Button>
+                <button className='btn' onClick={() => setOpenPopupAlert(false)}>close</button>
             </div>
         </div>
     )

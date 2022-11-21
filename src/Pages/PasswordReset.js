@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axiosInstance from '../api/axiosInstance'
-import Button from '../components/Button'
 import PageLoader from '../components/PageLoader'
 import PopupAlert from '../components/PopupAlert'
 
@@ -143,7 +142,7 @@ function PasswordReset() {
                         }
                     </div>
                     <div className="form__btn-wrapper">
-                        <Button>Reset</Button>
+                        <button className='btn'>Reset</button>
                     </div>
                 </form>
             </main>

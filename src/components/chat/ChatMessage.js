@@ -2,13 +2,12 @@ import { AccountCircle, ArrowBackIos, Send } from '@mui/icons-material'
 import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, useNavigate, useParams } from 'react-router-dom'
 import useSocket from '../../hooks/useSocket'
-import Button from '../Button'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
+import { useQuery } from '@tanstack/react-query'
 
 function ChatMessage() {
     const { chatId } = useParams()
     const [chatRoom, setChatRoom] = useState([])
-    const [isLoading, setIsLoading] = useState(true)
     const [message, setMessage] = useState('')
     const [messagesElement, setMessagesElement] = useState([])
     const messageRef = useRef(null)
@@ -16,6 +15,35 @@ function ChatMessage() {
     const socket = useSocket()
     const axiosPrivate = useAxiosPrivate()
     const navigate = useNavigate()
+
+    const { isLoading } = useQuery({
+        queryKey: ['chat-room'],
+        queryFn: () => axiosPrivate.get(`/chat/${chatId}`),
+        onSuccess: data => setChatRoom(data.data.chatRoom),
+        onError: () => navigate('/chat', { replace: true })
+    })
+    const { refetch: acceptRequest } = useQuery({
+        queryKey: ['accept-request'],
+        queryFn: () => axiosPrivate.post('/friend/accept', { chatId, userName: chatRoom.userName }),
+        onSuccess: () => setChatRoom(prev => ({
+            ...prev,
+            friends: true,
+            pending: false
+        })),
+        onError: () => alert("Couldn't accept request"),
+        enabled: false
+    })
+    const { refetch: rejectRequest } = useQuery({
+        queryKey: ['reject-request'],
+        queryFn: () => axiosPrivate.post('/friend/reject', { chatId, userName: chatRoom.userName }),
+        onSuccess: () => setChatRoom(prev => ({
+            ...prev,
+            friends: false,
+            pending: false
+        })),
+        onError: () => alert("Couldn't reject request"),
+        enabled: false
+    })
 
     const sendMessage = e => {
         e.preventDefault()
@@ -33,55 +61,6 @@ function ChatMessage() {
         ])
         setMessage('')
     }
-    const acceptRequest = async () => {
-        try {
-            await axiosPrivate.post('/friend/accept', { chatId, userName: chatRoom.userName })
-            setChatRoom(prev => ({
-                ...prev,
-                friends: true,
-                pending: false
-            }))
-        } catch (err) {
-            console.log(err)
-            alert('couldnt accept request')
-        }
-    }
-    const rejectRequest = async () => {
-        try {
-            await axiosPrivate.post('/friend/reject', { chatId, userName: chatRoom.userName })
-            setChatRoom(prev => ({
-                ...prev,
-                friends: false,
-                pending: false
-            }))
-        } catch (err) {
-            console.log(err)
-            alert('couldnt reject request')
-        }
-    }
-
-    useEffect(() => {
-        const controller = new AbortController()
-        let isMounted = true
-
-        const fetchData = async () => {
-            try {
-                const { data } = await axiosPrivate.get('/chat/' + chatId, { signal: controller.signal })
-                isMounted && setChatRoom(data.chatRoom)
-            } catch (err) {
-                navigate('/chat', { replace: true })
-            } finally {
-                isMounted && setIsLoading(false)
-            }
-        }
-
-        fetchData()
-
-        return () => {
-            controller.abort()
-            isMounted = false
-        }
-    }, [axiosPrivate, chatId, navigate])
 
     useEffect(() => {
         if (!isLoading) {
@@ -138,8 +117,12 @@ function ChatMessage() {
                         chatRoom.pending &&
                         <div className='friend-request-form'>
                             <p>{chatRoom.userName} has sent you a friend request</p>
-                            <Button onClick={acceptRequest} style={{ borderRadius: '10px' }}>Accept</Button>
-                            <Button onClick={rejectRequest} style={{ borderRadius: '10px' }}>Reject</Button>
+                            <button className='btn' onClick={acceptRequest} style={{ borderRadius: '10px' }}>
+                                Accept
+                            </button>
+                            <button className='btn' onClick={rejectRequest} style={{ borderRadius: '10px' }}>
+                                Reject
+                            </button>
                         </div>
                     }
                 </div>
@@ -154,7 +137,7 @@ function ChatMessage() {
                         ref={messageRef}
                     />
                     <div className='chat-message__btn-wrapper'>
-                        <Button><Send /></Button>
+                        <button className='btn'><Send /></button>
                     </div>
                 </form>
             </div>

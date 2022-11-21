@@ -2,7 +2,6 @@ import axiosInstance from "../api/axiosInstance"
 import useAuth from "../hooks/useAuth"
 import { Link } from "react-router-dom"
 import { useState, useEffect, useCallback, useRef } from "react"
-import Button from "../components/Button"
 import PopupAlert from "../components/PopupAlert"
 import PageLoader from "../components/PageLoader"
 
@@ -126,7 +125,7 @@ function Login() {
                         }
                     </div>
                     <div className="form__btn-wrapper">
-                        <Button>login</Button>
+                        <button className="btn">login</button>
                     </div>
                 </form>
                 <div className="form__link-wrapper">

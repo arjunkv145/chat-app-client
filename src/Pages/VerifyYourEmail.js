@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Button from '../components/Button'
 import axiosInstance from '../api/axiosInstance'
 import useAuth from '../hooks/useAuth'
 import PopupAlert from '../components/PopupAlert'
@@ -73,7 +72,7 @@ function VerifyYourEmail() {
                     A link has been sent to your account to verify your email.
                     Click resend if you haven't received the link.
                 </p>
-                <Button onClick={resend}>resend</Button>
+                <button className='btn' onClick={resend}>resend</button>
                 <p className='verify-your-email__logout'>
                     Used a wrong email to signup? logout and signup with a new email.&nbsp;
                     <Link to='#' onClick={logout}>logout</Link>

@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import useAuth from "../hooks/useAuth"
 import axiosInstance from "../api/axiosInstance"
 import PopupAlert from '../components/PopupAlert'
-import Button from '../components/Button'
 import useSocket from '../hooks/useSocket'
 import { useNavigate } from 'react-router-dom'
 
@@ -51,8 +50,8 @@ function Settings() {
     return (
         <>
             <main className='settings'>
-                <Button onClick={logout}>logout</Button>
-                <Button onClick={logoutAll}>logout of all devices</Button>
+                <button className='btn' onClick={logout}>logout</button>
+                <button className='btn' onClick={logoutAll}>logout of all devices</button>
             </main>
             <PopupAlert
                 title="Can't log out"

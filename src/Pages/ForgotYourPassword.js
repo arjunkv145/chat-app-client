@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import axiosInstance from '../api/axiosInstance'
-import Button from '../components/Button'
 import PageLoader from '../components/PageLoader'
 import PopupAlert from '../components/PopupAlert'
 
@@ -89,7 +88,7 @@ function ForgotYourPassword() {
                         }
                     </div>
                     <div className="form__btn-wrapper">
-                        <Button>send</Button>
+                        <button className='btn'>send</button>
                     </div>
                     <p className='form__message'>Click send again if you didn't receive the mail</p>
                 </form>
