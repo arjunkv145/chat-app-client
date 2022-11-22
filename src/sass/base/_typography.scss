@@ -1,0 +1,8 @@
+@use '../abstract/' as *;
+
+h1 {
+    @include font($primary-font, semibold, 1.6rem);
+}
+input {
+    @include font($secondary-font, medium, .8rem);
+}

@@ -6,30 +6,30 @@
     text-align: center;
 
     &__title {
-        @include font($primary-font, semibold, 2.6rem);
+        font-size: 2.6rem;
         color: color(neutral, 200);
         margin-top: 3em;
     }
     &__content {
-        @include font($secondary-font, medium, 1rem);
+        @include font($secondary-font, medium, .95rem);
         color: color(neutral, 300);
-        margin-top: 1.6em;
+        margin-top: 1.4em;
     }
     &__info {
-        @include font($secondary-font, medium, 1rem);
+        @include font($secondary-font, semibold, 1rem);
         color: color(neutral, 300);
-        margin-top: .6em;
+        margin-top: .4em;
     }
 
     @include mq(max-width, small) {
         &__title {
-            font-size: 1.6rem;
+            font-size: 2rem;
         }
         &__content {
-            font-size: .9rem;
+            font-size: .8rem;
         }
         &__info {
-            font-size: .9rem;
+            font-size: .825rem;
         }
     }
 }

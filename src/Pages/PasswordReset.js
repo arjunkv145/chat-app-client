@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axiosInstance from '../api/axiosInstance'
 import PageLoader from '../components/PageLoader'
@@ -15,14 +16,16 @@ export const loader = async ({ request, params }) => {
 
 function PasswordReset() {
     const { passwordResetToken } = useParams()
+    const isSubmittedOnce = useRef(null)
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
 
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
+
+    const [formValues, setFormValues] = useState({
+        password: '',
+        confirmPassword: ''
+    })
 
     const passwordRef = useRef()
-    const confirmPasswordRef = useRef()
 
     const [errors, setErrors] = useState({
         password: null,
@@ -33,72 +36,76 @@ function PasswordReset() {
         title: null,
         body: null
     })
-
-    const handlePassword = () => {
-        let passwordErrorMessage = null
-        const { value } = passwordRef.current
-        if (value.trim() === '') {
-            passwordErrorMessage = 'Password is required'
-        } else if (value.trim().length < 8) {
-            passwordErrorMessage = 'Password must be atleast 8 characters'
+    const { refetch, isFetching } = useQuery({
+        queryKey: ['login'],
+        queryFn: () => axiosInstance.post('password-reset', {
+            passwordResetToken,
+            password: formValues.password
+        }),
+        onSuccess: data => setServerResponse({
+            title: "Success!",
+            body: data.data.message
+        }),
+        onError: error => {
+            if (error?.response?.data?.message === "You can't use the old password") {
+                setServerResponse({
+                    title: "Password reset failed",
+                    body: error.response.data.message
+                })
+            } else if (error?.response?.data?.message === "This link is expired") {
+                setServerResponse({
+                    title: "Password reset failed",
+                    body: error.response.data.message
+                })
+            } else {
+                setServerResponse({
+                    title: "Server not responding",
+                    body: "The server is not responding at the moment, please try again later."
+                })
+            }
+        },
+        onSettled: () => setOpenPopupAlert(true),
+        enabled: false,
+        retry: 0
+    })
+    const handleChange = e => setFormValues(prev => ({
+        ...prev,
+        [e.target.name]: e.target.value
+    }))
+    const checkErrors = useCallback(() => {
+        let error = {
+            password: '',
+            confirmPassword: ''
         }
-        setPassword(value)
-        setErrors(prev => ({ ...prev, password: passwordErrorMessage }))
-        handleConfirmPassword()
-        return passwordErrorMessage === null ? true : false
-    }
-
-    const handleConfirmPassword = () => {
-        let confirmPasswordErrorMessage = null
-        const { value } = confirmPasswordRef.current
-        if (value.trim() !== passwordRef.current.value.trim()) {
-            confirmPasswordErrorMessage = 'Both passwords must match'
+        if (formValues.password.trim() === '') {
+            error.password = 'Password is required'
         }
-        setConfirmPassword(value)
-        setErrors(prev => ({ ...prev, confirmPassword: confirmPasswordErrorMessage }))
-        return confirmPasswordErrorMessage === null ? true : false
-    }
+        if (formValues.confirmPassword.trim() === '') {
+            error.confirmPassword = 'You must re-enter your password'
+        } else if (formValues.password.trim() !== formValues.confirmPassword.trim()) {
+            error.confirmPassword = 'Both password must match'
+        }
+        setErrors(prev => ({ ...prev, ...error }))
+    }, [formValues.password, formValues.confirmPassword])
 
     const handleSubmit = async e => {
         e.preventDefault()
-        const submitStatus = (
-            handlePassword() && handleConfirmPassword()
-        ) ? true : false
-        if (submitStatus === true) {
-            try {
-                setIsLoading(true)
-                const res = await axiosInstance.post('password-reset', { passwordResetToken, password })
-                setServerResponse({
-                    title: "Success!",
-                    body: res.data.message
-                })
-            } catch (err) {
-                if (err?.response?.data?.message === "You can't use the old password") {
-                    setServerResponse({
-                        title: "Password reset failed",
-                        body: err.response.data.message
-                    })
-                } else if (err?.response?.data?.message === "This link is expired") {
-                    setServerResponse({
-                        title: "Password reset failed",
-                        body: err.response.data.message
-                    })
-                } else {
-                    setServerResponse({
-                        title: "Server not responding",
-                        body: "The server is not responding at the moment, please try again later."
-                    })
-                }
-            } finally {
-                setIsLoading(false)
-                setOpenPopupAlert(true)
-            }
+        isSubmittedOnce.current = true
+        checkErrors()
+        if (errors.password === '' && errors.confirmPassword === '') {
+            refetch()
         }
     }
 
     useEffect(() => {
         passwordRef.current.focus()
     }, [])
+
+    useEffect(() => {
+        if (isSubmittedOnce.current === true) {
+            checkErrors()
+        }
+    }, [checkErrors])
 
     return (
         <>
@@ -108,17 +115,16 @@ function PasswordReset() {
                     <div className="form__input-wrapper">
                         <input
                             type="password"
+                            name="password"
                             placeholder="Enter your password"
-                            value={password}
+                            value={formValues.password}
                             ref={passwordRef}
-                            onChange={handlePassword}
+                            onChange={handleChange}
                             className="form__input"
                         />
                         {
                             errors.password &&
-                            <span
-                                className="form__error-message"
-                            >
+                            <span className="form__error-message">
                                 {errors.password}
                             </span>
                         }
@@ -126,17 +132,15 @@ function PasswordReset() {
                     <div className="form__input-wrapper">
                         <input
                             type="password"
+                            name="confirmPassword"
                             placeholder="Re-enter your password"
-                            value={confirmPassword}
-                            ref={confirmPasswordRef}
-                            onChange={handleConfirmPassword}
+                            value={formValues.confirmPassword}
+                            onChange={handleChange}
                             className="form__input"
                         />
                         {
                             errors.confirmPassword &&
-                            <span
-                                className="form__error-message"
-                            >
+                            <span className="form__error-message">
                                 {errors.confirmPassword}
                             </span>
                         }
@@ -152,7 +156,7 @@ function PasswordReset() {
                 openPopupAlert={openPopupAlert}
                 setOpenPopupAlert={setOpenPopupAlert}
             />
-            {isLoading && <PageLoader />}
+            {isFetching && <PageLoader />}
         </>
     )
 }

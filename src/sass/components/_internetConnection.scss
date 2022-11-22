@@ -6,6 +6,7 @@
     left: 0;
     width: 100%;
     height: 100vh;
+    padding: 0 1em;
     background-color: color(neutral, 800);
     @include flex(column, center, center);
     opacity: 0;
@@ -17,13 +18,13 @@
     text-align: center;
 
     &__title {
-        @include font($primary-font, semibold, 1.2rem);
-        color: color(neutral, 300);
+        @include font($primary-font, semibold, 1.4rem);
+        color: color(neutral, 200);
     }
 
     &__content {
         @include font($secondary-font, medium, .8rem);
-        color: color(neutral, 400);
+        color: color(neutral, 200);
     }
     
     &.offline, &.backend-down {

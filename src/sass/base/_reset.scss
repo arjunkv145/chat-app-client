@@ -46,6 +46,10 @@ a:not([class]) {
     text-decoration-skip-ink: auto;
 }
 
+a {
+    text-decoration: none;
+}
+
 img,
 picture {
     max-width: 100%;
@@ -62,25 +66,25 @@ select {
 
 ::-webkit-input-placeholder {
     @include font($secondary-font, bold, .8rem);
-    color: color(neutral, 400);
+    color: color(neutral, 300);
     letter-spacing: 1px;
 }
   
 :-ms-input-placeholder {
     @include font($secondary-font, bold, .8rem);
-    color: color(neutral, 400);
+    color: color(neutral, 300);
     letter-spacing: 1px;
 }
   
 ::-moz-placeholder {
     @include font($secondary-font, bold, .8rem);
-    color: color(neutral, 400);
+    color: color(neutral, 300);
     letter-spacing: 1px;
 }
   
 ::placeholder {
     @include font($secondary-font, bold, .8rem);
-    color: color(neutral, 400);
+    color: color(neutral, 300);
     letter-spacing: 1px;
 }
 

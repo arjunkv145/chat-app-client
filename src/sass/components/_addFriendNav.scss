@@ -12,8 +12,8 @@
     }
     .link {
         text-decoration: none;
-        @include font($primary-font, medium, .8rem);
-        color: color(neutral, 400);
+        @include font($secondary-font, medium, .8rem);
+        color: color(neutral, 300);
         display: block;
         padding: .6em 1em;
         margin-left: .4em;

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import VerifyYourEmail from '../Pages/VerifyYourEmail'
-import SocketProvider from '../SocketProvider'
-import InternetConnection from './InternetConnection'
 import Navbar from './Navbar'
 
 function AuthRoute() {
@@ -21,25 +19,19 @@ function AuthRoute() {
     }, [currentPath, navigate, auth.isLoggedIn])
 
     return (
-        <SocketProvider>
-            <div className='app'>
-                {
-                    (auth.isLoggedIn && !isLoading) && (
-                        auth.user.emailVerified ?
-                            <>
-                                <InternetConnection />
-                                <Navbar />
-                                <Outlet />
-                            </>
-                            :
-                            <>
-                                <InternetConnection />
-                                <VerifyYourEmail />
-                            </>
-                    )
-                }
-            </div>
-        </SocketProvider>
+        <div className='app'>
+            {
+                (auth.isLoggedIn && !isLoading) && (
+                    auth.user.emailVerified ?
+                        <>
+                            <Navbar />
+                            <Outlet />
+                        </>
+                        :
+                        <VerifyYourEmail />
+                )
+            }
+        </div>
     )
 }
 

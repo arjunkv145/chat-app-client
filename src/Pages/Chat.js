@@ -17,8 +17,8 @@ function Chat() {
             <section
                 className='main-resizable__left'
             >
-                <h1 className='chat__title'>Chat</h1>
-                <div className='chat__users'>
+                <h1 className='main-resizable__title'>Chat</h1>
+                <div className='main-resizable__body'>
                     <ChatUsers chats={data?.data?.chats} isLoading={isLoading} />
                 </div>
             </section>
@@ -32,7 +32,7 @@ function Chat() {
                 {
                     (location.pathname === '/chat' || location.pathname === '/chat/')
                     &&
-                    <span className='chat__start-message'>Start chatting</span>
+                    <span className='main-resizable__tag'>Start chatting</span>
                 }
                 <Outlet />
             </section>

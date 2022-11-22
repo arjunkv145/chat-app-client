@@ -4,16 +4,54 @@
     width: 100%;
     height: 100%;
     @include flex(row, center, flex-start);
-    padding-top: 2em;
+    padding: 2em 1em;
 
     form {
-        width: 90%;
+        width: 100%;
     }
-    button {
-        font: {
-            weight: 400;
-            size: .9rem;
-        };
-        width: 100px !important;
+    &__input-wrapper {
+        position: relative;
+    }
+    &__input {
+        width: 100%;
+        padding: 1em 1.2em;
+        background-color: color(neutral, 1000);
+        border: 1px solid color(neutral, 1000);
+        color: color(neutral, 300);
+        border: none;
+        border-radius: 3px;
+        padding-right: 155px;
+
+        &:focus {
+            outline: none;
+        }
+        &.success {
+            border: 1px solid color(blue, base);
+        }
+        &.fail {
+            border: 1px solid color(red, base);
+        }
+    }
+    .btn {
+        font-size: .8rem;
+        padding: .4em 1.8em;
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+
+        &:disabled {
+            filter: brightness(75%);
+        }
+    }
+    &__server-message {
+        padding-left: .4em;
+        @include font($secondary-font, medium, .8rem);
+        &.success {
+            color: color(blue, base);
+        }
+        &.fail {
+            color: color(red, base);
+        }
     }
 }

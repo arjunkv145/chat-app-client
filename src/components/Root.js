@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Outlet, useLoaderData } from 'react-router-dom'
 import axiosInstance from '../api/axiosInstance'
 import useAuth from '../hooks/useAuth'
+import InternetConnection from './InternetConnection'
 
 export const loader = async ({ request }) => {
     try {
@@ -30,7 +31,10 @@ function Root() {
     }, [data.accessToken, data.success, data.user, data.sessionId, setAuth])
 
     return (
-        <Outlet />
+        <>
+            <InternetConnection />
+            <Outlet />
+        </>
     )
 }
 

@@ -4,84 +4,79 @@ import { Link } from "react-router-dom"
 import { useState, useEffect, useCallback, useRef } from "react"
 import PopupAlert from "../components/PopupAlert"
 import PageLoader from "../components/PageLoader"
+import { useQuery } from "@tanstack/react-query"
 
 function Login() {
     const { setAuth } = useAuth()
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-
-    const [errors, setErrors] = useState({ email: null, password: null })
-    const isSubmittedOnce = useRef(false)
-    const inputRef = useRef(null)
+    const [formValues, setFormValues] = useState({ userNameOrEmail: '', password: '' })
+    const [errors, setErrors] = useState({ userNameOrEmail: null, password: null })
+    const isSubmittedOnce = useRef(null)
+    const userNameOrEmailRef = useRef(null)
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-
-    const handleErrors = useCallback(() => {
-        let emailErrorMessage = null
-        let passwordErrorMessage = null
-        const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
-
-        if (email.trim() === '') {
-            emailErrorMessage = 'Email is required'
-        } else if (email.match(regexEmail) === null) {
-            emailErrorMessage = 'Email is not valid'
+    const { refetch, isFetching } = useQuery({
+        queryKey: ['login'],
+        queryFn: () => axiosInstance.post('login', formValues),
+        onSuccess: data => setAuth({
+            user: data.data.user,
+            accessToken: data.data.accessToken,
+            isLoggedIn: true,
+            sessionId: data.data.sessionId
+        }),
+        onError: error => {
+            if (error?.response?.data?.message === "User doesn't exist") {
+                setErrors(prev => ({
+                    ...prev,
+                    userNameOrEmail: "The username or email you provided doesn't match any accounts",
+                }))
+            } else if (error?.response?.data?.message === "Wrong password") {
+                setErrors(prev => ({
+                    ...prev,
+                    password: "The password you entered is incorrect",
+                }))
+            } else {
+                setOpenPopupAlert(true)
+            }
+        },
+        enabled: false,
+        retry: 0
+    })
+    const handleChange = e => setFormValues(prev => ({
+        ...prev,
+        [e.target.name]: e.target.value
+    }))
+    const checkErrors = useCallback(() => {
+        const error = {
+            userNameOrEmail: '',
+            password: ''
         }
-
-        if (password.trim() === '') {
-            passwordErrorMessage = 'Password is required'
+        if (formValues.userNameOrEmail.trim() === '') {
+            error.userNameOrEmail = 'Username or email is required'
         }
-        setErrors(prev => ({
-            ...prev,
-            email: emailErrorMessage,
-            password: passwordErrorMessage
-        }))
-        return (emailErrorMessage === null && passwordErrorMessage === null) ? true : false
-    }, [email, password])
+        if (formValues.password.trim() === '') {
+            error.password = 'Password is required'
+        }
+        setErrors(prev => ({ ...prev, ...error }))
+    }, [formValues.userNameOrEmail, formValues.password])
 
     const handleSubmit = async e => {
         e.preventDefault()
         isSubmittedOnce.current = true
-        const submitStatus = handleErrors()
-        if (submitStatus === true) {
-            try {
-                setIsLoading(true)
-                const res = await axiosInstance.post('login', { email, password })
-                setAuth({
-                    user: res.data.user,
-                    accessToken: res.data.accessToken,
-                    isLoggedIn: true,
-                    sessionId: res.data.sessionId
-                })
-            } catch (err) {
-                if (err?.response?.data?.message === "User doesn't exist") {
-                    setErrors(prev => ({
-                        ...prev,
-                        email: "The email you provided doesn't match any accounts",
-                    }))
-                } else if (err?.response?.data?.message === "Wrong password") {
-                    setErrors(prev => ({
-                        ...prev,
-                        password: "The password you entered is incorrect",
-                    }))
-                } else {
-                    setOpenPopupAlert(true)
-                }
-            } finally {
-                setIsLoading(false)
-            }
+        checkErrors()
+        if (errors.userNameOrEmail === '' && errors.password === '') {
+            refetch()
         }
     }
 
     useEffect(() => {
-        inputRef.current.focus()
+        userNameOrEmailRef.current.focus()
     }, [])
 
     useEffect(() => {
         if (isSubmittedOnce.current === true) {
-            handleErrors()
+            checkErrors()
         }
-    }, [email, password, handleErrors])
+    }, [checkErrors])
 
     return (
         <>
@@ -91,35 +86,33 @@ function Login() {
                     <div className="form__input-wrapper">
                         <input
                             type="text"
-                            placeholder="Email"
+                            name="userNameOrEmail"
+                            placeholder="Username or email"
                             autoComplete="off"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
+                            value={formValues.userNameOrEmail}
+                            onChange={handleChange}
                             className="form__input"
-                            ref={inputRef}
+                            ref={userNameOrEmailRef}
                         />
                         {
-                            errors.email &&
-                            <span
-                                className="form__error-message"
-                            >
-                                {errors.email}
+                            errors.userNameOrEmail &&
+                            <span className="form__error-message">
+                                {errors.userNameOrEmail}
                             </span>
                         }
                     </div>
                     <div className="form__input-wrapper">
                         <input
                             type="password"
+                            name="password"
                             placeholder="Password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
+                            value={formValues.password}
+                            onChange={handleChange}
                             className="form__input"
                         />
                         {
                             errors.password &&
-                            <span
-                                className="form__error-message"
-                            >
+                            <span className="form__error-message">
                                 {errors.password}
                             </span>
                         }
@@ -146,7 +139,7 @@ function Login() {
                 openPopupAlert={openPopupAlert}
                 setOpenPopupAlert={setOpenPopupAlert}
             />
-            {isLoading && <PageLoader />}
+            {isFetching && <PageLoader />}
         </>
     )
 }

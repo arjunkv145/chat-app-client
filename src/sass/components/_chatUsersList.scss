@@ -17,26 +17,26 @@
         transition: background-color $transition-duration $transition-timing-function;
 
         &:hover {
-            background-color: color(neutral, 700);
+            background-color: color(neutral, 600);
         }
         &:hover .chat-users__user-name {
             color: color(neutral, 200);
         }
         &:hover .chat-users__user-image {
             svg {
-                color: color(indigo, lighter);
+                color: color(violet, base);
             }
         }
     }
     &__link.active {
-        background-color: color(neutral, 700);
+        background-color: color(neutral, 600);
     }
     &__link.active &__user-name {
         color: color(neutral, 200);
     }
     &__link.active &__user-image {
         svg {
-            color: color(indigo, lighter);
+            color: color(violet, base);
         }
     }
     &__user {
@@ -47,13 +47,13 @@
 
         svg {
             font-size: 2rem;
-            color: color(indigo, base);
-            filter: grayscale(60%);
+            color: color(violet, base);
+            filter: grayscale(40%);
             transition: color $transition-duration $transition-timing-function;
         }
     }
     &__user-name {
-        @include font($primary-font, semibold, .8rem);
+        @include font($secondary-font, semibold, .8rem);
         color: color(neutral, 400);
         margin-left: .6em;
         transition: color $transition-duration $transition-timing-function;

@@ -13,12 +13,10 @@
     @include flex(column, center, center);
 
     &__title {
-        @include font($primary-font, semibold, 1.6rem);
         color: color(neutral, 300);
         text-align: center;
     }
     &__content {
-        @include font($secondary-font, medium, .9rem);
         color: color(neutral, 400);
         text-align: center;
         margin-top: 1.6em;
@@ -27,13 +25,12 @@
         margin-top: .8em;
     }
     &__logout {
-        @include font($secondary-font, semibold, .8rem);
         color: color(neutral, 400);
         text-align: center;
         margin-top: 1.8em;
         
         a {
-            color: color(blue, light);
+            color: color(blue, base);
         }
     }
 

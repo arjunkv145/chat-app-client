@@ -1,8 +1,8 @@
 @use '../abstract/' as *;
 
 .btn {
-    @include font($primary-font, semibold, 1rem);
-    background-color: color(indigo, light);
+    @include font($secondary-font, semibold, 1rem);
+    background-color: color(violet, base);
     color: color(neutral, 200);
     padding: .6em 1.6em;
     border: none;
@@ -11,6 +11,6 @@
     transition: background-color $transition-duration $transition-timing-function;
 
     &:hover {
-        background-color: color(indigo, base);
+        background-color: color(violet, dark);
     }
 }

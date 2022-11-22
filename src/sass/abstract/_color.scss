@@ -1,31 +1,16 @@
 $colors: (
-    indigo: (
-        lighter: hsl(231, 48%, 48%),
-        light: hsl(231, 48%, 43%),
-        base: hsl(231, 49%, 38%),
-        dark: hsl(231, 49%, 34%),
-        darker: hsl(231, 48%, 29%),
+    violet: (
+        base: hsl(270, 100%, 50%),
+        dark: hsl(270, 96%, 48%),
     ),
     blue: (
-        lighter: hsl(200, 48%, 48%),
-        light: hsl(200, 48%, 43%),
-        base: hsl(200, 49%, 38%),
-        dark: hsl(200, 49%, 34%),
-        darker: hsl(200, 48%, 29%),
+        base: #1E90FF,
     ),
     green: (
-        lighter: hsl(143, 48%, 48%),
-        light: hsl(143, 48%, 43%),
-        base: hsl(143, 49%, 38%),
-        dark: hsl(143, 49%, 34%),
-        darker: hsl(143, 48%, 29%),
+        base: hsl(140, 90%, 45%),
     ),
     red: (
-        lighter: hsl(360, 48%, 48%),
-        light: hsl(360, 48%, 43%),
-        base: hsl(360, 49%, 38%),
-        dark: hsl(360, 49%, 34%),
-        darker: hsl(360, 48%, 29%),
+        base: hsl(357, 63%, 49%),
     ),
     neutral: (
         100: hsl(0, 0%, 95%),

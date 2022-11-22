@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 function AddFriendMain() {
     const [userName, setUserName] = useState('')
     const [serverResponse, setServerResponse] = useState({
-        success: false,
+        status: null,
         message: ''
     })
     const userNameRef = useRef()
@@ -14,16 +14,24 @@ function AddFriendMain() {
         queryKey: ['send-request'],
         queryFn: () => axiosPrivate.post('friend/request', { userName }),
         onSuccess: data => setServerResponse({
-            success: true,
+            status: 'success',
             message: data.data.message
         }),
         onError: error => setServerResponse({
-            success: false,
+            status: 'fail',
             message: error.response.data.message
         }),
         enabled: false,
         retry: 0
     })
+
+    const handleChange = e => {
+        setUserName(e.target.value)
+        setServerResponse({
+            status: null,
+            message: ''
+        })
+    }
 
     const handleSubmit = async e => {
         e.preventDefault()
@@ -41,22 +49,20 @@ function AddFriendMain() {
                         placeholder="Username"
                         autoComplete="off"
                         value={userName}
-                        onChange={e => setUserName(e.target.value)}
+                        onChange={handleChange}
                         ref={userNameRef}
-                        className="add-friend-add__input"
+                        className={`add-friend-add__input ${serverResponse.status && serverResponse.status}`}
                     />
+                    <button className='btn' disabled={userName.trim() === '' && true}>send request</button>
                 </div>
                 {
                     serverResponse.message &&
-                    <span style={{ color: 'white' }}
-                        className={`add-friend-add__server-message ${serverResponse.success ? 'success' : 'fail'}`}
+                    <span
+                        className={`add-friend-add__server-message ${serverResponse.status && serverResponse.status}`}
                     >
                         {serverResponse.message}
                     </span>
                 }
-                <div className="add-friend-add__btn-wrapper">
-                    <button>send request</button>
-                </div>
             </form>
         </div>
     )

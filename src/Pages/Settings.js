@@ -4,54 +4,48 @@ import axiosInstance from "../api/axiosInstance"
 import PopupAlert from '../components/PopupAlert'
 import useSocket from '../hooks/useSocket'
 import { useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 
 function Settings() {
     const { auth, setAuth } = useAuth()
     const socket = useSocket()
     const navigate = useNavigate()
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
-
-    const logout = async () => {
-        try {
-            await axiosInstance.get('logout')
-            socket.emit('logout', {
-                room: auth.user.userName,
-                sessionId: auth.sessionId
-            })
-            setAuth({
-                user: {},
-                accessToken: null,
-                isLoggedIn: false,
-                sessionId: null
-            })
-            navigate('/')
-        } catch (err) {
-            setOpenPopupAlert(true)
-        }
+    const onSuccess = () => {
+        socket.emit('logout', {
+            room: auth.user.userName,
+            sessionId: auth.sessionId
+        })
+        setAuth({
+            user: {},
+            accessToken: null,
+            isLoggedIn: false,
+            sessionId: null
+        })
+        navigate('/')
     }
-    const logoutAll = async () => {
-        try {
-            await axiosInstance.get('logout/all')
-            socket.emit('logoutAll', {
-                room: auth.user.userName
-            })
-            setAuth({
-                user: {},
-                accessToken: null,
-                isLoggedIn: false,
-                sessionId: null
-            })
-            navigate('/')
-        } catch (err) {
-            setOpenPopupAlert(true)
-        }
-    }
+    const { refetch: logoutRequest } = useQuery({
+        queryKey: ['logout'],
+        queryFn: () => axiosInstance.get('logout'),
+        onSuccess,
+        onError: () => setOpenPopupAlert(true),
+        enabled: false,
+        retry: 0
+    })
+    const { refetch: logoutAllRequest } = useQuery({
+        queryKey: ['logoutAll'],
+        queryFn: () => axiosInstance.get('logout/all'),
+        onSuccess,
+        onError: () => setOpenPopupAlert(true),
+        enabled: false,
+        retry: 0
+    })
 
     return (
         <>
             <main className='settings'>
-                <button className='btn' onClick={logout}>logout</button>
-                <button className='btn' onClick={logoutAll}>logout of all devices</button>
+                <button className='btn' onClick={logoutRequest}>logout</button>
+                <button className='btn' onClick={logoutAllRequest}>logout of all devices</button>
             </main>
             <PopupAlert
                 title="Can't log out"
