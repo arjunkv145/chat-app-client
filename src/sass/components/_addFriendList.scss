@@ -1,0 +1,48 @@
+@use '../abstract/' as *;
+
+.add-friend-list {
+    width: 100%;
+
+    &__list-item {
+        @include flex(row, flex-start, center);
+        padding: .5em 1em;
+        border-bottom: 1px solid color(neutral, 1000);
+    }
+    &__image {
+        width: 40px;
+        height: 40px;
+        @include flex(row, center, center);
+
+        svg {
+            font-size: 2rem;
+            background-color: color(neutral, 500);
+            border-radius: 50%;
+        }
+    }
+    &__name {
+        @include font($secondary-font, medium, .85rem);
+        color: color(neutral, 300);
+        margin-left: 1em;
+    }
+    &__btn {
+        width: 30px;
+        height: 30px;
+        border: none;
+        border-radius: 50%;
+        background-color: color(neutral, 1000);
+        @include flex(row, center, center);
+        margin-left: auto;
+        cursor: pointer;
+
+        svg {
+            font-size: 1.2rem;
+            color: color(neutral, 400);
+            transition: color $transition-duration $transition-timing-function;
+        }
+        &:hover {
+            svg {
+                color: color(red, base);
+            }
+        }
+    }
+}

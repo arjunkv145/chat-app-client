@@ -3,7 +3,8 @@ import { useState, useRef, useEffect, useCallback } from "react"
 import { Link } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 import PopupAlert from "../components/PopupAlert"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import PageLoader from "../components/PageLoader"
 
 const regexEmail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
@@ -26,19 +27,18 @@ function Signup() {
     const emailRef = useRef()
 
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
-    const { refetch: signupRequest } = useQuery({
-        queryKey: ['signup'],
-        queryFn: () => axiosInstance.post('signup/new-user', formValues),
-        onSuccess: data => setAuth({
-            user: data.data.user,
-            accessToken: data.data.accessToken,
-            isLoggedIn: true,
-            sessionId: data.data.sessionId
-        }),
-        onError: () => setOpenPopupAlert(true),
-        enabled: false,
-        retry: 0
-    })
+    const { mutate, isFetching } = useMutation(
+        formValues => axiosInstance.post('signup/new-user', formValues),
+        {
+            onSuccess: data => setAuth({
+                user: data.data.user,
+                accessToken: data.data.accessToken,
+                isLoggedIn: true,
+                sessionId: data.data.sessionId
+            }),
+            onError: () => setOpenPopupAlert(true)
+        }
+    )
     const { refetch: isEmailAvailableRequest, isLoading: emailIsLoading } = useQuery({
         queryKey: ['is-email-available', emailRef?.current?.value?.trim()],
         queryFn: () => axiosInstance.get(`signup/is-email-available/${emailRef?.current?.value?.trim()}`),
@@ -126,7 +126,7 @@ function Signup() {
                 errors.password === '' &&
                 errors.confirmPassword === ''
             ) {
-                signupRequest()
+                mutate(formValues)
             }
         }
     }
@@ -245,6 +245,7 @@ function Signup() {
                 openPopupAlert={openPopupAlert}
                 setOpenPopupAlert={setOpenPopupAlert}
             />
+            {isFetching && <PageLoader />}
         </>
     )
 }

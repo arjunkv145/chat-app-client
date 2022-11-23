@@ -17,16 +17,16 @@
         display: block;
         padding: .6em 1em;
         margin-left: .4em;
-        border-radius: 5px;
+        border-radius: 3px;
         transition: background-color $transition-duration $transition-timing-function,
                     color $transition-duration $transition-timing-function;
 
         &:hover {
-            background-color: color(neutral, 600);
+            background-color: color(violet, base);
             color: color(neutral, 200);
         }
         &.active {
-            background-color: color(neutral, 600);
+            background-color: color(violet, base);
             color: color(neutral, 200);
         }
     }

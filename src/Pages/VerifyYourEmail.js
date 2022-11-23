@@ -5,64 +5,66 @@ import PopupAlert from '../components/PopupAlert'
 import PageLoader from '../components/PageLoader'
 import { Link } from 'react-router-dom'
 import useSocket from '../hooks/useSocket'
+import useAxiosPrivate from '../hooks/useAxiosPrivate'
+import { useMutation } from '@tanstack/react-query'
 
 function VerifyYourEmail() {
     const { auth, setAuth } = useAuth()
     const socket = useSocket()
+    const axiosPrivate = useAxiosPrivate()
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
     const [serverResponse, setServerResponse] = useState({
         title: null,
         body: null
     })
 
-    const resend = async () => {
-        try {
-            setIsLoading(true)
-            await axiosInstance.get(`signup/verify-your-email/resend/${auth.user.email}`)
-            setServerResponse({
+    const { mutate: reSendRequest, isFetching: isFetchingReSend } = useMutation(
+        email => axiosInstance.post('signup/verify-your-email/resend/', { email }),
+        {
+            onSuccess: () => setServerResponse({
                 title: "New link sent!",
                 body: "A new link has been sent to your email. Verify your account by clicking the link."
-            })
-        } catch (err) {
-            if (err?.response?.status === 422) {
-                setServerResponse({
-                    title: "Your email is already verified",
-                    body: "You can reload the page to use the app."
+            }),
+            onError: error => {
+                if (error?.response?.status === 422) {
+                    setServerResponse({
+                        title: "Your email is already verified",
+                        body: "You can reload the page to use the app."
+                    })
+                } else {
+                    setServerResponse({
+                        title: "Server not responding",
+                        body: "We couldn't send a new link, please try again later."
+                    })
+                }
+            },
+            onSettled: () => setOpenPopupAlert(true)
+        }
+    )
+    const { mutate: logoutRequest, isFetching: isFetchingLogout } = useMutation(
+        () => axiosPrivate.post('logout'),
+        {
+            onSuccess: () => {
+                socket.emit('logout', {
+                    room: auth.user.userName,
+                    sessionId: auth.sessionId
                 })
-            } else {
-                setServerResponse({
-                    title: "Server not responding",
-                    body: "We couldn't send a new link, please try again later."
+                setAuth({
+                    user: {},
+                    accessToken: null,
+                    isLoggedIn: false,
+                    sessionId: null
                 })
+            },
+            onError: () => {
+                setServerResponse({
+                    title: "Can't log out",
+                    body: "The server is not responding at the moment, please try again later."
+                })
+                setOpenPopupAlert(true)
             }
-        } finally {
-            setIsLoading(false)
-            setOpenPopupAlert(true)
         }
-    }
-    const logout = async e => {
-        e.preventDefault()
-        try {
-            setIsLoading(true)
-            await axiosInstance.get('logout')
-            socket.disconnect()
-            setIsLoading(false)
-            setAuth({
-                user: {},
-                accessToken: null,
-                isLoggedIn: false,
-                sessionId: null
-            })
-        } catch (err) {
-            setIsLoading(false)
-            setServerResponse({
-                title: "Can't log out",
-                body: "The server is not responding at the moment, please try again later."
-            })
-            setOpenPopupAlert(true)
-        }
-    }
+    )
 
     return (
         <>
@@ -72,10 +74,15 @@ function VerifyYourEmail() {
                     A link has been sent to your account to verify your email.
                     Click resend if you haven't received the link.
                 </p>
-                <button className='btn' onClick={resend}>resend</button>
+                <button className='btn' onClick={() => reSendRequest(auth.user.email)}>resend</button>
                 <p className='verify-your-email__logout'>
                     Used a wrong email to signup? logout and signup with a new email.&nbsp;
-                    <Link to='#' onClick={logout}>logout</Link>
+                    <Link to='#' onClick={e => {
+                        e.preventDefault()
+                        logoutRequest()
+                    }}>
+                        logout
+                    </Link>
                 </p>
             </main>
             <PopupAlert
@@ -84,7 +91,7 @@ function VerifyYourEmail() {
                 openPopupAlert={openPopupAlert}
                 setOpenPopupAlert={setOpenPopupAlert}
             />
-            {isLoading && <PageLoader />}
+            {(isFetchingLogout || isFetchingReSend) && <PageLoader />}
         </>
     )
 }

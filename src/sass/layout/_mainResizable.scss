@@ -19,10 +19,13 @@
     }
 
     &__title {
+        @include font($primary-font, semibold, 1.8rem);
         color: color(neutral, 300);
         width: 100%;
         height: 60px;
-        padding: .5em 0 0 .5em;
+        padding: .4em 0 0 .5em;
+        border-bottom: 1px solid color(neutral, 1000);
+        box-shadow: 0 6px 6px -6px color(neutral, 1000);
     }
     &__body {
         width: 100%;
@@ -30,7 +33,7 @@
     }
     &__tag {
         @include font($primary-font, semibold, 1.4rem);
-        color: color(neutral, 300);
+        color: color(neutral, 400);
     }
     @include mq(max-width, small-medium) {
         &__start-message {

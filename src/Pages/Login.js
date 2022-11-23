@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 import { useState, useEffect, useCallback, useRef } from "react"
 import PopupAlert from "../components/PopupAlert"
 import PageLoader from "../components/PageLoader"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 
 function Login() {
     const { setAuth } = useAuth()
@@ -14,33 +14,32 @@ function Login() {
     const isSubmittedOnce = useRef(null)
     const userNameOrEmailRef = useRef(null)
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
-    const { refetch, isFetching } = useQuery({
-        queryKey: ['login'],
-        queryFn: () => axiosInstance.post('login', formValues),
-        onSuccess: data => setAuth({
-            user: data.data.user,
-            accessToken: data.data.accessToken,
-            isLoggedIn: true,
-            sessionId: data.data.sessionId
-        }),
-        onError: error => {
-            if (error?.response?.data?.message === "User doesn't exist") {
-                setErrors(prev => ({
-                    ...prev,
-                    userNameOrEmail: "The username or email you provided doesn't match any accounts",
-                }))
-            } else if (error?.response?.data?.message === "Wrong password") {
-                setErrors(prev => ({
-                    ...prev,
-                    password: "The password you entered is incorrect",
-                }))
-            } else {
-                setOpenPopupAlert(true)
+    const { mutate, isFetching } = useMutation(
+        formValues => axiosInstance.post('login', formValues),
+        {
+            onSuccess: data => setAuth({
+                user: data.data.user,
+                accessToken: data.data.accessToken,
+                isLoggedIn: true,
+                sessionId: data.data.sessionId
+            }),
+            onError: error => {
+                if (error?.response?.data?.message === "User doesn't exist") {
+                    setErrors(prev => ({
+                        ...prev,
+                        userNameOrEmail: "The username or email you provided doesn't match any accounts",
+                    }))
+                } else if (error?.response?.data?.message === "Wrong password") {
+                    setErrors(prev => ({
+                        ...prev,
+                        password: "The password you entered is incorrect",
+                    }))
+                } else {
+                    setOpenPopupAlert(true)
+                }
             }
-        },
-        enabled: false,
-        retry: 0
-    })
+        }
+    )
     const handleChange = e => setFormValues(prev => ({
         ...prev,
         [e.target.name]: e.target.value
@@ -64,7 +63,7 @@ function Login() {
         isSubmittedOnce.current = true
         checkErrors()
         if (errors.userNameOrEmail === '' && errors.password === '') {
-            refetch()
+            mutate(formValues)
         }
     }
 

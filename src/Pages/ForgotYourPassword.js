@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query'
 import React, { useEffect, useRef, useState } from 'react'
 import axiosInstance from '../api/axiosInstance'
 import PageLoader from '../components/PageLoader'
@@ -10,11 +11,33 @@ function ForgotYourPassword() {
     const emailRef = useRef()
     const [emailError, setEmailError] = useState(null)
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
     const [serverResponse, setServerResponse] = useState({
         title: null,
         body: null
     })
+    const { mutate, isFetching } = useMutation(
+        email => axiosInstance.post('/password-reset/send-mail/', { email }),
+        {
+            onSuccess: () => setServerResponse({
+                title: 'Password reset link sent!',
+                body: 'A link has been sent to your mail to reset your password'
+            }),
+            onError: error => {
+                if (error?.response?.data?.message === "User doesn't exist") {
+                    setServerResponse(({
+                        title: "Account doesn't exist",
+                        body: "The email you provided doesn't match any accounts",
+                    }))
+                } else {
+                    setServerResponse({
+                        title: "Server not responding",
+                        body: "The server is not responding at the moment, please try again later."
+                    })
+                }
+            },
+            onSettled: () => setOpenPopupAlert(true)
+        }
+    )
 
     const handleEmail = () => {
         let emailErrorMessage = null
@@ -33,29 +56,7 @@ function ForgotYourPassword() {
         e.preventDefault()
         const submitStatus = handleEmail()
         if (submitStatus === null) {
-            try {
-                setIsLoading(true)
-                await axiosInstance.get(`/password-reset/send-mail/${email}`)
-                setServerResponse({
-                    title: 'Password reset link sent!',
-                    body: 'A link has been sent to your mail to reset your password'
-                })
-            } catch (err) {
-                if (err?.response?.data?.message === "User doesn't exist") {
-                    setServerResponse(({
-                        title: "Account doesn't exist",
-                        body: "The email you provided doesn't match any accounts",
-                    }))
-                } else {
-                    setServerResponse({
-                        title: "Server not responding",
-                        body: "The server is not responding at the moment, please try again later."
-                    })
-                }
-            } finally {
-                setIsLoading(false)
-                setOpenPopupAlert(true)
-            }
+            mutate(email)
         }
     }
 
@@ -99,7 +100,7 @@ function ForgotYourPassword() {
                 openPopupAlert={openPopupAlert}
                 setOpenPopupAlert={setOpenPopupAlert}
             />
-            {isLoading && <PageLoader />}
+            {isFetching && <PageLoader />}
         </>
     )
 }

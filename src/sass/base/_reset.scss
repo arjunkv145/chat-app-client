@@ -65,27 +65,27 @@ select {
 }
 
 ::-webkit-input-placeholder {
-    @include font($secondary-font, bold, .8rem);
-    color: color(neutral, 300);
-    letter-spacing: 1px;
+    @include font($secondary-font, semibold, .8rem);
+    color: color(neutral, 400);
+    letter-spacing: .5px;
 }
   
 :-ms-input-placeholder {
-    @include font($secondary-font, bold, .8rem);
-    color: color(neutral, 300);
-    letter-spacing: 1px;
+    @include font($secondary-font, semibold, .8rem);
+    color: color(neutral, 400);
+    letter-spacing: .5px;
 }
   
 ::-moz-placeholder {
-    @include font($secondary-font, bold, .8rem);
-    color: color(neutral, 300);
-    letter-spacing: 1px;
+    @include font($secondary-font, semibold, .8rem);
+    color: color(neutral, 400);
+    letter-spacing: .5px;
 }
   
 ::placeholder {
-    @include font($secondary-font, bold, .8rem);
-    color: color(neutral, 300);
-    letter-spacing: 1px;
+    @include font($secondary-font, semibold, .8rem);
+    color: color(neutral, 400);
+    letter-spacing: .5px;
 }
 
 @media (prefers-reduced-motion: reduce) {

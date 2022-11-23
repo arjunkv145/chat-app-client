@@ -1,40 +1,32 @@
-import React, { useEffect } from 'react'
-import { Outlet, useLoaderData } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import React from 'react'
+import { Outlet } from 'react-router-dom'
 import axiosInstance from '../api/axiosInstance'
 import useAuth from '../hooks/useAuth'
 import InternetConnection from './InternetConnection'
 
-export const loader = async ({ request }) => {
-    try {
-        const { data } = await axiosInstance.get('/user', { signal: request.signal })
-        return data
-    } catch (err) {
-        const message = err?.response?.data?.message
-        const data = { success: false, message: message ? message : 'Server not responding' }
-        return data
-    }
-}
-
 function Root() {
     const { setAuth } = useAuth()
-    const data = useLoaderData()
-
-    useEffect(() => {
-        if (data.success === true) {
-            setAuth({
-                user: data.user,
-                accessToken: data.accessToken,
-                isLoggedIn: true,
-                sessionId: data.sessionId
-            })
-        }
-    }, [data.accessToken, data.success, data.user, data.sessionId, setAuth])
+    const { isLoading } = useQuery({
+        queryKey: ['is-logged-in'],
+        queryFn: () => axiosInstance.get('/user'),
+        onSuccess: data => setAuth({
+            user: data?.data.user,
+            accessToken: data?.data.accessToken,
+            isLoggedIn: true,
+            sessionId: data?.data.sessionId
+        }),
+        retry: 0,
+        refetchOnWindowFocus: false
+    })
 
     return (
-        <>
-            <InternetConnection />
-            <Outlet />
-        </>
+        !isLoading && (
+            <>
+                <InternetConnection />
+                <Outlet />
+            </>
+        )
     )
 }
 

@@ -14,6 +14,7 @@
     @include flex(column, center, center);
 
     &__title {
+        @include font($primary-font, semibold, 1.8rem);
         color: color(neutral, 300);
         text-align: center;
     }
@@ -25,6 +26,7 @@
         margin-bottom: .8em;
     }
     &__input {
+        @include font($secondary-font, semibold, .8rem);
         width: 100%;
         padding: 1em 1.2em;
         background-color: color(neutral, 1000);
@@ -46,7 +48,7 @@
         }
     }
     &__link-wrapper {
-        @include font($secondary-font, medium, .9rem);
+        @include font($secondary-font, medium, .8rem);
         margin-top: .5em;
         width: 100%;
         @include flex(row, space-between, center);
@@ -56,14 +58,15 @@
         }
     }
     &__link-signup, &__link-login {
-        color: color(neutral, 400);
+        color: color(neutral, 300);
     }
     &__link-login {
         width: 100%;
         text-align: center;
     }
     &__message {
-        color: color(neutral, 400);
+        @include font($secondary-font, medium, .8rem);
+        color: color(neutral, 300);
         margin-top: .5em;
         text-align: center;
     }

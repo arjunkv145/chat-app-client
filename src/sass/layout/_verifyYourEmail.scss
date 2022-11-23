@@ -10,23 +10,24 @@
     background-color: color(neutral, 800);
     border: none;
     border-radius: 3px;
+    text-align: center;
     @include flex(column, center, center);
 
     &__title {
+        @include font($primary-font, semibold, 1.8rem);
         color: color(neutral, 300);
-        text-align: center;
     }
     &__content {
-        color: color(neutral, 400);
-        text-align: center;
+        @include font($secondary-font, medium, .85rem);
+        color: color(neutral, 300);
         margin-top: 1.6em;
     }
-    button {
+    .btn {
         margin-top: .8em;
     }
     &__logout {
+        @include font($secondary-font, medium, .8rem);
         color: color(neutral, 400);
-        text-align: center;
         margin-top: 1.8em;
         
         a {
@@ -45,7 +46,7 @@
             font-size: 1.4rem;
         }
         &__content {
-            font-size: 0.8rem;
+            font-size: .8rem;
         }
     }
     @include mq(min-width, small) {

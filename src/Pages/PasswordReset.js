@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axiosInstance from '../api/axiosInstance'
@@ -36,38 +36,34 @@ function PasswordReset() {
         title: null,
         body: null
     })
-    const { refetch, isFetching } = useQuery({
-        queryKey: ['login'],
-        queryFn: () => axiosInstance.post('password-reset', {
-            passwordResetToken,
-            password: formValues.password
-        }),
-        onSuccess: data => setServerResponse({
-            title: "Success!",
-            body: data.data.message
-        }),
-        onError: error => {
-            if (error?.response?.data?.message === "You can't use the old password") {
-                setServerResponse({
-                    title: "Password reset failed",
-                    body: error.response.data.message
-                })
-            } else if (error?.response?.data?.message === "This link is expired") {
-                setServerResponse({
-                    title: "Password reset failed",
-                    body: error.response.data.message
-                })
-            } else {
-                setServerResponse({
-                    title: "Server not responding",
-                    body: "The server is not responding at the moment, please try again later."
-                })
-            }
-        },
-        onSettled: () => setOpenPopupAlert(true),
-        enabled: false,
-        retry: 0
-    })
+    const { mutate, isFetching } = useMutation(
+        values => axiosInstance.post('password-reset', values),
+        {
+            onSuccess: data => setServerResponse({
+                title: "Success!",
+                body: data.data.message
+            }),
+            onError: error => {
+                if (error?.response?.data?.message === "You can't use the old password") {
+                    setServerResponse({
+                        title: "Password reset failed",
+                        body: error.response.data.message
+                    })
+                } else if (error?.response?.data?.message === "This link is expired") {
+                    setServerResponse({
+                        title: "Password reset failed",
+                        body: error.response.data.message
+                    })
+                } else {
+                    setServerResponse({
+                        title: "Server not responding",
+                        body: "The server is not responding at the moment, please try again later."
+                    })
+                }
+            },
+            onSettled: () => setOpenPopupAlert(true)
+        }
+    )
     const handleChange = e => setFormValues(prev => ({
         ...prev,
         [e.target.name]: e.target.value
@@ -93,7 +89,10 @@ function PasswordReset() {
         isSubmittedOnce.current = true
         checkErrors()
         if (errors.password === '' && errors.confirmPassword === '') {
-            refetch()
+            mutate({
+                passwordResetToken,
+                password: formValues.password
+            })
         }
     }
 

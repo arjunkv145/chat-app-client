@@ -19,12 +19,12 @@
 
     &__title {
         @include font($primary-font, semibold, 1.4rem);
-        color: color(neutral, 200);
+        color: color(neutral, 300);
     }
 
     &__content {
         @include font($secondary-font, medium, .8rem);
-        color: color(neutral, 200);
+        color: color(neutral, 300);
     }
     
     &.offline, &.backend-down {

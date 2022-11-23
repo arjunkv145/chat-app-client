@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
 import useAuth from "../hooks/useAuth"
-import axiosInstance from "../api/axiosInstance"
 import PopupAlert from '../components/PopupAlert'
 import useSocket from '../hooks/useSocket'
 import { useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
+import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
 function Settings() {
     const { auth, setAuth } = useAuth()
     const socket = useSocket()
     const navigate = useNavigate()
+    const axiosPrivate = useAxiosPrivate()
     const [openPopupAlert, setOpenPopupAlert] = useState(false)
     const onSuccess = () => {
         socket.emit('logout', {
@@ -24,22 +25,20 @@ function Settings() {
         })
         navigate('/')
     }
-    const { refetch: logoutRequest } = useQuery({
-        queryKey: ['logout'],
-        queryFn: () => axiosInstance.get('logout'),
-        onSuccess,
-        onError: () => setOpenPopupAlert(true),
-        enabled: false,
-        retry: 0
-    })
-    const { refetch: logoutAllRequest } = useQuery({
-        queryKey: ['logoutAll'],
-        queryFn: () => axiosInstance.get('logout/all'),
-        onSuccess,
-        onError: () => setOpenPopupAlert(true),
-        enabled: false,
-        retry: 0
-    })
+    const { mutate: logoutRequest } = useMutation(
+        () => axiosPrivate.post('logout'),
+        {
+            onSuccess,
+            onError: () => setOpenPopupAlert(true)
+        }
+    )
+    const { mutate: logoutAllRequest } = useMutation(
+        () => axiosPrivate.post('logout/all'),
+        {
+            onSuccess,
+            onError: () => setOpenPopupAlert(true)
+        }
+    )
 
     return (
         <>

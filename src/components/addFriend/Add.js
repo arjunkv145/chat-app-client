@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
-import { useQuery } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 
 function AddFriendMain() {
     const [userName, setUserName] = useState('')
@@ -10,35 +10,32 @@ function AddFriendMain() {
     })
     const userNameRef = useRef()
     const axiosPrivate = useAxiosPrivate()
-    const { refetch } = useQuery({
-        queryKey: ['send-request'],
-        queryFn: () => axiosPrivate.post('friend/request', { userName }),
-        onSuccess: data => setServerResponse({
-            status: 'success',
-            message: data.data.message
-        }),
-        onError: error => setServerResponse({
-            status: 'fail',
-            message: error.response.data.message
-        }),
-        enabled: false,
-        retry: 0
-    })
+    const { mutate } = useMutation(
+        userName => axiosPrivate.post('friend/request', { userName }),
+        {
+            onSuccess: data => {
+                setServerResponse({ status: 'success', message: data.data.message })
+                setUserName('')
+            },
+            onError: error => setServerResponse({ status: 'fail', message: error.response.data.message })
+        }
+    )
 
     const handleChange = e => {
         setUserName(e.target.value)
-        setServerResponse({
-            status: null,
-            message: ''
-        })
+        setServerResponse({ status: null, message: '' })
     }
 
     const handleSubmit = async e => {
         e.preventDefault()
         if (userName.trim() !== '') {
-            refetch()
+            mutate(userName)
         }
     }
+
+    useEffect(() => {
+        userNameRef.current.focus()
+    }, [])
 
     return (
         <div className='add-friend-add'>
@@ -53,16 +50,16 @@ function AddFriendMain() {
                         ref={userNameRef}
                         className={`add-friend-add__input ${serverResponse.status && serverResponse.status}`}
                     />
+                    {
+                        serverResponse.message &&
+                        <span
+                            className={`add-friend-add__server-message ${serverResponse.status && serverResponse.status}`}
+                        >
+                            {serverResponse.message}
+                        </span>
+                    }
                     <button className='btn' disabled={userName.trim() === '' && true}>send request</button>
                 </div>
-                {
-                    serverResponse.message &&
-                    <span
-                        className={`add-friend-add__server-message ${serverResponse.status && serverResponse.status}`}
-                    >
-                        {serverResponse.message}
-                    </span>
-                }
             </form>
         </div>
     )

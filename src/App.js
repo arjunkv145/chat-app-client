@@ -14,11 +14,11 @@ import AddFriendPending from "./components/addFriend/Pending"
 import AddFriendFriends from "./components/addFriend/Friends"
 import Settings from "./Pages/Settings"
 import PublicGroup from "./Pages/PublicGroup"
-import Root, { loader as rootLoader } from './components/Root'
+import Root from './components/Root'
 import ChatMessage from "./components/chat/ChatMessage"
 import EmailVerificationLink, { loader as emailVerificationLinkLoader } from "./Pages/EmailVerificationLink"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import './sass/main.scss'
 
@@ -31,7 +31,6 @@ const router = createBrowserRouter([
     },
     {
         path: '/',
-        loader: rootLoader,
         element: <Root />,
         errorElement: <ErrorPage />,
         children: [
@@ -91,7 +90,7 @@ function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <RouterProvider router={router} />
-            <ReactQueryDevtools initialIsOpen={false} />
+            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
     )
 }
