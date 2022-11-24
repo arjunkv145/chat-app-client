@@ -15,7 +15,7 @@ import AddFriendFriends from "./components/addFriend/Friends"
 import Settings from "./Pages/Settings"
 import PublicGroup from "./Pages/PublicGroup"
 import Root from './components/Root'
-import ChatMessage from "./components/chat/ChatMessage"
+import ChatMessage from "./components/chat/Message"
 import EmailVerificationLink, { loader as emailVerificationLinkLoader } from "./Pages/EmailVerificationLink"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools"

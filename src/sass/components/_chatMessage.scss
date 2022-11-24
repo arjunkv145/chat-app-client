@@ -1,50 +1,54 @@
 @use '../abstract/' as *;
 
-.chat-message {
+.message {
     width: 100%;
     height: 100%;
-    @include flex(column, flex-start, flex-start);
+    @include flex(column, center, center);
 
     &__header {
         height: 50px;
         width: 100%;
-        padding-left: .5em;
-        box-shadow: 0 6px 5px -5px color(neutral, 1000);
+        border-bottom: 1px solid color(neutral, 1000);
+        box-shadow: 0 6px 6px -6px color(neutral, 1000);
         @include flex(row, flex-start, center);
     }
     &__close-btn {
-        width: 30px;
-        height: 30px;
-        @include flex(row, center, center);
-    }
-    &__left-arrow-icon {
-        display: block;
-        width: 15px;
-        height: 15px;
-        @include flex(row, flex-start, center);
+        width: 40px;
+        height: 40px;
+        margin-left: .8em;
 
+        a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            @include flex(row, center, center);
+        }
         svg {
-            font-size: 1.4rem;
-            color: color(neutral, 400);
+            font-size: 1.6rem;
+            color: color(neutral, 300);
         }
     }
-    &__user-image {
+    &__pfp {
+        width: 40px;
+        height: 40px;
         @include flex(row, center, center);
+        margin-left: -0.4em;
 
         svg {
             font-size: 2rem;
-            color: color(violet, base);
+            background-color: color(neutral, 400);
+            color: color(neutral, 1000);
+            border-radius: 50%;
         }
     }
-    &__user-name {
-        @include font($primary-font, semibold, .8rem);
-        color: color(neutral, 400);
+    &__name {
+        @include font($secondary-font, semibold, .85rem);
+        color: color(neutral, 300);
         margin-left: .6em;
     }
-    &__messages {
+    &__body {
         height: calc(100% - 100px);
         width: 98%;
-        margin: 0 auto;
         padding: 0 .4em;
         overflow: auto;
         &::-webkit-scrollbar {
@@ -68,16 +72,26 @@
         }
     }
     &__message {
-        @include font($primary-font, semibold, .8rem);
+        @include font($secondary-font, medium, .85rem);
         background-color: color(violet, base);
         color: color(neutral, 300);
         padding: .8em 1.2em;
         border-radius: 3px;
     }
-    &__send {
+    &__footer {
         height: 50px;
         width: 100%;
         padding: 0 .6em;
+    }
+    &__pending {
+
+    }
+    &__pending-text {
+
+    }
+    &__input-form {
+        width: 100%;
+        height: 100%;
         @include flex(row, space-between, center);
     }
     &__input {
@@ -103,7 +117,6 @@
 
         svg {
             font-size: 1rem;
-            transform: translateX(1.5px);
         }
     }
 }

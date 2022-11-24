@@ -5,7 +5,7 @@ import useSocket from '../../hooks/useSocket'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import { useQuery } from '@tanstack/react-query'
 
-function ChatMessage() {
+function Message() {
     const { chatId } = useParams()
     const [chatRoom, setChatRoom] = useState([])
     const [message, setMessage] = useState('')
@@ -53,8 +53,8 @@ function ChatMessage() {
         socket.emit('send_message', { message })
         setMessagesElement(prev => [
             ...prev,
-            <div className='chat-message__message-wrapper sent' key={prev.length + 1}>
-                <span className='chat-message__message'>
+            <div className='message__message-wrapper sent' key={prev.length + 1}>
+                <span className='message__message'>
                     {message}
                 </span>
             </div>
@@ -79,8 +79,8 @@ function ChatMessage() {
             console.log(data)
             setMessagesElement(prev => [
                 ...prev,
-                <div className='chat-message__message-wrapper' key={prev.length + 1}>
-                    <span className='chat-message__message'>
+                <div className='message__message-wrapper' key={prev.length + 1}>
+                    <span className='message__message'>
                         {data.message}
                     </span>
                 </div>
@@ -95,54 +95,55 @@ function ChatMessage() {
 
     return (
         !isLoading && (
-            <div className='chat-message'>
-                <div className='chat-message__header'>
-                    <div className='chat-message__close-btn'>
+            <div className='message'>
+                <div className='message__header'>
+                    <div className='message__close-btn'>
                         <NavLink to='/chat'>
-                            <span className='chat-message__left-arrow-icon'>
-                                <ArrowBackIos />
-                            </span>
+                            <ArrowBackIos />
                         </NavLink>
                     </div>
-                    <div className='chat-message__user-image'>
+                    <div className='message__pfp'>
                         <AccountCircle />
                     </div>
-                    <div className='chat-message__user-name'>
+                    <div className='message__name'>
                         {chatRoom.userName}
                     </div>
                 </div>
-                <div className='chat-message__messages' ref={messagesContainerRef}>
+                <div className='message__body' ref={messagesContainerRef}>
                     {messagesElement}
+                </div>
+                <div className='message__footer'>
                     {
-                        chatRoom.pending &&
-                        <div className='friend-request-form'>
-                            <p>{chatRoom.userName} has sent you a friend request</p>
-                            <button className='btn' onClick={acceptRequest} style={{ borderRadius: '10px' }}>
-                                Accept
-                            </button>
-                            <button className='btn' onClick={rejectRequest} style={{ borderRadius: '10px' }}>
-                                Reject
-                            </button>
-                        </div>
+                        chatRoom.pending ?
+                            <div className='message__pending'>
+                                <p className='message__pending-text'>{chatRoom.userName} has sent you a friend request</p>
+                                <button className='btn' onClick={acceptRequest}>
+                                    Accept
+                                </button>
+                                <button className='btn' onClick={rejectRequest}>
+                                    Reject
+                                </button>
+                            </div>
+                            :
+                            <form className='message__input-form' onSubmit={sendMessage}>
+                                <input
+                                    type='text'
+                                    className='message__input'
+                                    placeholder="Type a message..."
+                                    autoComplete="off"
+                                    value={message}
+                                    onChange={e => setMessage(e.target.value)}
+                                    ref={messageRef}
+                                />
+                                <div className='message__btn-wrapper'>
+                                    <button className='btn'><Send /></button>
+                                </div>
+                            </form>
                     }
                 </div>
-                <form className='chat-message__send' onSubmit={sendMessage}>
-                    <input
-                        type='text'
-                        className='chat-message__input'
-                        placeholder="Type a message..."
-                        autoComplete="off"
-                        value={message}
-                        onChange={e => setMessage(e.target.value)}
-                        ref={messageRef}
-                    />
-                    <div className='chat-message__btn-wrapper'>
-                        <button className='btn'><Send /></button>
-                    </div>
-                </form>
             </div>
         )
     )
 }
 
-export default ChatMessage
+export default Message

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import { useMutation } from "@tanstack/react-query"
 
-function AddFriendMain() {
+function Add() {
     const [userName, setUserName] = useState('')
     const [serverResponse, setServerResponse] = useState({
         status: null,
@@ -65,4 +65,4 @@ function AddFriendMain() {
     )
 }
 
-export default AddFriendMain
+export default Add

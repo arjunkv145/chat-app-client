@@ -2,9 +2,9 @@ import { AccountCircle } from '@mui/icons-material'
 import React from 'react'
 import CustomNavLink from '../CustomNavLink'
 
-function ChatUsers({ isLoading, chats }) {
+function Chats({ isLoading, chats }) {
     return (
-        <div className='chat-users'>
+        <div className='chats'>
             {
                 !isLoading && (
                     chats.length > 0 ? (
@@ -14,25 +14,25 @@ function ChatUsers({ isLoading, chats }) {
                                 key={chat.chatId}
                                 className={
                                     ({ isActive }) => isActive ?
-                                        'chat-users__link active' :
-                                        'chat-users__link'
+                                        'chats__link active' :
+                                        'chats__link'
                                 }
                             >
-                                <div className='chat-users__user'>
-                                    <div className='chat-users__user-image'>
+                                <div className='chats__list-item'>
+                                    <div className='chats__image'>
                                         <AccountCircle />
                                     </div>
-                                    <div className='chat-users__user-name'>
+                                    <div className='chats__name'>
                                         {chat.userName}
                                     </div>
                                 </div>
                             </CustomNavLink>
                         ))
-                    ) : <span>No chats</span>
+                    ) : <div className='chats__tag'>No chats</div>
                 )
             }
         </div>
     )
 }
 
-export default ChatUsers
+export default Chats

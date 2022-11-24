@@ -1,12 +1,18 @@
 @use '../abstract/' as *;
 
-.chat-users {
+.chats {
     width: 100%;
     height: 100%;
     overflow: auto;
 
     &::-webkit-scrollbar {
         width: 0;
+    }
+    &__tag {
+        @include font($secondary-font, semibold, .85rem);
+        color: color(neutral, 400);
+        text-align: center;
+        margin-top: 2em;
     }
     &__link {
         text-decoration: none;
@@ -16,45 +22,31 @@
         border-radius: 3px;
         transition: background-color $transition-duration $transition-timing-function;
 
-        &:hover {
+        &:hover, &.active {
             background-color: color(neutral, 600);
         }
-        &:hover .chat-users__user-name {
+        &:hover .chats__name, &.active .chats__name {
             color: color(neutral, 200);
         }
-        &:hover .chat-users__user-image {
-            svg {
-                color: color(violet, base);
-            }
-        }
     }
-    &__link.active {
-        background-color: color(neutral, 600);
-    }
-    &__link.active &__user-name {
-        color: color(neutral, 200);
-    }
-    &__link.active &__user-image {
-        svg {
-            color: color(violet, base);
-        }
-    }
-    &__user {
+    &__list-item {
         @include flex(row, flex-start, center);
     }
-    &__user-image {
+    &__image {
+        width: 40px;
+        height: 40px;
         @include flex(row, center, center);
 
         svg {
             font-size: 2rem;
-            color: color(violet, base);
-            filter: grayscale(40%);
-            transition: color $transition-duration $transition-timing-function;
+            background-color: color(neutral, 500);
+            color: color(neutral, 1000);
+            border-radius: 50%;
         }
     }
-    &__user-name {
+    &__name {
         @include font($secondary-font, semibold, .8rem);
-        color: color(neutral, 400);
+        color: color(neutral, 300);
         margin-left: .6em;
         transition: color $transition-duration $transition-timing-function;
     }

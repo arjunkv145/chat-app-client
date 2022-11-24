@@ -2,7 +2,7 @@ import React from 'react'
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import { useQuery } from "@tanstack/react-query"
 import { Outlet, useLocation } from 'react-router-dom'
-import ChatUsers from '../components/chat/ChatUsers'
+import Chats from '../components/chat/Chats'
 
 function Chat() {
     const location = useLocation()
@@ -14,12 +14,10 @@ function Chat() {
 
     return (
         <main className="chat main-resizable">
-            <section
-                className='main-resizable__left'
-            >
+            <section className='main-resizable__left'>
                 <h1 className='main-resizable__title'>Chat</h1>
                 <div className='main-resizable__body'>
-                    <ChatUsers chats={data?.data?.chats} isLoading={isLoading} />
+                    <Chats chats={data?.data?.chats} isLoading={isLoading} />
                 </div>
             </section>
             <section
