@@ -84,7 +84,17 @@ const router = createBrowserRouter([
     },
 ])
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnMount: true,
+            refetchOnWindowFocus: false,
+            refetchOnReconnect: false,
+            retry: false,
+            retryOnMount: false
+        }
+    },
+})
 
 function App() {
     return (

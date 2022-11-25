@@ -51,7 +51,6 @@ function Signup() {
         },
         onError: () => setErrors(prev => ({ ...prev, email: 'Server not responding' })),
         enabled: false,
-        retry: 0
     })
     const { refetch: isUserNameAvailableRequest, isLoading: userNameIsLoading } = useQuery({
         queryKey: ['is-username-available', userNameRef?.current?.value?.trim()],
@@ -65,7 +64,6 @@ function Signup() {
         },
         onError: () => setErrors(prev => ({ ...prev, userName: 'Server not responding' })),
         enabled: false,
-        retry: 0
     })
 
     const checkUserName = useCallback(() => {

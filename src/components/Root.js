@@ -16,8 +16,6 @@ function Root() {
             isLoggedIn: true,
             sessionId: data?.data.sessionId
         }),
-        retry: 0,
-        refetchOnWindowFocus: false
     })
 
     return (
