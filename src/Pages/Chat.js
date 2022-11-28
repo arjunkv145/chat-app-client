@@ -13,24 +13,26 @@ function Chat() {
     })
 
     return (
-        <main className="chat main-resizable">
-            <section className='main-resizable__left'>
-                <h1 className='main-resizable__title'>Chat</h1>
-                <div className='main-resizable__body'>
+        <main className='chat responsive'>
+            <section className='responsive__side'>
+                <div className='responsive__side-header'>
+                    <h1 className='responsive__title'>Chat</h1>
+                </div>
+                <div className='responsive__side-body'>
                     <Chats chats={data?.data?.chats} isLoading={isLoading} />
                 </div>
             </section>
             <section
                 className={
                     (location.pathname === '/chat' || location.pathname === '/chat/') ?
-                        'main-resizable__right hide' :
-                        'main-resizable__right'
+                        'responsive__main hide' :
+                        'responsive__main'
                 }
             >
                 {
                     (location.pathname === '/chat' || location.pathname === '/chat/')
                     &&
-                    <span className='main-resizable__tag'>Start chatting</span>
+                    <span className='responsive__tag'>Start chatting</span>
                 }
                 <Outlet />
             </section>

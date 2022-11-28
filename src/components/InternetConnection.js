@@ -1,8 +1,10 @@
+import { useQueryClient } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import useAuth from '../hooks/useAuth'
 import useSocket from '../hooks/useSocket'
 
 function InternetConnection() {
+    const queryClient = useQueryClient()
     const [internetConnection, setInternetConnection] = useState(navigator.onLine)
     const [backendConnection, setBackendConnection] = useState(true)
 
@@ -61,12 +63,39 @@ function InternetConnection() {
 
     useEffect(() => {
         const reloadPage = () => window.location.reload()
-        socket.on('email is verified', reloadPage)
+        socket.on('email_verified', reloadPage)
 
         return () => {
-            socket.off('email is verified', reloadPage)
+            socket.off('email_verified', reloadPage)
         }
     }, [socket, auth.sessionId])
+    useEffect(() => {
+        socket.on('friend_request_accepted', () => {
+            // queryClient.invalidateQueries('friends')
+            // queryClient.invalidateQueries('pending-requests')
+            queryClient.invalidateQueries('chats')
+        })
+        socket.on('friend_request_rejected', () => {
+            queryClient.invalidateQueries('pending-requests')
+        })
+        socket.on('friend_request_sent', () => {
+            queryClient.invalidateQueries('chats')
+        })
+
+        return () => {
+            socket.off('friend_request_accepted', () => {
+                // queryClient.invalidateQueries('friends')
+                // queryClient.invalidateQueries('pending-requests')
+                queryClient.invalidateQueries('chats')
+            })
+            socket.off('friend_request_rejected', () => {
+                queryClient.invalidateQueries('pending-requests')
+            })
+            socket.off('friend_request_sent', () => {
+                queryClient.invalidateQueries('chats')
+            })
+        }
+    }, [socket, queryClient])
 
     return (
         <>

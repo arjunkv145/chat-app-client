@@ -25,7 +25,13 @@
         }
         svg {
             font-size: 1.6rem;
-            color: color(neutral, 300);
+            color: color(neutral, 400);
+            transition: color $transition-duration $transition-timing-function;
+        }
+        &:hover {
+            svg {
+                color: color(neutral, 300);
+            }
         }
     }
     &__pfp {
@@ -85,6 +91,7 @@
         height: 50px;
         width: 100%;
         padding: 0 .6em;
+        position: relative;
 
         &.pending {
             height: 100px;
@@ -110,16 +117,107 @@
     .btn--reject {
         margin-left: .4em;
     }
-    &__message-form {
+    &__emojis-window {
+        position: absolute;
+        bottom: 100%;
+        width: calc(100% - 75px);
+        height: 120px;
+        padding: .4em;
+        background-color: color(neutral, 1000);
+        border-radius: 3px;
+        display: none;
+
+        &.open {
+            display: block;
+        }
+    }
+    &__emojis-window-header {
+        height: 32px;
+        @include flex(row, flex-start, center);
+    }
+    &__emojis-window-body {
+        height: calc(120px - 44px);
+        overflow: auto;
+
+        &::-webkit-scrollbar {
+            width: 0.3em;
+        }
+          
+        &::-webkit-scrollbar-track {
+            background: color(neutral, 1000);
+        }
+          
+        &::-webkit-scrollbar-thumb {
+            background: color(neutral, 700);
+        }
+    }
+    &__emojis-window-title {
+        @include font($secondary-font, medium, .8rem);
+        color: color(neutral, 300);
+    }
+    &__close-emojis-window-btn {
+        width: 30px;
+        height: 30px;
+        border: none;
+        background: none;
+        @include flex(row, center, center);
+        cursor: pointer;
+
+        svg {
+            font-size: 1.6rem;
+            color: color(neutral, 400);
+            transition: color $transition-duration $transition-timing-function;
+        }
+        &:hover {
+            svg {
+                color: color(neutral, 300);
+            }
+        }
+    }
+    &__emoji {
+        width: 30px;
+        height: 30px;
+        border: none;
+        border-radius: 3px;
+        background: none;
+        cursor: pointer;
+
+        &:hover {
+            background-color: color(neutral, 700);
+        }
+    }
+    &__open-emojis-window-btn {
+        width: 30px;
+        height: 30px;
+        border: none;
+        background: none;
+        @include flex(row, center, center);
+        cursor: pointer;
+        position: absolute;
+        top: 10px;
+        left: 15px;
+
+        svg {
+            font-size: 1.6rem;
+            color: color(neutral, 400);
+            transition: color $transition-duration $transition-timing-function;
+        }
+        &:hover {
+            svg {
+                color: color(neutral, 300);
+            }
+        }
+    }
+    &__form {
         width: 100%;
         height: 100%;
         @include flex(row, space-between, center);
     }
-    &__message-input {
+    &__form-input {
         @include font($secondary-font, semibold, .8rem);
         background-color: color(neutral, 1000);
         color: color(neutral, 300);
-        padding: .8em 1.8em;
+        padding: .8em 1.8em .8em 3.2em;
         width: calc(100% - 55px);
         border: none;
         border-radius: 50px;
@@ -128,7 +226,7 @@
             outline: none;
         }
     }
-    &__message-btn-wrapper {
+    &__form-btn-wrapper {
         width: 45px;
     }
     .btn--send {

@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import { useMutation } from "@tanstack/react-query"
+import useSocket from '../../hooks/useSocket'
 
 function Add() {
+    const socket = useSocket()
     const [userName, setUserName] = useState('')
     const [serverResponse, setServerResponse] = useState({
         status: null,
@@ -15,6 +17,7 @@ function Add() {
         {
             onSuccess: data => {
                 setServerResponse({ status: 'success', message: data.data.message })
+                socket.emit('friend_request_sent', { userName })
                 setUserName('')
             },
             onError: error => setServerResponse({ status: 'fail', message: error.response.data.message })

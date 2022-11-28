@@ -11,7 +11,7 @@ export const loader = async ({ request, params }) => {
             'reconnectionDelay': 500,
             'reconnectionAttempts': 10
         })
-        socket.emit('email is verified', {
+        socket.emit('email_verified', {
             room: data.userName
         })
         return redirect('/chat')

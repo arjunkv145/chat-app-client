@@ -1,20 +1,41 @@
-import { AccountCircle, ArrowBackIos, Send } from '@mui/icons-material'
+import { AccountCircle, ArrowBackIos, InsertEmoticon, KeyboardArrowDown, Send } from '@mui/icons-material'
 import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, useNavigate, useParams } from 'react-router-dom'
 import useSocket from '../../hooks/useSocket'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import useAuth from '../../hooks/useAuth'
+import { nanoid } from 'nanoid'
 
 function Message() {
     const { chatId } = useParams()
+
     const [message, setMessage] = useState('')
-    const [messagesElement, setMessagesElement] = useState([])
+    const [messagesContainer, setMessagesContainer] = useState([])
+
     const messageRef = useRef(null)
     const messagesContainerRef = useRef(null)
+
     const socket = useSocket()
+    const { auth } = useAuth()
+
     const axiosPrivate = useAxiosPrivate()
     const navigate = useNavigate()
     const queryClient = useQueryClient()
+
+    const emojis = [
+        '😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂',
+        '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩', '😘', '😗',
+        '😚', '😙', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗',
+        '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏',
+        '😒', '🙄', '😬', '🤥', '😌', '😔', '😪', '🤤', '😴',
+        '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥵', '🥶', '🥴',
+        '😵', '🤯', '🤠', '🥳', '😎', '🤓', '🧐', '😕', '😟',
+        '🙁', '☹️', '😮', '😯', '😲', '😳', '🥺', '😦', '😧',
+        '😨', '😰', '😥', '😢', '😭', '😱', '😖', '😣', '😓',
+        '😞'
+    ]
+    const [openEmojisWindow, setOpenEmojisWindow] = useState(false)
 
     const { data: chatRoom, isLoading } = useQuery({
         queryKey: ['chat-room', chatId],
@@ -26,24 +47,27 @@ function Message() {
         queryKey: ['message', chatId],
         queryFn: () => axiosPrivate.get(`/chat/messages/${chatId}`),
         onSuccess: data => {
-            const messages = data.data.message.messages.map((message, i) => {
+            const messages = data?.data.message.messages.map(message => {
                 return (
-                    <div className='message__message-wrapper sent' key={i + 1}>
+                    <div className={`message__message-wrapper ${message.userName !== chatRoom?.userName ? 'sent' : ''}`} key={nanoid()}>
                         <span className='message__message'>
                             {message.message}
                         </span>
                     </div>
                 )
             })
-            setMessagesElement(prev => [...prev, ...messages])
+            setMessagesContainer(prev => [...prev, ...messages])
         },
         onError: () => alert("Can't get messages from the server"),
-        enabled: !!chatRoom
+        enabled: !!chatRoom?.friends
     })
     const { mutate: acceptRequest } = useMutation(
         values => axiosPrivate.post('/friend/accept', values),
         {
-            onSuccess: () => queryClient.invalidateQueries('chat-room'),
+            onSuccess: () => {
+                queryClient.invalidateQueries('chat-room')
+                socket.emit('friend_request_accepted', { userName: chatRoom.userName })
+            },
             onError: () => alert("Couldn't accept request"),
         }
     )
@@ -52,6 +76,7 @@ function Message() {
         {
             onSuccess: () => {
                 queryClient.invalidateQueries('chats')
+                socket.emit('friend_request_rejected', { userName: chatRoom.userName })
                 navigate('/chat', { replace: true })
             },
             onError: () => alert("Couldn't reject request"),
@@ -63,10 +88,10 @@ function Message() {
         if (message === '') {
             return null
         }
-        socket.emit('send_message', { message, chatId, userName: chatRoom.userName })
-        setMessagesElement(prev => [
+        socket.emit('send_message', { message, chatId, userName: auth.user.userName })
+        setMessagesContainer(prev => [
             ...prev,
-            <div className='message__message-wrapper sent' key={prev.length + 1}>
+            <div className='message__message-wrapper sent' key={nanoid()}>
                 <span className='message__message'>
                     {message}
                 </span>
@@ -85,13 +110,17 @@ function Message() {
         if (!isLoading) {
             messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
         }
-    }, [messagesElement, isLoading])
+    }, [isLoading])
+
+    useEffect(() => {
+        socket.emit('join_chatroom', chatId)
+    }, [socket, chatId])
 
     useEffect(() => {
         const receiveMessage = ({ message }) => {
-            setMessagesElement(prev => [
+            setMessagesContainer(prev => [
                 ...prev,
-                <div className='message__message-wrapper' key={prev.length + 1}>
+                <div className='message__message-wrapper' key={nanoid()}>
                     <span className='message__message'>
                         {message}
                     </span>
@@ -122,7 +151,7 @@ function Message() {
                     </div>
                 </div>
                 <div className={`message__body ${chatRoom?.pending ? 'pending' : ''}`} ref={messagesContainerRef}>
-                    {messagesElement}
+                    {messagesContainer}
                 </div>
                 <div className={`message__footer ${chatRoom?.pending ? 'pending' : ''}`}>
                     {
@@ -145,20 +174,50 @@ function Message() {
                                 </div>
                             </div>
                             :
-                            <form className='message__message-form' onSubmit={sendMessage}>
-                                <input
-                                    type='text'
-                                    className='message__message-input'
-                                    placeholder="Type a message..."
-                                    autoComplete="off"
-                                    value={message}
-                                    onChange={e => setMessage(e.target.value)}
-                                    ref={messageRef}
-                                />
-                                <div className='message__message-btn-wrapper'>
-                                    <button className='btn btn--send'><Send /></button>
+                            <>
+                                <div className={`message__emojis-window ${openEmojisWindow ? 'open' : ''}`}>
+                                    <div className='message__emojis-window-header'>
+                                        <button
+                                            className='message__close-emojis-window-btn'
+                                            onClick={() => setOpenEmojisWindow(prev => !prev)}
+                                        >
+                                            <KeyboardArrowDown />
+                                        </button>
+                                        <p className='message__emojis-window-title'>Emojis</p>
+                                    </div>
+                                    <div className='message__emojis-window-body'>
+                                        {
+                                            emojis.map((emoji, i) => (
+                                                <button
+                                                    key={i}
+                                                    className='message__emoji'
+                                                    onClick={e => setMessage(prev => `${prev}${e.target.innerText}`)}
+                                                >{emoji}</button>
+                                            ))
+                                        }
+                                    </div>
                                 </div>
-                            </form>
+                                <button
+                                    className='message__open-emojis-window-btn'
+                                    onClick={() => setOpenEmojisWindow(prev => !prev)}
+                                >
+                                    <InsertEmoticon />
+                                </button>
+                                <form className='message__form' onSubmit={sendMessage}>
+                                    <input
+                                        type='text'
+                                        className='message__form-input'
+                                        placeholder="Type a message..."
+                                        autoComplete="off"
+                                        value={message}
+                                        onChange={e => setMessage(e.target.value)}
+                                        ref={messageRef}
+                                    />
+                                    <div className='message__form-btn-wrapper'>
+                                        <button className='btn btn--send'><Send /></button>
+                                    </div>
+                                </form>
+                            </>
                     }
                 </div>
             </div>

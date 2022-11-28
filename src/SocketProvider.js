@@ -14,7 +14,7 @@ function SocketProvider(props) {
 
     useEffect(() => {
         if (auth.isLoggedIn === true) {
-            socket.emit('join_room', auth.user.userName)
+            socket.emit('login', auth.user.userName)
         }
     }, [auth.isLoggedIn, auth.user.userName])
 
