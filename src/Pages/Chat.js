@@ -3,6 +3,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import { useQuery } from "@tanstack/react-query"
 import { Outlet, useLocation } from 'react-router-dom'
 import Chats from '../components/chat/Chats'
+import SearchChat from '../components/chat/SearchChat'
 
 function Chat() {
     const location = useLocation()
@@ -19,8 +20,12 @@ function Chat() {
                     <h1 className='responsive__title'>Chat</h1>
                 </div>
                 <div className='responsive__side-body'>
+                    <div className='chat__search'>
+                        <div className='chat__search-input' tabIndex={0}>search or start a chat</div>
+                    </div>
                     <Chats chats={data?.data?.chats} isLoading={isLoading} />
                 </div>
+                <SearchChat />
             </section>
             <section
                 className={

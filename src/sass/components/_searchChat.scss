@@ -1,0 +1,42 @@
+@use '../abstract/' as *;
+
+.search-chat-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    // background-color: rgba(0, 0, 0, 0.6);
+    // opacity: 0;
+    // visibility: hidden;
+    transition: opacity $transition-duration $transition-timing-function,
+                visibility $transition-duration $transition-timing-function;
+    @include flex(row, center, center);
+    z-index: 100;
+
+    .search-chat {
+        @include flex(column, center, center);
+        background-color: color(neutral, 1000);
+        border-radius: 3px;
+        width: 80%;
+        max-width: 400px;
+        padding: 1.6em 1.4em;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.07), 
+            0 2px 4px rgba(0,0,0,0.07), 
+            0 4px 8px rgba(0,0,0,0.07), 
+            0 8px 16px rgba(0,0,0,0.07),
+            0 16px 32px rgba(0,0,0,0.07), 
+            0 32px 64px rgba(0,0,0,0.07);
+
+        &__header {
+            width: 100%;
+            border: 1px solid red;
+        }
+        & .form__input-wrapper {
+            width: 100%;
+        }
+        & .form__input {
+            border: 1px solid color(neutral, 500);
+        }
+    }
+}
